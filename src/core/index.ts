@@ -10,5 +10,10 @@ export { default as DatabaseContext } from './DatabaseContext';
 export { default as Repository } from './Repository';
 export { default as UnitOfWork } from './UnitOfWork';
 
+export { default as DomainEvent } from './DomainEvent';
+
 export { default as Service } from './Service';
+export { default as DomainService } from './DomainService';
+export { default as ApplicationService } from './ApplicationService';
+export { default as InfraService } from './InfraService';
 export { default as ServiceProvider } from './ServiceProvider';
