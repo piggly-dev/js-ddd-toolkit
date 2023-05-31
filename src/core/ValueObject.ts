@@ -34,19 +34,19 @@ export default class ValueObject<Props extends Record<string, any>> {
 	/**
 	 * Checks if two value objects are equal.
 	 *
-	 * @param {ValueObject<Props>} vo
+	 * @param {(ValueObject|undefined|null)} [vo]
 	 * @returns {boolean}
 	 * @public
 	 * @memberof ValueObject
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public equals(vo?: ValueObject<Props>): boolean {
+	public equals(vo: ValueObject<Props> | undefined | null): boolean {
 		if (vo === null || vo === undefined) {
 			return false;
 		}
 
-		if (vo.props === undefined) {
+		if (!(vo instanceof this.constructor)) {
 			return false;
 		}
 

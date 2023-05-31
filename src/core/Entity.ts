@@ -4,18 +4,18 @@ import EntityID from './EntityID';
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
-export default abstract class Entity<Props> {
+export default abstract class Entity<Props, Id = string> {
 	/**
 	 * The entity identifier.
 	 *
-	 * @type {EntityID}
+	 * @type {EntityID<Id>}
 	 * @protected
 	 * @readonly
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected readonly _id: EntityID;
+	protected readonly _id: EntityID<Id>;
 
 	/**
 	 * The entity props.
@@ -33,61 +33,57 @@ export default abstract class Entity<Props> {
 	 * Creates an instance of Entity.
 	 *
 	 * @param {props} props
-	 * @param {EntityID | undefined} id
+	 * @param {EntityID<Id> | undefined} id
 	 * @public
 	 * @constructor
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(props: Props, id?: EntityID) {
-		this._id = id || new EntityID();
+	constructor(props: Props, id?: EntityID<Id>) {
+		this._id = id || new EntityID<Id>();
 		this.props = props;
 	}
 
 	/**
 	 * Gets the entity identifier.
 	 *
-	 * @returns {EntityID}
+	 * @returns {EntityID<Id>}
 	 * @public
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get id(): EntityID {
+	public get id(): EntityID<Id> {
 		return this._id;
 	}
 
 	/**
 	 * Checks if two entities are equal.
 	 *
-	 * @param {Entity<Props>} object
+	 * @param {Entity<Props, any> | undefined | null} e
 	 * @returns {boolean}
 	 * @public
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public equals(object?: Entity<Props>): boolean {
-		if (
-			object === null ||
-			object === undefined ||
-			Entity.isEntity(object) === false
-		) {
+	public equals(e: Entity<Props, any> | undefined | null): boolean {
+		if (e === null || e === undefined || Entity.isEntity(e) === false) {
 			return false;
 		}
 
-		if (this === object) {
+		if (this === e) {
 			return true;
 		}
 
-		return object._id.equals(this._id);
+		return e._id.equals(this._id);
 	}
 
 	/**
 	 * Checks if an object is an entity.
 	 *
-	 * @param {*} object
+	 * @param {*} e
 	 * @returns {boolean}
 	 * @public
 	 * @static
@@ -95,7 +91,7 @@ export default abstract class Entity<Props> {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static isEntity(object: any): boolean {
-		return object instanceof Entity;
+	public static isEntity(e: any): boolean {
+		return e instanceof Entity;
 	}
 }

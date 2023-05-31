@@ -9,10 +9,9 @@ export default class DomainEvent<Payload> extends EventPayload<Payload> {
 	/**
 	 * Will generate a new uuidv4 for default id.
 	 *
-	 * @param {Entity<Props>} object
-	 * @returns {boolean}
+	 * @returns {string}
 	 * @public
-	 * @memberof Entity
+	 * @memberof DomainEvent
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */

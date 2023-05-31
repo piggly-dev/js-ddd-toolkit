@@ -4,18 +4,18 @@ import { v4 as uuidv4 } from 'uuid';
  * @file Manages entity identifier.
  * @copyright Piggly Lab 2023
  */
-export default class EntityID {
+export default class EntityID<Value = string> {
 	/**
 	 * The raw value of the identifier.
 	 *
-	 * @type {string | number}
+	 * @type {Value}
 	 * @public
 	 * @readonly
 	 * @memberof EntityID
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public readonly value: string | number;
+	public readonly value: Value;
 
 	/**
 	 * Indicates if identifier was randomly generated.
@@ -38,22 +38,22 @@ export default class EntityID {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(id?: string | number | null) {
-		this.value = id || uuidv4();
+	constructor(id?: Value | null) {
+		this.value = (id || uuidv4()) as Value;
 		this._random = id === undefined || id === null;
 	}
 
 	/**
 	 * Checks if the identifier is equal to this identifier.
 	 *
-	 * @param {(EntityID<Id>|undefined|null)} id
+	 * @param {(EntityID<any>|undefined|null)} id
 	 * @returns {boolean}
 	 * @public
 	 * @memberof EntityID
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public equals(id: EntityID | undefined | null): boolean {
+	public equals(id: EntityID<any> | undefined | null): boolean {
 		if (id === null || id === undefined) {
 			return false;
 		}
@@ -89,6 +89,27 @@ export default class EntityID {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public toString(): string {
+		if (typeof this.value === 'string') {
+			return this.value;
+		}
+
 		return String(this.value);
+	}
+
+	/**
+	 * Returns an integer representation of the identifier.
+	 *
+	 * @returns {number}
+	 * @public
+	 * @memberof EntityID
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public toNumber(): number {
+		if (typeof this.value === 'number') {
+			return this.value;
+		}
+
+		return Number(this.value);
 	}
 }

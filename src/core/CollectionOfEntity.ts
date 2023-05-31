@@ -5,7 +5,7 @@ import EntityID from './EntityID';
  * @file A collection of entities.
  * @copyright Piggly Lab 2023
  */
-export default class CollectionOfEntity<Entity extends BaseEntity<any>> {
+export default class CollectionOfEntity<Entity extends BaseEntity<any, any>> {
 	/**
 	 * An array of entities.
 	 *
@@ -57,11 +57,11 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any>> {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public add(entity: Entity): this {
-		if (this._items.has(entity.id)) {
+		if (this._items.has(entity.id.value)) {
 			return this;
 		}
 
-		this._items.set(entity.id, entity);
+		this._items.set(entity.id.value, entity);
 		return this;
 	}
 
@@ -75,8 +75,8 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any>> {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public remove(id: EntityID): this {
-		this._items.delete(id);
+	public remove(id: EntityID<any>): this {
+		this._items.delete(id.value);
 		return this;
 	}
 
@@ -90,8 +90,8 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any>> {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public has(id: EntityID): boolean {
-		return this._items.has(id);
+	public has(id: EntityID<any>): boolean {
+		return this._items.has(id.value);
 	}
 
 	/**
@@ -104,8 +104,8 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any>> {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get(id: EntityID): Entity | undefined {
-		return this._items.get(id);
+	public get(id: EntityID<any>): Entity | undefined {
+		return this._items.get(id.value);
 	}
 
 	/**
