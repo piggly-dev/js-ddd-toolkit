@@ -76,6 +76,7 @@
 		"typescript": "^4.9.4"
 	},
 	"dependencies": {
+		"@piggly/event-bus": "^1.0.1",
 		"shallow-equal-object": "^1.1.1",
 		"uuid": "^9.0.0"
 	}
