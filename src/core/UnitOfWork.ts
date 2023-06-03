@@ -15,7 +15,7 @@ export default abstract class UnitOfWork {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _context: DatabaseContext<any>;
+	protected _context: DatabaseContext;
 
 	/**
 	 * A map of repositories.
@@ -40,7 +40,7 @@ export default abstract class UnitOfWork {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(context: DatabaseContext<any>) {
+	constructor(context: DatabaseContext) {
 		this._context = context;
 	}
 
