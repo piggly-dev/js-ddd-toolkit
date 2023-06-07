@@ -5,7 +5,7 @@ import BaseEntity from './Entity';
  * @copyright Piggly Lab 2023
  */
 export default abstract class Adapter<
-	Entity extends BaseEntity<any>,
+	Entity extends BaseEntity<any, any>,
 	PersistenceRecord extends Record<string, any>
 > {
 	/**
