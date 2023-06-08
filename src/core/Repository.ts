@@ -16,7 +16,7 @@ export default abstract class Repository<
 	/**
 	 * Database context.
 	 *
-	 * @type {DatabaseContext<Context>} _context
+	 * @type {DatabaseContext} _context
 	 * @protected
 	 * @memberof Repository
 	 * @since 1.0.0
@@ -27,7 +27,7 @@ export default abstract class Repository<
 	/**
 	 * Constructor.
 	 *
-	 * @param {DatabaseContext<Context>} context
+	 * @param {DatabaseContext} context
 	 * @public
 	 * @constructor
 	 * @memberof Repository
@@ -41,7 +41,7 @@ export default abstract class Repository<
 	/**
 	 * Find an entity by its id.
 	 *
-	 * @param {EntityUUID} id
+	 * @param {EntityID<any>} id
 	 * @returns {Promise<Entity | undefined>}
 	 * @public
 	 * @async
@@ -50,7 +50,7 @@ export default abstract class Repository<
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public abstract findById(id: EntityID): Promise<Entity | undefined>;
+	public abstract findById(id: EntityID<any>): Promise<Entity | undefined>;
 
 	/**
 	 * Find entities by a filter.
