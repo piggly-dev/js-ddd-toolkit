@@ -9,7 +9,7 @@ import Adapter from './Adapter';
  * @copyright Piggly Lab 2023
  */
 export default abstract class Repository<
-	Entity extends BaseEntity<any>,
+	Entity extends BaseEntity<any, any>,
 	PersistenceRecord extends Record<string, any>,
 	DatabaseContext
 > {

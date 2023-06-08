@@ -11,8 +11,11 @@
 # 1.0.2 at `2023-06-06`
 
 * [Fix] Type signature for Adapter.
-*
 
 # 1.1.0 at `2023-06-07`
 
 * [Change] UnitOfWork has connection, Repository has any context between this connection.
+
+# 1.1.1 at `2023-06-07`
+
+* [Fix] Type signature for Repository.
