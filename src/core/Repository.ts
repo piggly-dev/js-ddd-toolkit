@@ -3,7 +3,6 @@ import BaseEntity from './Entity';
 import CollectionOfEntity from './CollectionOfEntity';
 import EntityID from './EntityID';
 import Adapter from './Adapter';
-import DatabaseContext from './DatabaseContext';
 
 /**
  * @file A repository with default methods to manage entities.
@@ -11,7 +10,8 @@ import DatabaseContext from './DatabaseContext';
  */
 export default abstract class Repository<
 	Entity extends BaseEntity<any>,
-	PersistenceRecord extends Record<string, any>
+	PersistenceRecord extends Record<string, any>,
+	DatabaseContext
 > {
 	/**
 	 * Database context.
@@ -22,7 +22,7 @@ export default abstract class Repository<
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _context: DatabaseContext;
+	protected _database: DatabaseContext;
 
 	/**
 	 * Constructor.
@@ -35,7 +35,7 @@ export default abstract class Repository<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	constructor(context: DatabaseContext) {
-		this._context = context;
+		this._database = context;
 	}
 
 	/**
