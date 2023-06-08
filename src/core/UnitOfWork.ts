@@ -15,19 +15,7 @@ export default abstract class UnitOfWork {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _context: DatabaseContext;
-
-	/**
-	 * A map of repositories.
-	 * You may expose each repository individually.
-	 *
-	 * @type {Map<string, BaseRepository>}
-	 * @protected
-	 * @memberof UnitOfWork
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _repos: Map<string, BaseRepository<any, any>> = new Map();
+	protected _connection: DatabaseContext;
 
 	/**
 	 * Constructor.
@@ -41,7 +29,7 @@ export default abstract class UnitOfWork {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	constructor(context: DatabaseContext) {
-		this._context = context;
+		this._connection = context;
 	}
 
 	/**
@@ -54,15 +42,9 @@ export default abstract class UnitOfWork {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public repository<Repository extends BaseRepository<any, any>>(
+	public abstract repository<Repository extends BaseRepository<any, any, any>>(
 		name: string
-	): Repository {
-		if (this._repos.has(name) === false) {
-			throw new Error(`Repository ${name} not found.`);
-		}
-
-		return this._repos.get(name) as Repository;
-	}
+	): Repository;
 
 	/**
 	 * Begin a transaction in database context.
