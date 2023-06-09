@@ -20,7 +20,7 @@
 
 * [Fix] Type signature for Repository.
 
-# 1.1.4 at `2023-06-08`
+# 1.1.4 / 1.1.5 at `2023-06-08`
 
 * [Fix] Type signature for Unif of Work.
 * [Add] `reload()` method to Repository.
