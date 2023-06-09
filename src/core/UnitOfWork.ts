@@ -1,5 +1,4 @@
 import DatabaseContext from './DatabaseContext';
-import BaseRepository from './Repository';
 
 /**
  * @file A unit of work to manage repositories and transactions in database context.
@@ -44,9 +43,7 @@ export default abstract class UnitOfWork<
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public abstract repository<Repository extends BaseRepository<any, any, any>>(
-		name: string
-	): Repository;
+	public abstract repository(name: string): any;
 
 	/**
 	 * Begin a transaction in database context.
