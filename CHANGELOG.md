@@ -16,6 +16,6 @@
 
 * [Change] UnitOfWork has connection, Repository has any context between this connection.
 
-# 1.1.1 / 1.1.2 at `2023-06-07`
+# 1.1.1 / 1.1.2 / 1.1.3 at `2023-06-07`
 
 * [Fix] Type signature for Repository.
