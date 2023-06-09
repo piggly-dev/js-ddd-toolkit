@@ -5,29 +5,31 @@ import UnitOfWork from './UnitOfWork';
  * @file Application Service abstraction.
  * @copyright Piggly Lab 2023
  */
-export default abstract class ApplicationService extends Service {
+export default abstract class ApplicationService<
+	UoW extends UnitOfWork<any>
+> extends Service {
 	/**
 	 * UnitOfWork with repositories.
 	 *
-	 * @type {UnitOfWork}
+	 * @type {UoW}
 	 * @protected
 	 * @memberof Service
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _unitofwork: UnitOfWork;
+	protected _unitofwork: UoW;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param {UnitOfWork} unitofwork
+	 * @param {UoW} unitofwork
 	 * @public
 	 * @constructor
 	 * @memberof Service
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(unitofwork: UnitOfWork) {
+	constructor(unitofwork: UoW) {
 		super();
 		this._unitofwork = unitofwork;
 	}

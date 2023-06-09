@@ -39,6 +39,22 @@ export default abstract class Repository<
 	}
 
 	/**
+	 * Reload an entity.
+	 *
+	 * @param {Entity} entity
+	 * @returns {Promise<Entity | undefined>}
+	 * @public
+	 * @async
+	 * @abstract
+	 * @memberof Repository
+	 * @since 1.1.4
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public reload(entity: Entity): Promise<Entity | undefined> {
+		return this.findById(entity.id);
+	}
+
+	/**
 	 * Find an entity by its id.
 	 *
 	 * @param {EntityID<any>} id
