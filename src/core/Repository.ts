@@ -65,8 +65,8 @@ export default abstract class Repository<
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public abstract find<QueryFilter>(
-		filter: QueryFilter,
+	public abstract find(
+		filter: any,
 		paginate: PaginateQuery
 	): Promise<CollectionOfEntity<Entity>>;
 
@@ -139,7 +139,7 @@ export default abstract class Repository<
 	 * @abstract
 	 * @memberof Repository
 	 */
-	public abstract sizeOf<QueryFilter>(filter: QueryFilter): Promise<number>;
+	public abstract sizeOf(filter: any): Promise<number>;
 
 	/**
 	 * Count all entities.
