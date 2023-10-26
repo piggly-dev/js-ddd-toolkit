@@ -8,7 +8,8 @@ export { default as CollectionOfValueObjects } from './CollectionOfValueObjects'
 export { default as Adapter } from './Adapter';
 export { default as DatabaseContext } from './DatabaseContext';
 export { default as Repository } from './Repository';
-export { default as UnitOfWork } from './UnitOfWork';
+export { default as BaseSQLRepository } from './BaseSQLRepository';
+export { default as BaseUnitOfWork } from './BaseUnitOfWork';
 
 export { default as DomainEvent } from './DomainEvent';
 

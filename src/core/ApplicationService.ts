@@ -1,12 +1,12 @@
 import Service from './Service';
-import UnitOfWork from './UnitOfWork';
+import BaseUnitOfWork from './BaseUnitOfWork';
 
 /**
  * @file Application Service abstraction.
  * @copyright Piggly Lab 2023
  */
 export default abstract class ApplicationService<
-	UoW extends UnitOfWork<any>
+	UoW extends BaseUnitOfWork<any>
 > extends Service {
 	/**
 	 * UnitOfWork with repositories.

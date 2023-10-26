@@ -81,8 +81,8 @@ export default abstract class Repository<
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public abstract find(
-		filter: any,
+	public abstract find<Filter = any>(
+		filter: Filter,
 		paginate: PaginateQuery
 	): Promise<CollectionOfEntity<Entity>>;
 
