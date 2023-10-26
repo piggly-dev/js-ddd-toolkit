@@ -5,7 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
  * @file Base domain event class to be used/extended by all domain events.
  * @copyright Piggly Lab 2023
  */
-export default class DomainEvent<Payload> extends EventPayload<Payload> {
+export default class DomainEvent<
+	Payload extends Record<string, any>
+> extends EventPayload<Payload> {
 	/**
 	 * Will generate a new uuidv4 for default id.
 	 *
