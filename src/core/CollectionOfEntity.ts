@@ -32,16 +32,17 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any, any>> {
 	}
 
 	/**
-	 * Map an array of entities to the collection.
+	 * Add an array of entities to the collection.
 	 *
 	 * @param {Entity[]} entities
 	 * @returns {this}
 	 * @public
 	 * @memberof CollectionOfEntity
 	 * @since 1.0.0
+	 * @since 2.0.0 Change name
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public map(entities: Entity[]): this {
+	public addMany(entities: Entity[]): this {
 		entities.forEach(entity => this.add(entity));
 		return this;
 	}
@@ -95,6 +96,34 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any, any>> {
 	}
 
 	/**
+	 * Check if the collection has all entities.
+	 *
+	 * @param {EntityID} ids
+	 * @returns {boolean}
+	 * @public
+	 * @memberof CollectionOfEntity
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAll(ids: EntityID<any>[]): boolean {
+		return ids.every(id => this.has(id));
+	}
+
+	/**
+	 * Check if the collection has any of entities.
+	 *
+	 * @param {EntityID} ids
+	 * @returns {boolean}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAny(ids: EntityID<any>[]): boolean {
+		return ids.some(id => this.has(id));
+	}
+
+	/**
 	 * Get an entity by its id from the collection.
 	 *
 	 * @param {EntityID} id
@@ -109,15 +138,29 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any, any>> {
 	}
 
 	/**
+	 * Find an entity by its content from the collection.
+	 *
+	 * @param {EntityID} id
+	 * @returns {Entity | undefined}
+	 * @public
+	 * @memberof CollectionOfEntity
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public find(id: EntityID<any>): Entity | undefined {
+		return this.get(id);
+	}
+
+	/**
 	 * Return the entities as an array.
 	 *
 	 * @returns {Entity[]}
 	 * @public
 	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get items(): Entity[] {
+	public get arrayOf(): Entity[] {
 		return Array.from(this._items.values());
 	}
 

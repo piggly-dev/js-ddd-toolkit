@@ -3,8 +3,9 @@ import { shallowEqual } from 'shallow-equal-object';
 /**
  * @file Base value object class.
  * @copyright Piggly Lab 2023
+ * @since 2.0.0 Flexible props
  */
-export default class ValueObject<Props extends Record<string, any>> {
+export default class ValueObject<Props = Record<string, any>> {
 	/**
 	 * The value object props.
 	 *
@@ -13,21 +14,25 @@ export default class ValueObject<Props extends Record<string, any>> {
 	 * @readonly
 	 * @memberof ValueObject
 	 * @since 1.0.0
+	 * @since 2.0.0 Protected props
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public readonly props: Props;
+	protected readonly props: Props;
 
 	/**
 	 * Creates an instance of ValueObject.
+	 * The props are frozen to avoid any change.
+	 * You should create a new instance with a static method.
 	 *
 	 * @param {Props} props
-	 * @public
+	 * @protected
 	 * @constructor
 	 * @memberof ValueObject
 	 * @since 1.0.0
+	 * @since 2.0.0 Protected constructor
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(props: Props) {
+	protected constructor(props: Props) {
 		this.props = Object.freeze(props);
 	}
 

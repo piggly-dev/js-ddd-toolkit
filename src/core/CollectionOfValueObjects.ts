@@ -89,7 +89,7 @@ export default class CollectionOfValueObject<
 	/**
 	 * Check if the collection has all value objects.
 	 *
-	 * @param {ValueObject} item
+	 * @param {ValueObject} items
 	 * @returns {boolean}
 	 * @public
 	 * @memberof CollectionOfValueObject
@@ -103,7 +103,7 @@ export default class CollectionOfValueObject<
 	/**
 	 * Check if the collection has any of value objects.
 	 *
-	 * @param {ValueObject} item
+	 * @param {ValueObject} items
 	 * @returns {boolean}
 	 * @public
 	 * @memberof CollectionOfValueObject
@@ -148,10 +148,10 @@ export default class CollectionOfValueObject<
 	 * @returns {ValueObject[]}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get items(): ValueObject[] {
+	public get arrayOf(): ValueObject[] {
 		return Array.from(this._items.values());
 	}
 
