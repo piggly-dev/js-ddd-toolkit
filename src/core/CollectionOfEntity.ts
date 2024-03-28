@@ -15,19 +15,19 @@ export default class CollectionOfEntity<Entity extends BaseEntity<any, any>> {
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	private _items: Map<EntityID, Entity>;
+	private _items: Map<EntityID<any>, Entity>;
 
 	/**
 	 * Creates an instance of CollectionOfEntity.
 	 *
-	 * @param {Map<EntityID, Entity>} [initial]
+	 * @param {Map<EntityID<any>, Entity>} [initial]
 	 * @public
 	 * @constructor
 	 * @memberof CollectionOfEntity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(initial?: Map<EntityID, Entity>) {
+	constructor(initial?: Map<EntityID<any>, Entity>) {
 		this._items = initial || new Map();
 	}
 
