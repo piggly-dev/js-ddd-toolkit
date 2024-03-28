@@ -30,3 +30,17 @@
 * [Add] A very simple base class for Repository when using SQL;
 * [Add] A very simple interface for UnitOfWork, allow to customize it as needed;
 * [Update] Dependencies to latest version.
+
+## 2.0.0 at `2024-03-27`
+
+* [Remove] All classes related to database/repositories;
+* [Add] A new class to handle schema validation;
+* [Add] A new Result class for handling error or success of a return value;
+* [Add] UseCase abstract class;
+* [Update] Domain error without extends Error;
+* [Update] Make EntityID more flexible.
+
+## 2.0.1 at `2024-03-28`
+
+* [Fix] Type signature for AggregateRoot class;
+* [Fix] Type signature for CollectionOfEntity class.

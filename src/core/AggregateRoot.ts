@@ -7,5 +7,5 @@ import EntityID from './EntityID';
  */
 export default abstract class AggregateRoot<
 	Props,
-	Id extends EntityID
+	Id extends EntityID<any>
 > extends Entity<Props, Id> {}
