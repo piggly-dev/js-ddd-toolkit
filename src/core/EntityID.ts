@@ -39,7 +39,7 @@ export default class EntityID<Value = string> {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	constructor(id?: Value | null) {
-		this.value = (id || uuidv4()) as Value;
+		this.value = (id ?? this.generateRandom()) as Value;
 		this._random = id === undefined || id === null;
 	}
 
@@ -111,5 +111,17 @@ export default class EntityID<Value = string> {
 		}
 
 		return Number(this.value);
+	}
+
+	/**
+	 * Generate a random value to entity id.
+	 *
+	 * @protected
+	 * @memberof EntityID
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected generateRandom(): Value {
+		return uuidv4() as Value;
 	}
 }

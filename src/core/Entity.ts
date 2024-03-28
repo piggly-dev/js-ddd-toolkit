@@ -4,18 +4,18 @@ import EntityID from './EntityID';
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
-export default abstract class Entity<Props, Id = string> {
+export default abstract class Entity<Props, Id extends EntityID<any>> {
 	/**
 	 * The entity identifier.
 	 *
-	 * @type {EntityID<Id>}
+	 * @type {Id}
 	 * @protected
 	 * @readonly
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected readonly _id: EntityID<Id>;
+	protected readonly _id: Id;
 
 	/**
 	 * The entity props.
@@ -33,28 +33,28 @@ export default abstract class Entity<Props, Id = string> {
 	 * Creates an instance of Entity.
 	 *
 	 * @param {props} props
-	 * @param {EntityID<Id> | undefined} id
+	 * @param {Id | undefined} id
 	 * @public
 	 * @constructor
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(props: Props, id?: EntityID<Id>) {
-		this._id = id || new EntityID<Id>();
+	constructor(props: Props, id?: Id) {
+		this._id = id ?? this.generateId();
 		this.props = props;
 	}
 
 	/**
 	 * Gets the entity identifier.
 	 *
-	 * @returns {EntityID<Id>}
+	 * @returns {Id}
 	 * @public
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get id(): EntityID<Id> {
+	public get id(): Id {
 		return this._id;
 	}
 
@@ -78,6 +78,19 @@ export default abstract class Entity<Props, Id = string> {
 		}
 
 		return e._id.equals(this._id);
+	}
+
+	/**
+	 * Generate a new entity id object.
+	 *
+	 * @returns {Id}
+	 * @protected
+	 * @memberof Entity
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected generateId(): Id {
+		return new EntityID() as Id;
 	}
 
 	/**

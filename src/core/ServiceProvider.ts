@@ -33,10 +33,24 @@ export default class ServiceProvider {
 		instance: ServiceInstance
 	): void {
 		if (this._services.has(name)) {
-			throw new Error(`Service ${name} already registered.`);
+			throw new Error(`Service "${name}" already registered.`);
 		}
 
 		this._services.set(name, instance);
+	}
+
+	/**
+	 * Clear all services.
+	 *
+	 * @returns {void}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static clear(): void {
+		this._services.clear();
 	}
 
 	/**
@@ -53,7 +67,7 @@ export default class ServiceProvider {
 	 */
 	public static resolve<ServiceInstance = any>(name: string): ServiceInstance {
 		if (this._services.has(name) === false) {
-			throw new Error(`Service ${name} not found.`);
+			throw new Error(`Service "${name}" not found.`);
 		}
 
 		return this._services.get(name) as ServiceInstance;

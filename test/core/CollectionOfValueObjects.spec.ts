@@ -1,11 +1,19 @@
 import { CollectionOfValueObjects, ValueObject } from '@/core';
 
-class EmailValueObject extends ValueObject<{ value: string }> {}
+class EmailValueObject extends ValueObject<{ value: string }> {
+	constructor(email: string) {
+		super({ value: email });
+	}
+
+	public get value(): string {
+		return this.props.value;
+	}
+}
 
 describe('CollectionOfValueObject', () => {
 	it('should evaluate common operations to the collection', () => {
 		const collection = new CollectionOfValueObjects<EmailValueObject>();
-		const email = new EmailValueObject({ value: 'john@doe.com' });
+		const email = new EmailValueObject('john@doe.com');
 
 		expect(collection.length).toBe(0);
 		expect(collection.has(email)).toBe(false);
@@ -17,7 +25,7 @@ describe('CollectionOfValueObject', () => {
 		expect(collection.get(0)).toBe(email);
 		expect(collection.has(email)).toBe(true);
 		expect(collection.find(email)).toStrictEqual(email);
-		expect(collection.items).toStrictEqual([email]);
+		expect(collection.arrayOf).toStrictEqual([email]);
 
 		// will not add
 		collection.add(email);
@@ -40,8 +48,8 @@ describe('CollectionOfValueObject', () => {
 
 	it('should have all value objects', () => {
 		const emails = [
-			new EmailValueObject({ value: 'john@doe.com' }),
-			new EmailValueObject({ value: 'alice@doe.com' }),
+			new EmailValueObject('john@doe.com'),
+			new EmailValueObject('alice@doe.com'),
 		];
 
 		const collection = new CollectionOfValueObjects<EmailValueObject>(emails);
@@ -51,13 +59,13 @@ describe('CollectionOfValueObject', () => {
 
 	it('should not have all value objects', () => {
 		const emails = [
-			new EmailValueObject({ value: 'paul@doe.com' }),
-			new EmailValueObject({ value: 'alfred@doe.com' }),
+			new EmailValueObject('paul@doe.com'),
+			new EmailValueObject('alfred@doe.com'),
 		];
 
 		const collection = new CollectionOfValueObjects<EmailValueObject>([
-			new EmailValueObject({ value: 'john@doe.com' }),
-			new EmailValueObject({ value: 'alice@doe.com' }),
+			new EmailValueObject('john@doe.com'),
+			new EmailValueObject('alice@doe.com'),
 		]);
 
 		expect(collection.hasAll(emails)).toBe(false);
@@ -65,13 +73,13 @@ describe('CollectionOfValueObject', () => {
 
 	it('should have any of value objects', () => {
 		const emails = [
-			new EmailValueObject({ value: 'john@doe.com' }),
-			new EmailValueObject({ value: 'alice@doe.com' }),
+			new EmailValueObject('john@doe.com'),
+			new EmailValueObject('alice@doe.com'),
 		];
 
 		const collection = new CollectionOfValueObjects<EmailValueObject>([
-			new EmailValueObject({ value: 'john@doe.com' }),
-			new EmailValueObject({ value: 'alfred@doe.com' }),
+			new EmailValueObject('john@doe.com'),
+			new EmailValueObject('alfred@doe.com'),
 		]);
 
 		expect(collection.hasAny(emails)).toBe(true);
@@ -79,13 +87,13 @@ describe('CollectionOfValueObject', () => {
 
 	it('should not have any of value objects', () => {
 		const emails = [
-			new EmailValueObject({ value: 'paul@doe.com' }),
-			new EmailValueObject({ value: 'alice@doe.com' }),
+			new EmailValueObject('paul@doe.com'),
+			new EmailValueObject('alice@doe.com'),
 		];
 
 		const collection = new CollectionOfValueObjects<EmailValueObject>([
-			new EmailValueObject({ value: 'john@doe.com' }),
-			new EmailValueObject({ value: 'alfred@doe.com' }),
+			new EmailValueObject('john@doe.com'),
+			new EmailValueObject('alfred@doe.com'),
 		]);
 
 		expect(collection.hasAny(emails)).toBe(false);
