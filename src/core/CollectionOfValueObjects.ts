@@ -4,7 +4,7 @@ import BaseValueObject from './ValueObject';
  * @file A collection of value objects.
  * @copyright Piggly Lab 2023
  */
-export default class CollectionOfValueObject<
+export default class CollectionOfValueObjects<
 	ValueObject extends BaseValueObject<any>
 > {
 	/**
