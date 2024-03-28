@@ -1,10 +1,11 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"check": "tsc --noEmit",
 		"clean": "rimraf dist",
+		"prebuild": "npm run lint && npm run format && npm run test:once",
 		"build": "npm run clean && npm run build:esm && npm run build:cjs",
 		"build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
 		"build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
@@ -59,6 +60,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.48.0",
 		"@typescript-eslint/parser": "^5.48.0",
 		"@zerollup/ts-transform-paths": "^1.7.18",
+		"cross-env": "^7.0.3",
 		"eslint": "^8.31.0",
 		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-config-airbnb-typescript": "^17.0.0",
@@ -77,6 +79,7 @@
 	},
 	"dependencies": {
 		"@piggly/event-bus": "^2.0.0",
+		"joi": "^17.12.2",
 		"shallow-equal-object": "^1.1.1",
 		"uuid": "^9.0.0"
 	}
