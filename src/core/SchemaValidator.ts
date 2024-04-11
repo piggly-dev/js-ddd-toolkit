@@ -48,6 +48,7 @@ export default abstract class SchemaValidator<Payload> {
 	/**
 	 * Validate an entry against the schema.
 	 *
+	 * @param {any} entry
 	 * @public
 	 * @memberof SchemaValidator
 	 * @since 2.0.0

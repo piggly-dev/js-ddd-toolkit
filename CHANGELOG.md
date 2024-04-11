@@ -44,3 +44,7 @@
 
 * [Fix] Type signature for AggregateRoot class;
 * [Fix] Type signature for CollectionOfEntity class.
+
+## 2.0.2 at `2024-01-11`
+
+* [Add] `schemaValidator` function to validate schema without a class.
