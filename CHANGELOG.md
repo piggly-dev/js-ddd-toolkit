@@ -48,3 +48,7 @@
 ## 2.0.2 at `2024-01-11`
 
 * [Add] `schemaValidator` function to validate schema without a class.
+
+## 2.1.0 at `2024-05-10`
+
+* [Add] `CollectionOfRelatedEntity` class to handle collections of related entities.
