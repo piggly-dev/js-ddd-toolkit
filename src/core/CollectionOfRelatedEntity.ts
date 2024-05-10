@@ -1,3 +1,4 @@
+import type { RelatedEntity } from '../types';
 import BaseEntity from './Entity';
 import EntityID from './EntityID';
 
@@ -5,66 +6,62 @@ import EntityID from './EntityID';
  * @file A collection of entities.
  * @copyright Piggly Lab 2023
  */
-export default class CollectionOfEntity<
+export default class CollectionOfRelatedEntity<
 	Entity extends BaseEntity<any, any>,
 	ID extends EntityID<any> = EntityID<any>
 > {
 	/**
 	 * An array of entities.
 	 *
-	 * @type {Array<Entity>}
+	 * @type {Map<ID, RelatedEntity<ID, Entity>>}
 	 * @private
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	private _items: Map<ID, Entity>;
+	private _items: Map<ID, RelatedEntity<ID, Entity>>;
 
 	/**
-	 * Creates an instance of CollectionOfEntity.
+	 * Creates an instance of CollectionOfRelatedEntity.
 	 *
-	 * @param {Map<ID, Entity>} [initial]
+	 * @param {Map<ID, RelatedEntity<ID, Entity>>} [initial]
 	 * @public
 	 * @constructor
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(initial?: Map<ID, Entity>) {
+	constructor(initial?: Map<ID, RelatedEntity<ID, Entity>>) {
 		this._items = initial || new Map();
 	}
 
 	/**
 	 * Add an array of entities to the collection.
 	 *
-	 * @param {Array<Entity>} entities
+	 * @param {Entity[]} entities
 	 * @returns {this}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
-	 * @since 2.0.0 Change name
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public addMany(entities: Array<Entity>): this {
+	public addMany(entities: Array<RelatedEntity<ID, Entity>>): this {
 		entities.forEach(entity => this.add(entity));
 		return this;
 	}
 
 	/**
 	 * Add an entity to the collection.
+	 * It may be used to reload an entity.
 	 *
 	 * @param {Entity} entity
 	 * @returns {this}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public add(entity: Entity): this {
-		if (this._items.has(entity.id.value)) {
-			return this;
-		}
-
+	public add(entity: RelatedEntity<ID, Entity>): this {
 		this._items.set(entity.id.value, entity);
 		return this;
 	}
@@ -75,8 +72,8 @@ export default class CollectionOfEntity<
 	 * @param {EntityID} id
 	 * @returns {this}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public remove(id: ID): this {
@@ -90,8 +87,8 @@ export default class CollectionOfEntity<
 	 * @param {EntityID} id
 	 * @returns {boolean}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public has(id: ID): boolean {
@@ -101,11 +98,11 @@ export default class CollectionOfEntity<
 	/**
 	 * Check if the collection has all entities.
 	 *
-	 * @param {EntityID} ids
+	 * @param {Array<ID>} ids
 	 * @returns {boolean}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 2.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public hasAll(ids: Array<ID>): boolean {
@@ -115,11 +112,11 @@ export default class CollectionOfEntity<
 	/**
 	 * Check if the collection has any of entities.
 	 *
-	 * @param {EntityID} ids
+	 * @param {Array<ID>} ids
 	 * @returns {boolean}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 2.0.0
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public hasAny(ids: Array<ID>): boolean {
@@ -129,14 +126,14 @@ export default class CollectionOfEntity<
 	/**
 	 * Get an entity by its id from the collection.
 	 *
-	 * @param {EntityID} id
-	 * @returns {Entity | undefined}
+	 * @param {ID} id
+	 * @returns {RelatedEntity<ID, Entity> | undefined}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get(id: ID): Entity | undefined {
+	public get(id: ID): RelatedEntity<ID, Entity> | undefined {
 		return this._items.get(id.value);
 	}
 
@@ -144,41 +141,55 @@ export default class CollectionOfEntity<
 	 * Find an entity by its content from the collection.
 	 *
 	 * @param {EntityID} id
-	 * @returns {Entity | undefined}
+	 * @returns {Entity | null}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 2.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public find(id: ID): Entity | undefined {
-		return this.get(id);
+	public find(id: ID): Entity | null {
+		const related = this.get(id);
+
+		if (related) {
+			return related.entity;
+		}
+
+		return null;
 	}
 
 	/**
 	 * Return the entities as an array.
 	 *
-	 * @returns {Array<Entity>}
+	 * @returns {RelatedEntity<ID, Entity>}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 2.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get arrayOf(): Array<Entity> {
+	public get arrayOf(): Array<RelatedEntity<ID, Entity>> {
 		return Array.from(this._items.values());
 	}
 
 	/**
 	 * Return the entities as an array.
-	 * Alias to `arrayOf`.
+	 * May have be less entities than IDs.
 	 *
-	 * @returns {Array<Entity>}
+	 * @returns {Array<Entities>}
 	 * @public
-	 * @memberof CollectionOfEntity
+	 * @memberof CollectionOfRelatedEntity
 	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get entities(): Array<Entity> {
-		return this.arrayOf;
+		const entities: Array<Entity> = [];
+
+		this._items.forEach(related => {
+			if (related.entity === null) return;
+
+			entities.push(related.entity);
+		});
+
+		return entities;
 	}
 
 	/**
@@ -186,7 +197,7 @@ export default class CollectionOfEntity<
 	 *
 	 * @returns {Array<ID>}
 	 * @public
-	 * @memberof CollectionOfEntity
+	 * @memberof CollectionOfRelatedEntity
 	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -195,12 +206,12 @@ export default class CollectionOfEntity<
 	}
 
 	/**
-	 * Return the number of entities.
+	 * Return the number of IDs.
 	 *
 	 * @returns {number}
 	 * @public
-	 * @memberof CollectionOfEntity
-	 * @since 1.0.0
+	 * @memberof CollectionOfRelatedEntity
+	 * @since 2.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get length(): number {

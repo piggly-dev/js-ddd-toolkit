@@ -1,3 +1,5 @@
+import type { Entity as BaseEntity, EntityID } from '@/core';
+
 export type PaginateQuery = {
 	page: number;
 	size: number;
@@ -16,3 +18,11 @@ export interface DomainErrorObject {
 	hint: string | null;
 	extra: Record<string, any> | null;
 }
+
+export type RelatedEntity<
+	ID extends EntityID<any>,
+	Entity extends BaseEntity<any, any>
+> = {
+	id: ID;
+	entity: Entity | null;
+};

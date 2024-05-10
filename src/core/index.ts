@@ -5,6 +5,7 @@ export { default as Result } from './Result';
 export { default as AggregateRoot } from './AggregateRoot';
 export { default as CollectionOfEntity } from './CollectionOfEntity';
 export { default as CollectionOfValueObjects } from './CollectionOfValueObjects';
+export { default as CollectionOfRelatedEntity } from './CollectionOfRelatedEntity';
 export { default as SchemaValidator } from './SchemaValidator';
 
 export { default as Adapter } from './Adapter';
