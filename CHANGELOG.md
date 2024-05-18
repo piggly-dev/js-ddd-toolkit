@@ -52,3 +52,7 @@
 ## 2.1.0 at `2024-05-10`
 
 * [Add] `CollectionOfRelatedEntity` class to handle collections of related entities.
+
+## 2.1.1 at `2024-05-18`
+
+* [Add] Methods `get` and `has` to `ServiceProvider`.

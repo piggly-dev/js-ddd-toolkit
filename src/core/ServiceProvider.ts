@@ -72,4 +72,40 @@ export default class ServiceProvider {
 
 		return this._services.get(name) as ServiceInstance;
 	}
+
+	/**
+	 * Check if has a service.
+	 *
+	 * @param {string} name
+	 * @returns {boolean}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static has(name: string): boolean {
+		return this._services.has(name);
+	}
+
+	/**
+	 * Get a service.
+	 *
+	 * @param {string} name
+	 * @returns {ServiceInstance|undefined}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static get<ServiceInstance = any>(
+		name: string
+	): ServiceInstance | undefined {
+		if (this._services.has(name) === false) {
+			return undefined;
+		}
+
+		return this._services.get(name) as ServiceInstance;
+	}
 }
