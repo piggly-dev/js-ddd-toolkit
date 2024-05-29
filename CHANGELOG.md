@@ -56,3 +56,7 @@
 ## 2.1.1 at `2024-05-18`
 
 * [Add] Methods `get` and `has` to `ServiceProvider`.
+
+## 2.1.2 at `2024-05-29`
+
+* [Add] Methods `replace` and `unregister` to `ServiceProvider`.
