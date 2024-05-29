@@ -40,6 +40,41 @@ export default class ServiceProvider {
 	}
 
 	/**
+	 * Replaces a service.
+	 *
+	 * @param {string} name
+	 * @param {ServiceInstance} instance
+	 * @returns {void}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 2.1.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static replace<ServiceInstance = any>(
+		name: string,
+		instance: ServiceInstance
+	): void {
+		this.unregister(name);
+		this._services.set(name, instance);
+	}
+
+	/**
+	 * Unregister a service.
+	 *
+	 * @param {string} name
+	 * @returns {boolean}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 2.1.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static unregister(name: string): boolean {
+		return this._services.delete(name);
+	}
+
+	/**
 	 * Clear all services.
 	 *
 	 * @returns {void}
