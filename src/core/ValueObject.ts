@@ -5,7 +5,7 @@ import { shallowEqual } from 'shallow-equal-object';
  * @copyright Piggly Lab 2023
  * @since 2.0.0 Flexible props
  */
-export default class ValueObject<Props = Record<string, any>> {
+export class ValueObject<Props = Record<string, any>> {
 	/**
 	 * The value object props.
 	 *
@@ -44,14 +44,11 @@ export default class ValueObject<Props = Record<string, any>> {
 	 * @public
 	 * @memberof ValueObject
 	 * @since 1.0.0
+	 * @since 3.0.0 Remove class constructor checking
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public equals(vo: ValueObject<Props> | undefined | null): boolean {
 		if (vo === null || vo === undefined) {
-			return false;
-		}
-
-		if (!(vo instanceof this.constructor)) {
 			return false;
 		}
 

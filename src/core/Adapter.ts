@@ -1,10 +1,10 @@
-import BaseEntity from './Entity';
+import { Entity as BaseEntity } from './Entity';
 
 /**
  * @file An adapter to convert entities to persistence records and vice-versa.
  * @copyright Piggly Lab 2023
  */
-export default abstract class Adapter<
+export abstract class Adapter<
 	Entity extends BaseEntity<any, any>,
 	PersistenceRecord extends Record<string, any>
 > {

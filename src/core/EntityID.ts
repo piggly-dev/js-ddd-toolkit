@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @file Manages entity identifier.
  * @copyright Piggly Lab 2023
  */
-export default class EntityID<Value = string> {
+export class EntityID<Value = string> {
 	/**
 	 * The raw value of the identifier.
 	 *

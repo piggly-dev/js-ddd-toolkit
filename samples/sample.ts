@@ -1,6 +1,6 @@
 import { ValueObject } from '../src/core';
-import DomainError from '../src/core/DomainError';
-import Result from '../src/core/Result';
+import { DomainError } from '../src/core/errors/DomainError';
+import { Result } from '../src/core/Result';
 
 class CustomValueObject extends ValueObject {
 	private constructor(number: number) {
@@ -14,7 +14,7 @@ class CustomValueObject extends ValueObject {
 	public static create(number: number): Result<CustomValueObject, DomainError> {
 		if (number < 0) {
 			return Result.fail(
-				new DomainError('Number', 'Number must be greater than 0')
+				new DomainError('Number', 10, 'Number must be greater than 0')
 			);
 		}
 

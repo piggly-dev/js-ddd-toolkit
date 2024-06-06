@@ -2,19 +2,22 @@ import { ValueObject as BaseValueObject } from './ValueObject';
 
 /**
  * @file A collection of value objects.
- * @copyright Piggly Lab 2023
+ * @copyright Piggly Lab 2024
  */
-export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> {
+export class MapCollectionOfValueObjects<
+	Key,
+	ValueObject extends BaseValueObject<any>
+> {
 	/**
 	 * An array of value objects.
 	 *
 	 * @type {Array<ValueObject>}
 	 * @private
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	private _items: Array<ValueObject>;
+	private _items: Map<Key, ValueObject>;
 
 	/**
 	 * Creates an instance of CollectionOfValueObject.
@@ -23,29 +26,41 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @public
 	 * @constructor
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(initial?: Array<ValueObject>) {
-		this._items = initial || [];
+	constructor(initial?: Map<Key, ValueObject>) {
+		this._items = initial ?? new Map<Key, ValueObject>();
 	}
 
 	/**
 	 * Add an value object to the collection.
 	 *
+	 * @param {Key} key
 	 * @param {ValueObject} item
 	 * @returns {this}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public add(item: ValueObject): this {
-		if (this.has(item)) {
-			return this;
-		}
+	public add(key: Key, item: ValueObject): this {
+		this._items.set(key, item);
+		return this;
+	}
 
-		this._items.push(item);
+	/**
+	 * Remove an value object from the collection.
+	 *
+	 * @param {Key} key
+	 * @returns {this}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public remove(key: Key): this {
+		this._items.delete(key);
 		return this;
 	}
 
@@ -56,18 +71,33 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @returns {this}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public remove(item: ValueObject): this {
-		const index = this._items.indexOf(item);
-
-		if (index === -1) {
-			return this;
+	public removeVO(item: ValueObject): this {
+		/* eslint-disable no-restricted-syntax */
+		for (const [key, vo] of this._items) {
+			if (item.equals(vo)) {
+				this._items.delete(key);
+				break;
+			}
 		}
 
-		this._items.splice(index, 1);
 		return this;
+	}
+
+	/**
+	 * Check if the collection has an value object.
+	 *
+	 * @param {Key} key
+	 * @returns {boolean}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public has(key: Key): boolean {
+		return this._items.has(key);
 	}
 
 	/**
@@ -77,11 +107,21 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @returns {boolean}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public has(item: ValueObject): boolean {
-		return this.find(item) !== undefined;
+	public hasVO(item: ValueObject): boolean {
+		let has = false;
+
+		/* eslint-disable no-restricted-syntax */
+		for (const [_, vo] of this._items) {
+			if (item.equals(vo)) {
+				has = true;
+				break;
+			}
+		}
+
+		return has;
 	}
 
 	/**
@@ -91,11 +131,11 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @returns {boolean}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public hasAll(items: Array<ValueObject>): boolean {
-		return items.every(item => this.has(item));
+	public hasAllVO(items: Array<ValueObject>): boolean {
+		return items.every(item => this.hasVO(item));
 	}
 
 	/**
@@ -105,39 +145,25 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @returns {boolean}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public hasAny(items: Array<ValueObject>): boolean {
-		return items.some(item => this.has(item));
+	public hasAnyVO(items: Array<ValueObject>): boolean {
+		return items.some(item => this.hasVO(item));
 	}
 
 	/**
-	 * Get an value object by its index from the collection.
+	 * Get an value object by its key from the collection.
 	 *
-	 * @param {number} index
+	 * @param {Key} key
 	 * @returns {ValueObject | undefined}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get(index: number): ValueObject | undefined {
-		return this._items[index] || undefined;
-	}
-
-	/**
-	 * Find an value object by its content from the collection.
-	 *
-	 * @param {ValueObject} item
-	 * @returns {ValueObject | undefined}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public find(item: ValueObject): ValueObject | undefined {
-		return this._items.find(_item => _item.equals(item));
+	public get(key: Key): ValueObject | undefined {
+		return this._items.get(key);
 	}
 
 	/**
@@ -146,11 +172,11 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @returns {Array<ValueObject>}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get arrayOf(): Array<ValueObject> {
-		return this._items;
+		return Array.from(this._items.values());
 	}
 
 	/**
@@ -159,10 +185,10 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	 * @returns {number}
 	 * @public
 	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get length(): number {
-		return this._items.length;
+		return this._items.size;
 	}
 }

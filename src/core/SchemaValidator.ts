@@ -1,12 +1,12 @@
 import Joi from 'joi';
-import Result from './Result';
-import InvalidSchemaError from './errors/InvalidSchemaError';
+import { Result } from './Result';
+import { InvalidSchemaError } from './errors/InvalidSchemaError';
 
 /**
  * @file Schema validator class.
  * @copyright Piggly Lab 2023
  */
-export default abstract class SchemaValidator<Payload> {
+export abstract class SchemaValidator<Payload> {
 	/**
 	 * Schema to be used in the validation.
 	 *

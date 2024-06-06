@@ -1,11 +1,11 @@
-import Entity from './Entity';
-import EntityID from './EntityID';
+import { Entity } from './Entity';
+import { EntityID } from './EntityID';
 
 /**
  * @file Aggregate root base class.
  * @copyright Piggly Lab 2023
  */
-export default abstract class AggregateRoot<
+export abstract class AggregateRoot<Props, Id extends EntityID<any>> extends Entity<
 	Props,
-	Id extends EntityID<any>
-> extends Entity<Props, Id> {}
+	Id
+> {}

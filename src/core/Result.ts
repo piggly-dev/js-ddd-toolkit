@@ -1,10 +1,10 @@
-import DomainError from './DomainError';
+import { DomainError } from './errors/DomainError';
 
 /**
  * @file Base result class.
  * @copyright Piggly Lab 2023
  */
-export default class Result<Data, Error extends DomainError> {
+export class Result<Data, Error extends DomainError> {
 	/**
 	 * Success flag.
 	 *

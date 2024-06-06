@@ -1,28 +1,24 @@
-import type { Entity as BaseEntity, EntityID } from '@/core';
+import type moment from 'moment-timezone';
 
-export type PaginateQuery = {
-	page: number;
-	size: number;
-};
+/** Globals */
+export type TOrNull<T> = T | null;
+export type TOrUndefined<T> = T | undefined;
+export type TOrNullable<T> = TOrNull<T>;
+export type TOrAnother<T, Another> = T | Another;
+export type TOrFalse<T> = T | false;
+export type TOrEmpty<T> = T | undefined | null;
+export type TDateInput = number | string | Date | moment.Moment;
+export type TObject = Record<any, any>;
 
-export type SQL_ERROR_EVENT<Error = any> = {
-	sql: string;
-	values?: any[];
-	error: Error;
-};
-
-export interface DomainErrorObject {
-	code: number;
-	name: string;
-	message: string | null;
-	hint: string | null;
-	extra: Record<string, any> | null;
+export interface JSONExportable<
+	Key extends string = string,
+	Return extends Record<Key, any> = Record<Key, any>
+> {
+	toJSON(hide: Array<Key>): Return;
 }
 
-export type RelatedEntity<
-	ID extends EntityID<any>,
-	Entity extends BaseEntity<any, any>
-> = {
-	id: ID;
-	entity: Entity | null;
-};
+export interface ObjectExportable<
+	Return extends Record<any, any> = Record<any, any>
+> {
+	toObject(): Return;
+}

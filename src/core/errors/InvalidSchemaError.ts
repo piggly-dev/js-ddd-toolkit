@@ -1,6 +1,10 @@
-import DomainError from '../DomainError';
+import { DomainError } from './DomainError';
 
-export default class InvalidSchemaError extends DomainError {
+/**
+ * @file Invalid schema error class.
+ * @copyright Piggly Lab 2024
+ */
+export class InvalidSchemaError extends DomainError {
 	constructor(errors: string[], message?: string, hint?: string) {
 		super(
 			'InvalidSchemaError',
