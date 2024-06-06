@@ -60,3 +60,12 @@
 ## 2.1.2 at `2024-05-29`
 
 * [Add] Methods `replace` and `unregister` to `ServiceProvider`.
+
+## 3.0.0 at `2024-06-06`
+
+* [Add] New errors classes for handling errors;
+* [Add] `MapCollectionOfValueObjects` allowing to map a collection of value objects;
+* [Remove] Dependencies on `@piggly/event-bus`;
+* [Export] Full compatibility with ESM and CommonJS;
+* [Add] Some methods for many classes;
+* [Update] Dependencies to latest version.

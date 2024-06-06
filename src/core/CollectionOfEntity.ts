@@ -1,11 +1,11 @@
-import BaseEntity from './Entity';
-import EntityID from './EntityID';
+import { Entity as BaseEntity } from './Entity';
+import { EntityID } from './EntityID';
 
 /**
  * @file A collection of entities.
  * @copyright Piggly Lab 2023
  */
-export default class CollectionOfEntity<
+export class CollectionOfEntity<
 	Entity extends BaseEntity<any, any>,
 	ID extends EntityID<any> = EntityID<any>
 > {

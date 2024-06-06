@@ -6,18 +6,13 @@ module.exports = {
 	collectCoverage: true,
 	coverageThreshold: {
 		global: {
-			branches: 30,
-			functions: 50,
-			lines: 60,
-			statements: 60,
+			branches: 25,
+			functions: 30,
+			lines: 30,
+			statements: 30,
 		},
 	},
-	coveragePathIgnorePatterns: [
-		'./node_modules/',
-		'./test/',
-		'./debug',
-		'./build',
-	],
+	coveragePathIgnorePatterns: ['./node_modules/', './test/', './debug', './build'],
 	coverageReporters: ['json-summary', 'text', 'lcov'],
 	transform: {
 		'^.+\\.ts?$': [

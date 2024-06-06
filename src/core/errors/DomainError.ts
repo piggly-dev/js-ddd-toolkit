@@ -1,10 +1,22 @@
-import type { DomainErrorObject } from '../types';
+import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './types';
 
 /**
  * @file Base domain error class.
  * @copyright Piggly Lab 2023
  */
-export default class DomainError {
+export class DomainError implements IDomainError {
+	/**
+	 * The error class name.
+	 *
+	 * @type {Array<string>}
+	 * @public
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _is: Array<string> = ['DomainError'];
+
 	/**
 	 * The error name.
 	 *
@@ -12,7 +24,7 @@ export default class DomainError {
 	 * @public
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly name: string;
@@ -24,7 +36,7 @@ export default class DomainError {
 	 * @public
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly message: string;
@@ -36,7 +48,7 @@ export default class DomainError {
 	 * @public
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly code: number;
@@ -48,7 +60,7 @@ export default class DomainError {
 	 * @public
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly status: number;
@@ -60,7 +72,7 @@ export default class DomainError {
 	 * @public
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly hint?: string;
@@ -72,7 +84,7 @@ export default class DomainError {
 	 * @protected
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly extra?: Record<string, any>;
@@ -89,14 +101,14 @@ export default class DomainError {
 	 * @public
 	 * @constructor
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public constructor(
 		name: string,
 		code: number,
-		message: string,
-		status: number,
+		message?: string,
+		status?: number,
 		hint?: string,
 		extra?: Record<string, any>
 	) {
@@ -106,22 +118,48 @@ export default class DomainError {
 
 		this.name = name;
 		this.code = code;
-		this.message = message;
-		this.status = status;
+		this.message = message ?? '';
+		this.status = status ?? 500;
 		this.hint = hint;
 		this.extra = extra !== undefined ? Object.freeze(extra) : undefined;
 	}
 
 	/**
 	 * Get the object representation of the error.
+	 * Will hide the properties defined in the `hidden` array.
 	 *
-	 * @returns {DomainErrorObject}
+	 * @returns {DomainErrorJSON}
 	 * @public
 	 * @memberof DomainError
-	 * @since 2.0.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toObject(): DomainErrorObject {
+	public toJSON(hidden: Array<DomainErrorHiddenProp>): DomainErrorJSON {
+		const object = {
+			code: this.code,
+			name: this.name,
+			message: this.message,
+			hint: this.hint ?? null,
+			extra: this.extra ?? null,
+		};
+
+		hidden.forEach(prop => {
+			delete object[prop];
+		});
+
+		return object;
+	}
+
+	/**
+	 * Get the object representation of the error.
+	 *
+	 * @returns {DomainErrorJSON}
+	 * @public
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public toObject(): DomainErrorJSON {
 		return {
 			code: this.code,
 			name: this.name,
@@ -129,5 +167,19 @@ export default class DomainError {
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
 		};
+	}
+
+	/**
+	 * Check if the error is an instance of the given class.
+	 *
+	 * @param {string} class_name
+	 * @returns {boolean}
+	 * @public
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public is(class_name: string): boolean {
+		return this._is.includes(class_name);
 	}
 }

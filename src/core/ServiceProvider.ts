@@ -2,7 +2,7 @@
  * @file A service provider to register and resolve services.
  * @copyright Piggly Lab 2023
  */
-export default class ServiceProvider {
+export class ServiceProvider {
 	/**
 	 * Services registered.
 	 *
