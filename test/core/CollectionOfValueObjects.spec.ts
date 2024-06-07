@@ -1,4 +1,4 @@
-import { CollectionOfValueObjects, ValueObject } from '@/core';
+import { CollectionOfValueObjects, ValueObject } from '@/index';
 
 class EmailValueObject extends ValueObject<{ value: string }> {
 	constructor(email: string) {

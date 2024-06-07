@@ -1,4 +1,4 @@
-import { DomainError, Result } from '@/core';
+import { DomainError, Result } from '@/index';
 
 class DefaultDomainError extends DomainError {
 	constructor() {

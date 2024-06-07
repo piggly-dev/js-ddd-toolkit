@@ -1,4 +1,4 @@
-import { EntityID, ValueObject } from '@/core';
+import { EntityID, ValueObject } from '@/index';
 
 export class NumberID extends EntityID<number> {
 	protected generateRandom(): number {

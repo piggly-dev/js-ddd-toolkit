@@ -3,8 +3,8 @@
 		"target": "esnext",
 		"module": "esnext",
 		"strict": true,
-		"declaration": false,
-		"emitDeclarationOnly": false,
+		"declaration": true,
+		"emitDeclarationOnly": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": false,
 		"importHelpers": true,
@@ -17,7 +17,7 @@
 		"resolveJsonModule": true,
 		"baseUrl": ".",
 		"rootDir": "./src",
-		"outDir": "./dist/esm",
+		"outDir": "./dist/types",
 		"paths": {
 			"@/*": ["src/*"]
 		},
@@ -32,8 +32,5 @@
 		"types": ["node"]
 	},
 	"include": ["./src/**/*"],
-	"exclude": ["./node_modules/**/*", "./build/**/*", "./test/**/*"],
-	"tsc-alias": {
-		"resolveFullPaths": true
-	}
+	"exclude": ["./node_modules/**/*", "./build/**/*", "./test/**/*"]
 }

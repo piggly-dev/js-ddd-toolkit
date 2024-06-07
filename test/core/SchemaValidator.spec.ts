@@ -1,4 +1,4 @@
-import { InvalidSchemaError, SchemaValidator } from '@/core';
+import { InvalidSchemaError, SchemaValidator } from '@/index';
 import Joi from 'joi';
 
 class PersonSchemaValidator extends SchemaValidator<{ name: string; age: number }> {

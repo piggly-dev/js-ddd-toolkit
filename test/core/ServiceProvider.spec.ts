@@ -1,4 +1,4 @@
-import { ServiceProvider } from '@/core';
+import { ServiceProvider } from '@/index';
 
 describe('ServiceProvider', () => {
 	beforeEach(() => {

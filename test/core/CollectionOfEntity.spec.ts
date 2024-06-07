@@ -1,4 +1,4 @@
-import { CollectionOfEntity, Entity, EntityID } from '@/core';
+import { CollectionOfEntity, Entity, EntityID } from '@/index';
 
 class ConcreteEntity extends Entity<{}, EntityID> {}
 

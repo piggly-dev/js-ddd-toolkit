@@ -1,4 +1,4 @@
-import { InvalidSchemaError } from '@/core';
+import { InvalidSchemaError } from '@/index';
 import { schemaValidator } from '@/utils';
 import Joi from 'joi';
 

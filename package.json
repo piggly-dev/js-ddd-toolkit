@@ -1,15 +1,16 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"check": "tsc --noEmit",
 		"clean": "rimraf dist",
 		"pre:commit": "npm run lint && npm run format && npm run test:once",
 		"prebuild": "npm run lint && npm run format",
-		"build": "npm run clean && npm run build:esm && npm run build:cjs",
-		"build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
+		"build": "npm run clean && npm run build:types && npm run build:esm && npm run build:cjs",
+		"build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json && node ./fixESM.cjs",
 		"build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
+		"build:types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json",
 		"format": "prettier --write \"src/**/*.ts\"",
 		"lint": "eslint --ext .ts --ignore-path .gitignore --fix src",
 		"test": "cross-env NODE_ENV=test jest --coverage --watchAll",
@@ -22,11 +23,13 @@
 	},
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/esm/index.js",
-	"types": "./dist/esm/index.d.ts",
+	"types": "./dist/types/index.d.ts",
 	"exports": {
 		".": {
+			"types": "./dist/types/index.d.ts",
 			"import": "./dist/esm/index.js",
-			"require": "./dist/cjs/index.js"
+			"require": "./dist/cjs/index.js",
+			"default": "./dist/esm/index.js"
 		}
 	},
 	"files": [

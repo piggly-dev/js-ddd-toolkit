@@ -69,3 +69,7 @@
 * [Export] Full compatibility with ESM and CommonJS;
 * [Add] Some methods for many classes;
 * [Update] Dependencies to latest version.
+
+## 3.0.1 at `2024-06-07`
+
+* [Fix] ESM/CommonJS/Types compatibility.

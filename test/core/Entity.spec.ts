@@ -1,4 +1,4 @@
-import { Entity } from '@/core';
+import { Entity } from '@/index';
 import { CustomValueObject, NumberID } from '@test/__stubs__';
 
 class ConcreteEntity extends Entity<{ a: number }, NumberID> {

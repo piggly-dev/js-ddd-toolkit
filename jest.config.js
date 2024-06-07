@@ -15,9 +15,10 @@ module.exports = {
 	coveragePathIgnorePatterns: ['./node_modules/', './test/', './debug', './build'],
 	coverageReporters: ['json-summary', 'text', 'lcov'],
 	transform: {
-		'^.+\\.ts?$': [
+		'^.+\\.[jt]s?$': [
 			'ts-jest',
 			{
+				useESM: true,
 				diagnostics: false,
 				tsconfig: 'tsconfig.json',
 			},
@@ -26,7 +27,7 @@ module.exports = {
 	preset: 'ts-jest',
 	moduleFileExtensions: ['ts', 'js'],
 	moduleNameMapper: {
-		'@/(.*)': '<rootDir>/src/$1',
+		'@/(.*)?': '<rootDir>/src/$1',
 		'@test/(.*)': '<rootDir>/test/$1',
 	},
 	moduleDirectories: ['node_modules', '<rootDir>/src'],
