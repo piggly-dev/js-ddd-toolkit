@@ -32,5 +32,8 @@
 		"types": ["node", "jest"]
 	},
 	"include": ["./src/**/*", "./debug/**/*", "./test/**/*", "samples/sample.ts"],
-	"exclude": ["./node_modules/**/*", "./build/**/*"]
+	"exclude": ["./node_modules/**/*", "./build/**/*"],
+	"tsc-alias": {
+		"resolveFullPaths": true,
+	}
 }

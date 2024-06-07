@@ -1,4 +1,4 @@
-import { EntityID } from '@/core';
+import { EntityID } from '@/index';
 import { CustomValueObject, NumberID } from '@test/__stubs__';
 
 describe('EntityID', () => {
