@@ -73,3 +73,7 @@
 ## 3.0.1 at `2024-06-07`
 
 * [Fix] ESM/CommonJS/Types compatibility.
+
+## 3.0.2 at `2024-06-11`
+
+* [Fix] Allow empty hidden properties in `toJSON` method for `DomainError` and `RuntimeError`.

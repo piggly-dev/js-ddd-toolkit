@@ -148,7 +148,7 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toJSON(hidden: Array<DomainErrorHiddenProp>): DomainErrorJSON {
+	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
 		const object = {
 			code: this.code,
 			name: this.name,
