@@ -134,7 +134,7 @@ export class DomainError implements IDomainError {
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toJSON(hidden: Array<DomainErrorHiddenProp>): DomainErrorJSON {
+	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
 		const object = {
 			code: this.code,
 			name: this.name,
