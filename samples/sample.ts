@@ -1,6 +1,4 @@
-import { ValueObject } from '../src/core';
-import { DomainError } from '../src/core/errors/DomainError';
-import { Result } from '../src/core/Result';
+import { ValueObject, Result, DomainError } from '../src';
 
 class CustomValueObject extends ValueObject {
 	private constructor(number: number) {
