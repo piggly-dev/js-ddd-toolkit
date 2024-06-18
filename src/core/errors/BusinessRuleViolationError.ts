@@ -10,14 +10,16 @@ export class BusinessRuleViolationError extends DomainError {
 		name: string,
 		message: string | string[],
 		hint: string | string[] = 'Try again later.',
-		code = 422
+		code = 422,
+		extra?: Record<string, any>
 	) {
 		super(
 			name,
 			crc.crc32(name),
 			typeof message === 'string' ? message : message.join(', '),
 			code,
-			typeof hint === 'string' ? hint : hint.join(', ')
+			typeof hint === 'string' ? hint : hint.join(', '),
+			extra
 		);
 	}
 }

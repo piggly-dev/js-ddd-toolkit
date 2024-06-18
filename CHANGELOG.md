@@ -77,3 +77,7 @@
 ## 3.0.2 at `2024-06-11`
 
 * [Fix] Allow empty hidden properties in `toJSON` method for `DomainError` and `RuntimeError`.
+
+## 3.0.3 at `2024-06-18`
+
+* [Fix] Allow extra property on `BusinessRuleViolationError`.
