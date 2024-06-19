@@ -26,6 +26,7 @@ export { ApplicationError } from '@/core/errors/ApplicationError';
 export { RuntimeError } from '@/core/errors/RuntimeError';
 export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
+export { InvalidPayloadError } from '@/core/errors/InvalidPayloadError';
 
 export { DateParser } from '@/utils/parsers/DateParser';
 

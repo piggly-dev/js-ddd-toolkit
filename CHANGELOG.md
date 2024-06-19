@@ -81,3 +81,8 @@
 ## 3.0.3 at `2024-06-18`
 
 * [Fix] Allow extra property on `BusinessRuleViolationError`.
+
+## 3.0.4 at `2024-06-19`
+
+* [Fix] Parse last available string when string has a separator;
+* [Add] `InvalidPayloadError`.

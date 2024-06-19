@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "3.0.3",
+	"version": "3.0.4",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"check": "tsc --noEmit",
@@ -87,6 +87,6 @@
 		"joi": "^17.13.1",
 		"moment-timezone": "^0.5.45",
 		"shallow-equal-object": "^1.1.1",
-		"uuid": "^9.0.1"
+		"uuid": "^10.0.0"
 	}
 }
