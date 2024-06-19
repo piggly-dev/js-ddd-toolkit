@@ -84,4 +84,5 @@
 
 ## 3.0.4 at `2024-06-19`
 
-* [Fix] Parse last available string when string has a separator.
+* [Fix] Parse last available string when string has a separator;
+* [Add] `InvalidPayloadError`.
