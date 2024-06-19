@@ -15,13 +15,23 @@ export function commaStringAsArray(str?: string): Array<string> {
 
 export const lastAvailableString = (
 	entry: string[] | string,
-	defaultValue: string
+	defaultValue: string,
+	separator = ','
 ) => {
 	if (!entry) {
 		return defaultValue;
 	}
 
 	if (Array.isArray(entry) === false) {
+		if (entry.includes(separator)) {
+			return (
+				entry
+					.split(separator)
+					.map(s => s.trim())
+					.pop() ?? defaultValue
+			);
+		}
+
 		return entry;
 	}
 
