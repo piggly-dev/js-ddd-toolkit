@@ -25,7 +25,7 @@ export const lastAvailableString = (
 	if (Array.isArray(entry) === false) {
 		if (entry.includes(separator)) {
 			return (
-				entry
+				(entry as string)
 					.split(separator)
 					.map(s => s.trim())
 					.pop() ?? defaultValue
@@ -39,7 +39,7 @@ export const lastAvailableString = (
 		return defaultValue;
 	}
 
-	return entry.pop() ?? defaultValue;
+	return (entry as Array<string>).pop() ?? defaultValue;
 };
 
 export function deleteKeys<T extends Record<string, any>>(
