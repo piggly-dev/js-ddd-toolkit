@@ -86,3 +86,8 @@
 
 * [Fix] Parse last available string when string has a separator;
 * [Add] `InvalidPayloadError`.
+
+## 3.0.5 at `2024-10-30`
+
+* [Add] Simple class for `EventEmmiter`;
+* [Update] Vulnerabilities on dependecies.

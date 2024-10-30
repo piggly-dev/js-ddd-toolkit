@@ -12,6 +12,7 @@ export { SchemaValidator } from '@/core/SchemaValidator';
 export { Adapter } from '@/core/Adapter';
 
 export { DomainEvent } from '@/core/DomainEvent';
+export { EventEmmiter } from '@/core/EventEmmiter';
 
 export { Service } from '@/core/Service';
 export { DomainService } from '@/core/DomainService';
@@ -75,4 +76,4 @@ export type {
 	IRuntimeError,
 } from '@/core/errors/types';
 
-export type { RelatedEntity, IDomainEvent } from '@/core/types';
+export type { RelatedEntity, IDomainEvent, EventListener } from '@/core/types';

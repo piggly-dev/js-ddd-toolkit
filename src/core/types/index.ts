@@ -18,3 +18,5 @@ export interface IDomainEvent<
 	readonly issued_at: number;
 	generateId(): string;
 }
+
+export type EventListener = (...args: Array<any>) => void;
