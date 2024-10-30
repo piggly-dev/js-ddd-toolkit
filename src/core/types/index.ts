@@ -19,4 +19,4 @@ export interface IDomainEvent<
 	generateId(): string;
 }
 
-export type EventListener = (...args: any[]) => void;
+export type EventListener = (...args: Array<any>) => void;
