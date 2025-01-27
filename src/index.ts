@@ -1,6 +1,8 @@
 export { Entity } from '@/core/Entity';
+export { EnhancedEntity } from '@/core/EnhancedEntity';
 export { EntityID } from '@/core/EntityID';
 export { ValueObject } from '@/core/ValueObject';
+export { EnhancedAttribute } from '@/core/EnhancedAttribute';
 export { Result } from '@/core/Result';
 export { AggregateRoot } from '@/core/AggregateRoot';
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
