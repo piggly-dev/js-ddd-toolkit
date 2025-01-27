@@ -5,6 +5,7 @@ export { ValueObject } from '@/core/ValueObject';
 export { EnhancedAttribute } from '@/core/EnhancedAttribute';
 export { Result } from '@/core/Result';
 export { AggregateRoot } from '@/core/AggregateRoot';
+export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
 export { CollectionOfValueObjects } from '@/core/CollectionOfValueObjects';
 export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects';

@@ -96,3 +96,7 @@
 
 * [Add] Enhanced classes for `Entity` and `Attribute`;
 * [Update] Vulnerabilities on dependecies.
+
+## 3.1.1 at `2025-01-27`
+
+* [Add] Enhanced classes for `CollectionOfEntity`.
