@@ -1,3 +1,4 @@
+import { TOrNull } from '@/types';
 import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './types';
 
 /**
@@ -79,7 +80,7 @@ export class DomainError implements IDomainError {
 
 	/**
 	 * The extra error data.
-	 * Better to add data to inspect response. May be ignored on JSON.
+	 * Better to add data to client about a response.
 	 *
 	 * @type {Record<string, any>}
 	 * @protected
@@ -92,7 +93,7 @@ export class DomainError implements IDomainError {
 
 	/**
 	 * The error context.
-	 * Better to add context to client about a response.
+	 * Better to add data to inspect response.
 	 *
 	 * @type {Record<string, any>}
 	 * @protected
@@ -101,7 +102,7 @@ export class DomainError implements IDomainError {
 	 * @since 3.2.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public readonly context?: Record<string, any>;
+	protected _context?: Record<string, any>;
 
 	/**
 	 * Creates an instance of DomainError.
@@ -155,7 +156,6 @@ export class DomainError implements IDomainError {
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
-			context: this.context ?? null,
 		};
 
 		hidden.forEach(prop => {
@@ -174,14 +174,14 @@ export class DomainError implements IDomainError {
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toObject(): DomainErrorJSON {
+	public toObject(): DomainErrorJSON & { context: TOrNull<Record<string, any>> } {
 		return {
 			code: this.code,
 			name: this.name,
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
-			context: this.context ?? null,
+			context: this._context ?? null,
 		};
 	}
 

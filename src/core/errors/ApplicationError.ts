@@ -1,4 +1,4 @@
-import { TOrNullable, TOrUndefined } from '@/types';
+import type { TOrNull, TOrNullable, TOrUndefined } from '@/types';
 import { DomainError } from './DomainError';
 import type {
 	ApplicationErrorJSON,
@@ -96,7 +96,6 @@ export abstract class ApplicationError
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
-			context: this.context ?? null,
 		};
 
 		hidden.forEach((key: DomainErrorHiddenProp) => {
@@ -115,15 +114,17 @@ export abstract class ApplicationError
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toObject(): ApplicationErrorJSON {
+	public toObject(): ApplicationErrorJSON & {
+		context: TOrNull<Record<string, any>>;
+	} {
 		return {
 			code: this.code,
 			name: this.name,
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			context: this._context ?? null,
 			previous: this.previousToObject(),
-			context: this.context ?? null,
 		};
 	}
 
