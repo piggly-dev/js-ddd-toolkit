@@ -25,9 +25,12 @@ export interface IDomainEvent<
 export type EventListener = (...args: Array<any>) => void;
 
 export type ResultFn<
-	Data = any,
-	Last = any,
-	Error extends DomainError = DomainError
-> = (
-	last?: Result<Last, Error>
-) => TOrAnother<Result<Data, Error>, Promise<Result<Data, Error>>>;
+	PrevData = any,
+	NextData = any,
+	NextError extends DomainError = DomainError
+> = (last: Result<PrevData, DomainError>) => ResultReturnType<NextData, NextError>;
+
+export type ResultReturnType<
+	NextData = any,
+	NextError extends DomainError = DomainError
+> = TOrAnother<Result<NextData, NextError>, Promise<Result<NextData, NextError>>>;
