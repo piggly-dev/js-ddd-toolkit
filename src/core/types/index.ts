@@ -1,5 +1,8 @@
-import { EntityID } from '../EntityID';
-import { Entity as BaseEntity } from '../Entity';
+import type { TOrAnother } from '@/types';
+import type { Entity as BaseEntity } from '../Entity';
+import type { EntityID } from '../EntityID';
+import type { Result } from '../Result';
+import type { DomainError } from '../errors/DomainError';
 
 export type RelatedEntity<
 	ID extends EntityID<any>,
@@ -20,3 +23,11 @@ export interface IDomainEvent<
 }
 
 export type EventListener = (...args: Array<any>) => void;
+
+export type ResultFn<
+	Data = any,
+	Last = any,
+	Error extends DomainError = DomainError
+> = (
+	last?: Result<Last, Error>
+) => TOrAnother<Result<Data, Error>, Promise<Result<Data, Error>>>;
