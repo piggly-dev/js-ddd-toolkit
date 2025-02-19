@@ -11,6 +11,7 @@ export type DomainErrorJSON = {
 	message: TOrNullable<string>;
 	hint: TOrNullable<string>;
 	extra: TOrNullable<Record<any, any>>;
+	context: TOrNullable<Record<any, any>>;
 };
 
 export type ApplicationErrorJSON = DomainErrorJSON & {

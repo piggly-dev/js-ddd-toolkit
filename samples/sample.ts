@@ -1,4 +1,4 @@
-import { ValueObject, Result, DomainError } from '../src';
+import { ValueObject, ResultChain, Result, DomainError } from '../src';
 
 class CustomValueObject extends ValueObject {
 	private constructor(number: number) {
@@ -20,12 +20,49 @@ class CustomValueObject extends ValueObject {
 	}
 }
 
-const vo = CustomValueObject.create(-1);
+const isEven = (number: number): Result<boolean, DomainError> => {
+	if (number % 2 === 0) {
+		return Result.ok(true);
+	}
 
-if (vo.isFailure) {
-	console.log(vo.error);
-}
+	return Result.fail(new DomainError('Number', 10, 'Number must be even'));
+};
 
-if (vo.isSuccess) {
-	console.log(vo.data);
-}
+const asyncIsEven = async (number: number): Promise<Result<boolean, DomainError>> =>
+	new Promise(resolve => {
+		setTimeout(() => {
+			if (number % 2 === 0) {
+				resolve(Result.ok(true));
+			}
+
+			resolve(Result.fail(new DomainError('Number', 10, 'Number must be even')));
+		}, 1000);
+	});
+
+const results = new ResultChain();
+
+results
+	.begin()
+	.chain('isEven', () => isEven(2))
+	.chain('asyncIsEven', async () => asyncIsEven(3))
+	.chain('voData', () => CustomValueObject.create(2))
+	.run()
+	.then(r => {
+		if (r.isFailure) {
+			console.log(results.resultFor('isEven'));
+			console.log(results.resultFor('asyncIsEven'));
+			console.log(results.resultFor('voData'));
+
+			console.error(r.error);
+			return;
+		}
+
+		console.log(results.resultFor('isEven'));
+		console.log(results.resultFor('asyncIsEven'));
+		console.log(results.resultFor('voData'));
+
+		console.log(r.data);
+	})
+	.catch(err => {
+		console.error(err);
+	});

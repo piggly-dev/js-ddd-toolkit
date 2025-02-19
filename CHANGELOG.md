@@ -100,3 +100,8 @@
 ## 3.1.1 at `2025-01-27`
 
 * [Add] Enhanced classes for `CollectionOfEntity`.
+
+## 3.2.0 at `2025-02-19`
+
+* [Add] `ResultChain` class, which allows to chain multiple results and handle errors;
+* [Update] `DomainError` class, now allows to create domain errors with context.

@@ -4,6 +4,7 @@ export { EntityID } from '@/core/EntityID';
 export { ValueObject } from '@/core/ValueObject';
 export { EnhancedAttribute } from '@/core/EnhancedAttribute';
 export { Result } from '@/core/Result';
+export { ResultChain } from '@/core/ResultChain';
 export { AggregateRoot } from '@/core/AggregateRoot';
 export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
@@ -79,4 +80,9 @@ export type {
 	IRuntimeError,
 } from '@/core/errors/types';
 
-export type { RelatedEntity, IDomainEvent, EventListener } from '@/core/types';
+export type {
+	RelatedEntity,
+	IDomainEvent,
+	EventListener,
+	ResultFn,
+} from '@/core/types';

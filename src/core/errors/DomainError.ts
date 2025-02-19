@@ -79,6 +79,7 @@ export class DomainError implements IDomainError {
 
 	/**
 	 * The extra error data.
+	 * Better to add data to inspect response. May be ignored on JSON.
 	 *
 	 * @type {Record<string, any>}
 	 * @protected
@@ -88,6 +89,19 @@ export class DomainError implements IDomainError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly extra?: Record<string, any>;
+
+	/**
+	 * The error context.
+	 * Better to add context to client about a response.
+	 *
+	 * @type {Record<string, any>}
+	 * @protected
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly context?: Record<string, any>;
 
 	/**
 	 * Creates an instance of DomainError.
@@ -141,6 +155,7 @@ export class DomainError implements IDomainError {
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			context: this.context ?? null,
 		};
 
 		hidden.forEach(prop => {
@@ -166,6 +181,7 @@ export class DomainError implements IDomainError {
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			context: this.context ?? null,
 		};
 	}
 

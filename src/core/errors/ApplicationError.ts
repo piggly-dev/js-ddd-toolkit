@@ -96,6 +96,7 @@ export abstract class ApplicationError
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			context: this.context ?? null,
 		};
 
 		hidden.forEach((key: DomainErrorHiddenProp) => {
@@ -122,6 +123,7 @@ export abstract class ApplicationError
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
 			previous: this.previousToObject(),
+			context: this.context ?? null,
 		};
 	}
 
