@@ -20,7 +20,7 @@ class CustomValueObject extends ValueObject {
 	}
 }
 
-const isEven = (number: number): Result<boolean, DomainError> => {
+const isEven = (number: number): Result<true, DomainError> => {
 	if (number % 2 === 0) {
 		return Result.ok(true);
 	}
@@ -28,7 +28,7 @@ const isEven = (number: number): Result<boolean, DomainError> => {
 	return Result.fail(new DomainError('Number', 10, 'Number must be even'));
 };
 
-const asyncIsEven = async (number: number): Promise<Result<boolean, DomainError>> =>
+const asyncIsEven = async (number: number): Promise<Result<true, DomainError>> =>
 	new Promise(resolve => {
 		setTimeout(() => {
 			if (number % 2 === 0) {
@@ -43,10 +43,10 @@ const results = new ResultChain();
 
 results
 	.begin()
-	.chain('isEven', () => isEven(2))
-	.chain('asyncIsEven', async () => asyncIsEven(3))
-	.chain('voData', () => CustomValueObject.create(2))
-	.run()
+	.chain<false, true>('isEven', _last => isEven(2))
+	.chain<true, true>('asyncIsEven', async last => asyncIsEven(3))
+	.chain<true, CustomValueObject>('voData', last => CustomValueObject.create(2))
+	.run<CustomValueObject>()
 	.then(r => {
 		if (r.isFailure) {
 			console.log(results.resultFor('isEven'));

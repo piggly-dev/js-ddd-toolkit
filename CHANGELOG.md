@@ -105,3 +105,7 @@
 
 * [Add] `ResultChain` class, which allows to chain multiple results and handle errors;
 * [Update] `DomainError` class, now allows to create domain errors with context.
+
+## 3.2.1 at `2025-02-19`
+
+* [Fix] Type signature for `ResultChain`.
