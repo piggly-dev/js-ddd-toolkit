@@ -89,6 +89,19 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	public readonly extra?: Record<string, any>;
 
 	/**
+	 * The error context.
+	 * Better to add context to client about a response.
+	 *
+	 * @type {Record<string, any>}
+	 * @protected
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly context?: Record<string, any>;
+
+	/**
 	 * The previous error.
 	 *
 	 * @type {PreviousError}
@@ -155,6 +168,7 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			context: this.context ?? null,
 		};
 
 		hidden.forEach((key: DomainErrorHiddenProp) => {
@@ -193,6 +207,7 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 			message: this.message,
 			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			context: this.context ?? null,
 			previous: this.previousToObject(),
 		};
 	}
