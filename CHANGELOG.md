@@ -109,3 +109,7 @@
 ## 3.2.1 at `2025-02-19`
 
 * [Fix] Type signature for `ResultChain`.
+
+## 3.2.2 at `2025-02-19`
+
+* [Fix] Contexts for errors are protected now.
