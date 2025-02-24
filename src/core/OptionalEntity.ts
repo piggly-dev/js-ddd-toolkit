@@ -153,6 +153,19 @@ export class OptionalEntity<
 	}
 
 	/**
+	 * Clone the optional entity.
+	 *
+	 * @returns {OptionalEntity<Entity, ID>} The cloned optional entity.
+	 * @public
+	 * @memberof OptionalEntity
+	 * @since 3.3.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public clone(): OptionalEntity<Entity, ID> {
+		return new OptionalEntity<Entity, ID>(this._pack.id, this._pack.entity);
+	}
+
+	/**
 	 * Check if the entity is equal to another entity.
 	 *
 	 * @param {Entity} entity The entity to compare.

@@ -65,4 +65,23 @@ export class CollectionOfEntity<
 	protected idToKey(id: ID): string {
 		return id.toString();
 	}
+
+	/**
+	 * Clone the collection.
+	 *
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public clone(): CollectionOfEntity<Entity, ID> {
+		const collection = new CollectionOfEntity<Entity, ID>();
+
+		this._items.forEach(item => {
+			collection.appendRaw(item.clone());
+		});
+
+		return collection;
+	}
 }

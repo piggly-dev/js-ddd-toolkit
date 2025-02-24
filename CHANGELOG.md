@@ -122,6 +122,11 @@
 * [Compatibility] All collection classes extends `CollectionOfEntity` as an alias for compatibility;
 * [Update] `ResultChain` can be cancelled by calling `cancel()` method inside a chain.
 
-## 3.3.1 at `2025-02-25`
+## 3.3.1 at `2025-02-24`
 
 * [Fix] Typing fixing for `EnhancedEntity`.
+
+## 3.3.2 at `2025-02-24`
+
+* [Add] `clone()` method to collections and `OptionalEntity`;
+* [Add] `appendRaw()` method to collections.
