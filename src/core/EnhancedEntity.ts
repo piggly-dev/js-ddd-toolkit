@@ -124,7 +124,7 @@ export abstract class EnhancedEntity<
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get id(): Readonly<Id> {
+	public get id(): Id {
 		return this._id;
 	}
 
