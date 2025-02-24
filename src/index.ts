@@ -6,12 +6,16 @@ export { EnhancedAttribute } from '@/core/EnhancedAttribute';
 export { Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
 export { AggregateRoot } from '@/core/AggregateRoot';
-export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
+export { SchemaValidator } from '@/core/SchemaValidator';
+
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
+export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
+export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
+export { CollectionOfRelatedEnhancedEntity } from '@/core/CollectionOfRelatedEnhancedEntity';
+export { AbstractCollectionOfEntities } from '@/core/AbstractCollectionOfEntities';
+
 export { CollectionOfValueObjects } from '@/core/CollectionOfValueObjects';
 export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects';
-export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
-export { SchemaValidator } from '@/core/SchemaValidator';
 
 export { Adapter } from '@/core/Adapter';
 
@@ -82,7 +86,10 @@ export type {
 
 export type {
 	RelatedEntity,
+	RelatedEnhancedEntity,
 	IDomainEvent,
 	EventListener,
 	ResultFn,
+	ResultReturnType,
+	CollectionOfEntitiesIndex,
 } from '@/core/types';

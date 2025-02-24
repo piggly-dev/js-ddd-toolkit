@@ -113,3 +113,8 @@
 ## 3.2.2 at `2025-02-19`
 
 * [Fix] Contexts for errors are protected now.
+
+## 3.3.0 at `2025-02-24`
+
+* [Add] Create a new abstract class `AbstractCollectionOfEntities`;
+* [Update] All collection classes extends `AbstractCollectionOfEntities`.

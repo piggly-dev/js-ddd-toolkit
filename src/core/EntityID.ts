@@ -85,12 +85,17 @@ export class EntityID<Value = string> {
 	 * @returns {string}
 	 * @public
 	 * @memberof EntityID
+	 * @since 3.3.0 Check if value has `toString` method.
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public toString(): string {
 		if (typeof this.value === 'string') {
 			return this.value;
+		}
+
+		if (this.value?.toString) {
+			return this.value.toString();
 		}
 
 		return String(this.value);

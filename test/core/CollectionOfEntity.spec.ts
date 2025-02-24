@@ -9,14 +9,14 @@ describe('CollectionOfEntity', () => {
 
 		expect(collection.length).toBe(0);
 		expect(collection.has(new EntityID('10'))).toBe(false);
-		expect(collection.get(new EntityID('10'))).toBeUndefined();
+		expect(collection.find(new EntityID('10'))).toBeUndefined();
 
 		collection.add(entity);
 
 		expect(collection.length).toBe(1);
-		expect(collection.get(new EntityID('10'))).toBe(entity);
+		expect(collection.find(new EntityID('10'))).toBe(entity);
 		expect(collection.has(new EntityID('10'))).toBe(true);
-		expect(collection.arrayOf).toStrictEqual([entity]);
+		expect(collection.entities).toStrictEqual([entity]);
 
 		// will not add
 		collection.add(entity);
@@ -26,6 +26,6 @@ describe('CollectionOfEntity', () => {
 
 		expect(collection.length).toBe(0);
 		expect(collection.has(new EntityID('10'))).toBe(false);
-		expect(collection.get(new EntityID('10'))).toBeUndefined();
+		expect(collection.find(new EntityID('10'))).toBeUndefined();
 	});
 });
