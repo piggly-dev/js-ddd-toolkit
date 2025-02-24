@@ -1,6 +1,6 @@
 import type { EntityID } from './EntityID';
-import { OptionalEntity } from './OptionalEntity';
 import type { IEntity } from './types';
+import { OptionalEntity } from './OptionalEntity';
 
 /**
  * @file A collection of something.
@@ -69,6 +69,38 @@ export abstract class AbstractCollectionOfEntities<
 	 */
 	public addMany(items: Array<Entity>): this {
 		items.forEach(item => this.add(item));
+		return this;
+	}
+
+	/**
+	 * Append a raw item to the collection.
+	 * Will replace no matter what.
+	 *
+	 * @param {OptionalEntity<Entity, ID>} item
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public appendRaw(item: OptionalEntity<Entity, ID>): this {
+		this._items.set(this.idToKey(item.id), item);
+		return this;
+	}
+
+	/**
+	 * Append an array of raw items to the collection.
+	 * Will replace no matter what.
+	 *
+	 * @param {Array<OptionalEntity<Entity, ID>>} items
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public appendManyRaw(items: Array<OptionalEntity<Entity, ID>>): this {
+		items.forEach(item => this.appendRaw(item));
 		return this;
 	}
 
@@ -489,6 +521,17 @@ export abstract class AbstractCollectionOfEntities<
 	public get length(): number {
 		return this._items.size;
 	}
+
+	/**
+	 * Clone the collection.
+	 *
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public abstract clone(): AbstractCollectionOfEntities<Key, Entity, ID>;
 
 	/**
 	 * Get the key for an item.
