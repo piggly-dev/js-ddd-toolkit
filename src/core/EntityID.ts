@@ -62,6 +62,18 @@ export class EntityID<Value = string> {
 			return false;
 		}
 
+		if (typeof (this.value as any)?.equals === 'function') {
+			return (this.value as any).equals(id.value);
+		}
+
+		if (typeof id.value === 'string' && typeof this.value === 'string') {
+			return id.value === this.value;
+		}
+
+		if (typeof id.value === 'number' && typeof this.value === 'number') {
+			return id.value === this.value;
+		}
+
 		return id.value === this.value;
 	}
 
@@ -85,12 +97,17 @@ export class EntityID<Value = string> {
 	 * @returns {string}
 	 * @public
 	 * @memberof EntityID
+	 * @since 3.3.0 Check if value has `toString` method.
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public toString(): string {
 		if (typeof this.value === 'string') {
 			return this.value;
+		}
+
+		if (this.value?.toString) {
+			return this.value.toString();
 		}
 
 		return String(this.value);

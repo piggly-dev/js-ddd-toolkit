@@ -1,4 +1,5 @@
 export { Entity } from '@/core/Entity';
+export { OptionalEntity } from '@/core/OptionalEntity';
 export { EnhancedEntity } from '@/core/EnhancedEntity';
 export { EntityID } from '@/core/EntityID';
 export { ValueObject } from '@/core/ValueObject';
@@ -6,12 +7,16 @@ export { EnhancedAttribute } from '@/core/EnhancedAttribute';
 export { Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
 export { AggregateRoot } from '@/core/AggregateRoot';
-export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
+export { SchemaValidator } from '@/core/SchemaValidator';
+
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
+export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
+export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
+export { CollectionOfRelatedEnhancedEntity } from '@/core/CollectionOfRelatedEnhancedEntity';
+export { AbstractCollectionOfEntities } from '@/core/AbstractCollectionOfEntities';
+
 export { CollectionOfValueObjects } from '@/core/CollectionOfValueObjects';
 export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects';
-export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
-export { SchemaValidator } from '@/core/SchemaValidator';
 
 export { Adapter } from '@/core/Adapter';
 
@@ -32,6 +37,7 @@ export { RuntimeError } from '@/core/errors/RuntimeError';
 export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 export { InvalidPayloadError } from '@/core/errors/InvalidPayloadError';
+export { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError';
 
 export { DateParser } from '@/utils/parsers/DateParser';
 
@@ -82,7 +88,9 @@ export type {
 
 export type {
 	RelatedEntity,
+	RelatedEnhancedEntity,
 	IDomainEvent,
 	EventListener,
 	ResultFn,
+	ResultReturnType,
 } from '@/core/types';

@@ -1,6 +1,7 @@
 import moment from 'moment-timezone';
 import { EntityID } from './EntityID';
 import { EventEmmiter } from './EventEmmiter';
+import type { IEntity } from './types';
 
 /**
  * @file Base entity class.
@@ -9,7 +10,8 @@ import { EventEmmiter } from './EventEmmiter';
 export abstract class EnhancedEntity<
 	Props extends { updated_at: moment.Moment },
 	Id extends EntityID<any>
-> {
+> implements IEntity<Id>
+{
 	/**
 	 * The entity identifier.
 	 *

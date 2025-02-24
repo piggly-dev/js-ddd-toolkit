@@ -55,6 +55,17 @@ export class ResultChain {
 	protected _executed = false;
 
 	/**
+	 * Check if the chain has been canceled.
+	 *
+	 * @protected
+	 * @readonly
+	 * @memberof ResultChain
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _cancel = false;
+
+	/**
 	 * Check if the chain is initialized.
 	 *
 	 * @returns {boolean}
@@ -95,6 +106,21 @@ export class ResultChain {
 		this._last = Result.ok(false);
 		this._executed = false;
 
+		return this;
+	}
+
+	/**
+	 * The next chain will never be executed.
+	 * Will for run method to return immediately the last result.
+	 *
+	 * @returns {ResultChain}
+	 * @public
+	 * @memberof ResultChain
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public cancel(): ResultChain {
+		this._cancel = true;
 		return this;
 	}
 
@@ -174,6 +200,11 @@ export class ResultChain {
 			/* eslint-disable no-await-in-loop */
 			this._last = await Promise.resolve(fn(this._last));
 			this._results?.set(key, this._last);
+
+			if (this._cancel) {
+				this._cancel = false;
+				return this._last as Result<ResponseData, ResponseError>;
+			}
 
 			if (this._last.isFailure) {
 				return this._last as Result<never, ResponseError>;
