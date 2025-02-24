@@ -393,13 +393,13 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Return the items as an iterable array.
 	 *
-	 * @returns {MapIterator<Value>}
+	 * @returns {Iterator<Value>}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get values(): MapIterator<CollectionOfEntitiesIndex<ID, Value>> {
+	public get values(): Iterator<CollectionOfEntitiesIndex<ID, Value>> {
 		return this._items.values();
 	}
 
@@ -427,13 +427,13 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Return the entries (key, value) as an iterable array.
 	 *
-	 * @returns {MapIterator<[Key, CollectionOfEntitiesIndex<ID, Value>]>}
+	 * @returns {Iterator<[Key, CollectionOfEntitiesIndex<ID, Value>]>}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get entries(): MapIterator<[Key, CollectionOfEntitiesIndex<ID, Value>]> {
+	public get entries(): Iterator<[Key, CollectionOfEntitiesIndex<ID, Value>]> {
 		return this._items.entries();
 	}
 
