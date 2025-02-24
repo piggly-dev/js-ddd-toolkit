@@ -121,3 +121,7 @@
 * [Compatibility] All collection methods existing before are kept with the same input/output;
 * [Compatibility] All collection classes extends `CollectionOfEntity` as an alias for compatibility;
 * [Update] `ResultChain` can be cancelled by calling `cancel()` method inside a chain.
+
+## 3.3.1 at `2025-02-25`
+
+* [Fix] Typing fixing for `EnhancedEntity`.
