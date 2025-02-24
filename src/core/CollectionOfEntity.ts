@@ -1,13 +1,13 @@
 import { AbstractCollectionOfEntities } from './AbstractCollectionOfEntities';
-import { Entity as BaseEntity } from './Entity';
 import { EntityID } from './EntityID';
+import type { IEntity } from './types';
 
 /**
  * @file A collection of entities.
  * @copyright Piggly Lab 2023
  */
 export class CollectionOfEntity<
-	Entity extends BaseEntity<any, ID>,
+	Entity extends IEntity<ID>,
 	ID extends EntityID<any> = EntityID<any>
 > extends AbstractCollectionOfEntities<string, Entity, ID> {
 	/**
@@ -21,7 +21,7 @@ export class CollectionOfEntity<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get entities(): Array<Entity> {
-		return this.existingValues;
+		return this.knowableEntities;
 	}
 
 	/**

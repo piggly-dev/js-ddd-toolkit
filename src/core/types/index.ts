@@ -39,3 +39,8 @@ export type ResultReturnType<
 > = TOrAnother<Result<NextData, NextError>, Promise<Result<NextData, NextError>>>;
 
 export type CollectionOfEntitiesIndex<ID, Value> = { id: ID; value?: Value };
+
+export interface IEntity<ID extends EntityID<any>> {
+	id: ID;
+	equals(e: IEntity<ID> | undefined | null): boolean;
+}

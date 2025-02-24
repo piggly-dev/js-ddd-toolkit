@@ -1,4 +1,5 @@
 export { Entity } from '@/core/Entity';
+export { OptionalEntity } from '@/core/OptionalEntity';
 export { EnhancedEntity } from '@/core/EnhancedEntity';
 export { EntityID } from '@/core/EntityID';
 export { ValueObject } from '@/core/ValueObject';
@@ -36,6 +37,7 @@ export { RuntimeError } from '@/core/errors/RuntimeError';
 export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 export { InvalidPayloadError } from '@/core/errors/InvalidPayloadError';
+export { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError';
 
 export { DateParser } from '@/utils/parsers/DateParser';
 
@@ -91,5 +93,4 @@ export type {
 	EventListener,
 	ResultFn,
 	ResultReturnType,
-	CollectionOfEntitiesIndex,
 } from '@/core/types';

@@ -62,6 +62,18 @@ export class EntityID<Value = string> {
 			return false;
 		}
 
+		if (typeof (this.value as any)?.equals === 'function') {
+			return (this.value as any).equals(id.value);
+		}
+
+		if (typeof id.value === 'string' && typeof this.value === 'string') {
+			return id.value === this.value;
+		}
+
+		if (typeof id.value === 'number' && typeof this.value === 'number') {
+			return id.value === this.value;
+		}
+
 		return id.value === this.value;
 	}
 

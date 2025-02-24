@@ -1,12 +1,12 @@
-import { CollectionOfEnhancedEntity } from './CollectionOfEnhancedEntity';
-import type { EnhancedEntity as BaseEnhancedEntity } from './EnhancedEntity';
+import { CollectionOfEntity } from './CollectionOfEntity';
 import type { EntityID } from './EntityID';
+import type { IEntity } from './types';
 
 /**
  * @file A collection of entities.
  * @copyright Piggly Lab 2025
  */
 export class CollectionOfRelatedEnhancedEntity<
-	Entity extends BaseEnhancedEntity<any, ID>,
+	Entity extends IEntity<ID>,
 	ID extends EntityID<any> = EntityID<any>
-> extends CollectionOfEnhancedEntity<Entity, ID> {}
+> extends CollectionOfEntity<Entity, ID> {}

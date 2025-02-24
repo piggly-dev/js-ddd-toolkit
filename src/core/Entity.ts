@@ -1,10 +1,13 @@
 import { EntityID } from './EntityID';
+import type { IEntity } from './types';
 
 /**
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
-export abstract class Entity<Props, Id extends EntityID<any>> {
+export abstract class Entity<Props, Id extends EntityID<any>>
+	implements IEntity<Id>
+{
 	/**
 	 * The entity identifier.
 	 *

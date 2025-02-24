@@ -1,67 +1,73 @@
-import { CollectionOfEntitiesIndex } from './types';
+import type { EntityID } from './EntityID';
+import { OptionalEntity } from './OptionalEntity';
+import type { IEntity } from './types';
 
 /**
  * @file A collection of something.
  * @copyright Piggly Lab 2025
  */
-export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
+export abstract class AbstractCollectionOfEntities<
+	Key,
+	Entity extends IEntity<ID>,
+	ID extends EntityID<any> = EntityID<any>
+> {
 	/**
 	 * A map of entities.
 	 *
-	 * @type {Map<Key, CollectionOfEntitiesIndex<ID, Value>>}
+	 * @type {Map<Key, OptionalEntity<Entity, ID>>}
 	 * @protected
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _items: Map<Key, CollectionOfEntitiesIndex<ID, Value>>;
+	protected _items: Map<Key, OptionalEntity<Entity, ID>>;
 
 	/**
 	 * Creates an instance of AbstractCollectionOfEntities.
 	 *
-	 * @param {Map<Key, CollectionOfEntitiesIndex<ID, Value>>} [initial]
+	 * @param {Map<Key, OptionalEntity<Entity, ID>>} [initial]
 	 * @public
 	 * @constructor
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(initial?: Map<Key, CollectionOfEntitiesIndex<ID, Value>>) {
+	constructor(initial?: Map<Key, OptionalEntity<Entity, ID>>) {
 		this._items = initial || new Map();
 	}
 
 	/**
 	 * Add an item to the collection.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public add(item: Value): this {
+	public add(item: Entity): this {
 		const key = this.getKeyFor(item);
 
 		if (this._items.has(key)) {
 			return this;
 		}
 
-		this._items.set(key, { id: this.getIdFor(item), value: item });
+		this._items.set(key, new OptionalEntity(this.getIdFor(item), item));
 		return this;
 	}
 
 	/**
 	 * Add an array of items to the collection.
 	 *
-	 * @param {Array<Value>} items
+	 * @param {Array<Entity>} items
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public addMany(items: Array<Value>): this {
+	public addMany(items: Array<Entity>): this {
 		items.forEach(item => this.add(item));
 		return this;
 	}
@@ -69,21 +75,22 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Reload an item to the collection. Only if the item is already in the collection.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
+	 * @throws {Error} If the item is not found in the collection.
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public reload(item: Value): this {
-		const key = this.getKeyFor(item);
+	public reload(item: Entity): this {
+		const i = this.get(this.getIdFor(item));
 
-		if (!this._items.has(key)) {
-			return this;
+		if (!i) {
+			throw new Error('Item not found, cannot be reloaded.');
 		}
 
-		this._items.set(key, { id: this.getIdFor(item), value: item });
+		i.load(item);
 		return this;
 	}
 
@@ -91,14 +98,15 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	 * Reload an array of items to the collection.
 	 * Only if the items are already in the collection.
 	 *
-	 * @param {Array<Value>} items
+	 * @param {Array<Entity>} items
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
+	 * @throws {Error} If the item is not found in the collection.
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public reloadMany(items: Array<Value>): this {
+	public reloadMany(items: Array<Entity>): this {
 		items.forEach(item => this.reload(item));
 		return this;
 	}
@@ -106,18 +114,18 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Sync an item to the collection. Always add the item to the collection, even if it is already in the collection.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public sync(item: Value): this {
-		this._items.set(this.getKeyFor(item), {
-			id: this.getIdFor(item),
-			value: item,
-		});
+	public sync(item: Entity): this {
+		this._items.set(
+			this.getKeyFor(item),
+			new OptionalEntity(this.getIdFor(item), item)
+		);
 
 		return this;
 	}
@@ -126,14 +134,14 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	 * Sync an array of items to the collection.
 	 * Always add the items to the collection, even if they are already in the collection.
 	 *
-	 * @param {Array<Value>} items
+	 * @param {Array<Entity>} items
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public syncMany(items: Array<Value>): this {
+	public syncMany(items: Array<Entity>): this {
 		items.forEach(item => this.sync(item));
 		return this;
 	}
@@ -172,14 +180,14 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Remove item from the collection.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {this}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public removeItem(item: Value): this {
+	public removeItem(item: Entity): this {
 		return this.removeKey(this.getKeyFor(item));
 	}
 
@@ -236,13 +244,13 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public itemAvailableFor(id: ID): boolean {
-		const item = this.getKey(this.idToKey(id));
+		const item = this.get(id);
 
-		if (!item || !item?.value) {
+		if (!item) {
 			return false;
 		}
 
-		return true;
+		return item.isPresent();
 	}
 
 	/**
@@ -262,7 +270,7 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Check if the collection has all keys.
 	 *
-	 * @param {Array<Value>} keys
+	 * @param {Array<Entity>} keys
 	 * @returns {boolean}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
@@ -276,7 +284,7 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Check if the collection has any of keys.
 	 *
-	 * @param {Array<Value>} keys
+	 * @param {Array<Entity>} keys
 	 * @returns {boolean}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
@@ -290,42 +298,42 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Check if the collection has an item.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {boolean}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public hasItem(item: Value): boolean {
+	public hasItem(item: Entity): boolean {
 		return this.hasKey(this.getKeyFor(item));
 	}
 
 	/**
 	 * Check if the collection has all keys.
 	 *
-	 * @param {Array<Value>} items
+	 * @param {Array<Entity>} items
 	 * @returns {boolean}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public hasAllItems(items: Array<Value>): boolean {
+	public hasAllItems(items: Array<Entity>): boolean {
 		return items.every(item => this.hasItem(item));
 	}
 
 	/**
 	 * Check if the collection has any of keys.
 	 *
-	 * @param {Array<Value>} items
+	 * @param {Array<Entity>} items
 	 * @returns {boolean}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public hasAnyItems(items: Array<Value>): boolean {
+	public hasAnyItems(items: Array<Entity>): boolean {
 		return items.some(item => this.hasItem(item));
 	}
 
@@ -333,13 +341,13 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	 * Get an item by its id from the collection.
 	 *
 	 * @param {ID} id
-	 * @returns {CollectionOfEntitiesIndex<ID, Value> | undefined}
+	 * @returns {OptionalEntity<Entity, ID> | undefined}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get(id: ID): CollectionOfEntitiesIndex<ID, Value> | undefined {
+	public get(id: ID): OptionalEntity<Entity, ID> | undefined {
 		return this._items.get(this.idToKey(id));
 	}
 
@@ -347,13 +355,13 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	 * Get an item by its key from the collection.
 	 *
 	 * @param {Key} key
-	 * @returns {CollectionOfEntitiesIndex<ID, Value> | undefined}
+	 * @returns {OptionalEntity<Entity, ID> | undefined}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public getKey(key: Key): CollectionOfEntitiesIndex<ID, Value> | undefined {
+	public getKey(key: Key): OptionalEntity<Entity, ID> | undefined {
 		return this._items.get(key);
 	}
 
@@ -361,63 +369,63 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	 * Find an item by its id from the collection.
 	 *
 	 * @param {ID} id
-	 * @returns {Value | undefined}
+	 * @returns {Entity | undefined}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public find(id: ID): Value | undefined {
+	public find(id: ID): Entity | undefined {
 		const found = this.getKey(this.idToKey(id));
 
 		if (!found) {
 			return undefined;
 		}
 
-		return found.value;
+		return found.entity;
 	}
 
 	/**
 	 * Return the items as an array.
 	 *
-	 * @returns {Array<Value>}
+	 * @returns {Array<Entity>}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get arrayOf(): Array<CollectionOfEntitiesIndex<ID, Value>> {
+	public get arrayOf(): Array<OptionalEntity<Entity, ID>> {
 		return Array.from(this._items.values());
 	}
 
 	/**
 	 * Return the items as an iterable array.
 	 *
-	 * @returns {Iterator<Value>}
+	 * @returns {Iterator<Entity>}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get values(): Iterator<CollectionOfEntitiesIndex<ID, Value>> {
+	public get values(): Iterator<OptionalEntity<Entity, ID>> {
 		return this._items.values();
 	}
 
 	/**
 	 * Return the existing items as an iterable array.
 	 *
-	 * @returns {Array<Value>}
+	 * @returns {Array<Entity>}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get existingValues(): Array<Value> {
-		const values: Array<Value> = [];
+	public get knowableEntities(): Array<Entity> {
+		const values: Array<Entity> = [];
 
 		this._items.forEach(item => {
-			if (item.value) {
-				values.push(item.value);
+			if (item.isPresent()) {
+				values.push(item.knowableEntity);
 			}
 		});
 
@@ -427,13 +435,13 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Return the entries (key, value) as an iterable array.
 	 *
-	 * @returns {Iterator<[Key, CollectionOfEntitiesIndex<ID, Value>]>}
+	 * @returns {Iterator<[Key, OptionalEntity<Entity, ID>]>}
 	 * @public
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get entries(): Iterator<[Key, CollectionOfEntitiesIndex<ID, Value>]> {
+	public get entries(): Iterator<[Key, OptionalEntity<Entity, ID>]> {
 		return this._items.entries();
 	}
 
@@ -485,26 +493,26 @@ export abstract class AbstractCollectionOfEntities<Key, Value, ID = Key> {
 	/**
 	 * Get the key for an item.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {Key}
 	 * @protected
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected abstract getKeyFor(item: Value): Key;
+	protected abstract getKeyFor(item: Entity): Key;
 
 	/**
 	 * Get the id for an item.
 	 *
-	 * @param {Value} item
+	 * @param {Entity} item
 	 * @returns {ID}
 	 * @protected
 	 * @memberof AbstractCollectionOfEntities
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected abstract getIdFor(item: Value): ID;
+	protected abstract getIdFor(item: Entity): ID;
 
 	/**
 	 * Get the key for a raw key.

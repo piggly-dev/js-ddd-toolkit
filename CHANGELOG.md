@@ -116,5 +116,8 @@
 
 ## 3.3.0 at `2025-02-24`
 
-* [Add] Create a new abstract class `AbstractCollectionOfEntities`;
-* [Update] All collection classes extends `AbstractCollectionOfEntities`.
+* [Add] `OptionalEntity` class to handle optional entities;
+* [Add] Create a new abstract class `AbstractCollectionOfEntities` by using `OptionalEntity`;
+* [Compatibility] All collection methods existing before are kept with the same input/output;
+* [Compatibility] All collection classes extends `CollectionOfEntity` as an alias for compatibility;
+* [Update] `ResultChain` can be cancelled by calling `cancel()` method inside a chain.
