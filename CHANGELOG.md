@@ -142,3 +142,8 @@
 
 * [Add] `EnhancedAttribute` class to handle enhanced attributes;
 * [Add] `AbstractCollectionOfEnhancedAttributes` class to handle collections of enhanced attributes.
+
+## 3.6.0 at `2025-02-26`
+
+* [Export] Enhanced attributes and collections.
+* 😭 Sorry for lot of version tags, I'm under too much pressure right now.
