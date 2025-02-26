@@ -130,3 +130,10 @@
 
 * [Add] `clone()` method to collections and `OptionalEntity`;
 * [Add] `appendRaw()` method to collections.
+
+## 3.4.0 at `2025-02-25`
+
+* [Add] `CollectionOfAttributes` class to handle collections of attributes;
+* [Add] `AbstractCollectionOfAttributes` class to handle collections of attributes;
+* [Add] `Attribute` class to handle attributes;
+* [Add] `IAttribute` type to handle attributes;
