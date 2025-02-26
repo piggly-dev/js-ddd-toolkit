@@ -44,3 +44,9 @@ export interface IEntity<ID extends EntityID<any>> {
 	id: ID;
 	equals(e: IEntity<ID> | undefined | null): boolean;
 }
+
+export interface IAttribute<Props extends Record<any, any> = Record<any, any>> {
+	clone(): IAttribute<Props>;
+	hash(): string;
+	equals(a: IAttribute<Props> | undefined | null): boolean;
+}

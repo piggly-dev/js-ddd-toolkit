@@ -8,6 +8,9 @@ export { Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
 export { AggregateRoot } from '@/core/AggregateRoot';
 export { SchemaValidator } from '@/core/SchemaValidator';
+export { Attribute } from '@/core/Attribute';
+export { CollectionOfAttributes } from '@/core/CollectionOfAttributes';
+export { AbstractCollectionOfAttributes } from '@/core/AbstractCollectionOfAttributes';
 
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
 export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
@@ -93,4 +96,6 @@ export type {
 	EventListener,
 	ResultFn,
 	ResultReturnType,
+	IEntity,
+	IAttribute,
 } from '@/core/types';
