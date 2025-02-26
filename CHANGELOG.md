@@ -138,7 +138,7 @@
 * [Add] `Attribute` class to handle attributes;
 * [Add] `IAttribute` type to handle attributes;
 
-## 3.4.1 at `2025-02-25`
+## 3.5.0 at `2025-02-25`
 
 * [Add] `EnhancedAttribute` class to handle enhanced attributes;
 * [Add] `AbstractCollectionOfEnhancedAttributes` class to handle collections of enhanced attributes.
