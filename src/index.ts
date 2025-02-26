@@ -10,8 +10,9 @@ export { AggregateRoot } from '@/core/AggregateRoot';
 export { SchemaValidator } from '@/core/SchemaValidator';
 export { Attribute } from '@/core/Attribute';
 export { CollectionOfAttributes } from '@/core/CollectionOfAttributes';
+export { CollectionOfEnhancedAttributes } from '@/core/CollectionOfEnhancedAttributes';
 export { AbstractCollectionOfAttributes } from '@/core/AbstractCollectionOfAttributes';
-
+export { AbstractCollectionOfEnhancedAttributes } from '@/core/AbstractCollectionOfEnhancedAttributes';
 export { CollectionOfEntity } from '@/core/CollectionOfEntity';
 export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
 export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
