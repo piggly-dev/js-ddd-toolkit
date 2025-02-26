@@ -17,7 +17,7 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected readonly props: Props;
+	protected readonly _props: Props;
 
 	/**
 	 * Creates an instance of Attribute.
@@ -32,7 +32,7 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected constructor(props: Props) {
-		this.props = props;
+		this._props = props;
 	}
 
 	/**
@@ -45,7 +45,7 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public clone(): Attribute<Props> {
-		return new Attribute({ ...this.props });
+		return new Attribute({ ...this._props });
 	}
 
 	/**
@@ -60,7 +60,7 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	public hash(): string {
 		return crypto
 			.createHash('sha256')
-			.update(JSON.stringify(this.props))
+			.update(JSON.stringify(this._props))
 			.digest('hex');
 	}
 
@@ -75,10 +75,25 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public equals(attr: IAttribute<Props> | undefined | null): boolean {
-		if (attr === null || attr === undefined) {
+		if (attr === null || attr === undefined || !Attribute.isAttribute(attr)) {
 			return false;
 		}
 
 		return this.hash() === attr.hash();
+	}
+
+	/**
+	 * Checks if an object is an attribute.
+	 *
+	 * @param {*} e
+	 * @returns {boolean}
+	 * @public
+	 * @static
+	 * @memberof Attribute
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static isAttribute(e: any): boolean {
+		return e instanceof Attribute;
 	}
 }
