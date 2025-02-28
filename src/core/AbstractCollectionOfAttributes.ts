@@ -149,6 +149,21 @@ export abstract class AbstractCollectionOfAttributes<
 	}
 
 	/**
+	 * Remove an item by its hash from the collection.
+	 *
+	 * @param {string} hash
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.7.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public removeHash(hash: string): this {
+		this._items.delete(hash);
+		return this;
+	}
+
+	/**
 	 * Check if the collection has a id.
 	 *
 	 * @param {Attribute} item
@@ -191,31 +206,51 @@ export abstract class AbstractCollectionOfAttributes<
 	}
 
 	/**
-	 * Get an item by its id from the collection.
+	 * Check if the collection has a hash.
 	 *
-	 * @param {Attribute} item
-	 * @returns {Attribute | undefined}
+	 * @param {string} hash
+	 * @returns {boolean}
 	 * @public
 	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.4.0
+	 * @since 3.7.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get(item: Attribute): Attribute | undefined {
-		return this._items.get(item.hash());
+	public hasHash(hash: string): boolean {
+		return this._items.has(hash);
 	}
 
 	/**
-	 * Find an item by its id from the collection.
+	 * Get an item by its hash from the collection.
+	 *
+	 * @param {string} hash
+	 * @returns {Attribute | undefined}
+	 * @public
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.7.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get(hash: string): Attribute | undefined {
+		const found = this._items.get(hash);
+
+		if (!found) {
+			return undefined;
+		}
+
+		return found;
+	}
+
+	/**
+	 * Find an item by its hash from the collection.
 	 *
 	 * @param {Attribute} item
 	 * @returns {Attribute | undefined}
 	 * @public
 	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.4.0
+	 * @since 3.7.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public find(item: Attribute): Attribute | undefined {
-		const found = this.get(item);
+		const found = this._items.get(item.hash());
 
 		if (!found) {
 			return undefined;

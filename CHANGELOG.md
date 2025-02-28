@@ -147,3 +147,7 @@
 
 * [Export] Enhanced attributes and collections.
 * 😭 Sorry for lot of version tags, I'm under too much pressure right now.
+
+## 3.7.0 at `2025-02-28`
+
+* [Add] Allow to get/remove an attribute by its hash from the collection.
