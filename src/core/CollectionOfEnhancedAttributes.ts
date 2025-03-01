@@ -1,4 +1,4 @@
-import { AbstractCollectionOfAttributes } from './AbstractCollectionOfAttributes';
+import { AbstractCollectionOfEnhancedAttributes } from './AbstractCollectionOfEnhancedAttributes';
 import { EnhancedAttribute } from './EnhancedAttribute';
 
 /**
@@ -7,7 +7,7 @@ import { EnhancedAttribute } from './EnhancedAttribute';
  */
 export class CollectionOfEnhancedAttributes<
 	Attribute extends EnhancedAttribute<any>
-> extends AbstractCollectionOfAttributes<Attribute> {
+> extends AbstractCollectionOfEnhancedAttributes<Attribute> {
 	/**
 	 * Return the attributes as an array.
 	 * Alias for `this.arrayOf`.

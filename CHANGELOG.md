@@ -151,3 +151,7 @@
 ## 3.7.0 at `2025-02-28`
 
 * [Add] Allow to get/remove an attribute by its hash from the collection.
+
+## 3.7.1 at `2025-03-01`
+
+* [Fix] `CollectionOfEnhancedAttributes` should extend `AbstractCollectionOfEnhancedAttributes`.
