@@ -1,13 +1,15 @@
-import type { TOrNull, TOrNullable, TOrUndefined } from '@/types';
-import { DomainError } from './DomainError';
+import type { TOrUndefined, TOrNullable, TOrNull } from '@/types';
+
 import type {
-	ApplicationErrorJSON,
 	DomainErrorHiddenProp,
-	DomainErrorJSON,
+	ApplicationErrorJSON,
 	IApplicationError,
-	PreviousError,
 	PreviousErrorJSON,
+	DomainErrorJSON,
+	PreviousError,
 } from './types';
+
+import { DomainError } from './DomainError';
 
 /**
  * @file Abstract application error class.
@@ -59,7 +61,7 @@ export abstract class ApplicationError
 		status: number,
 		hint?: string,
 		extra?: Record<string, any>,
-		previous?: PreviousError
+		previous?: PreviousError,
 	) {
 		super(name, code, message, status, hint, extra);
 		this.previous = previous;
@@ -79,6 +81,50 @@ export abstract class ApplicationError
 	}
 
 	/**
+	 * Get the previous error as a JSON object.
+	 *
+	 * @returns {TOrNullable<PreviousErrorJSON>}
+	 * @public
+	 * @memberof ApplicationError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public previousToObject(): TOrNullable<PreviousErrorJSON> {
+		if (this.previous) {
+			if (this.previous instanceof ApplicationError) {
+				return {
+					message: this.previous.message,
+					name: this.previous.name,
+					stack: this.previous.previousToObject(),
+				};
+			}
+
+			if (this.previous instanceof DomainError) {
+				return {
+					message: this.previous.message,
+					name: this.previous.name,
+					stack: null,
+				};
+			}
+
+			if (this.previous instanceof Error) {
+				return {
+					message: this.previous.message ?? null,
+					name: this.previous.name,
+					stack: this.previous.stack || null,
+				};
+			}
+
+			return {
+				message: this.previous.message ?? null,
+				name: this.previous.name,
+			};
+		}
+
+		return null;
+	}
+
+	/**
 	 * Get the object representation of the error.
 	 * Will hide the properties defined in the `hidden` array.
 	 * Also it will always hide the previous error.
@@ -92,10 +138,10 @@ export abstract class ApplicationError
 	public toJSON(hidden: Array<DomainErrorHiddenProp>): DomainErrorJSON {
 		const object = {
 			code: this.code,
-			name: this.name,
-			message: this.message,
-			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			hint: this.hint ?? null,
+			message: this.message,
+			name: this.name,
 		};
 
 		hidden.forEach((key: DomainErrorHiddenProp) => {
@@ -114,61 +160,17 @@ export abstract class ApplicationError
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toObject(): ApplicationErrorJSON & {
+	public toObject(): {
 		context: TOrNull<Record<string, any>>;
-	} {
+	} & ApplicationErrorJSON {
 		return {
 			code: this.code,
-			name: this.name,
-			message: this.message,
-			hint: this.hint ?? null,
-			extra: this.extra ?? null,
 			context: this._context ?? null,
+			extra: this.extra ?? null,
+			hint: this.hint ?? null,
+			message: this.message,
+			name: this.name,
 			previous: this.previousToObject(),
 		};
-	}
-
-	/**
-	 * Get the previous error as a JSON object.
-	 *
-	 * @returns {TOrNullable<PreviousErrorJSON>}
-	 * @public
-	 * @memberof ApplicationError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public previousToObject(): TOrNullable<PreviousErrorJSON> {
-		if (this.previous) {
-			if (this.previous instanceof ApplicationError) {
-				return {
-					name: this.previous.name,
-					message: this.previous.message,
-					stack: this.previous.previousToObject(),
-				};
-			}
-
-			if (this.previous instanceof DomainError) {
-				return {
-					name: this.previous.name,
-					message: this.previous.message,
-					stack: null,
-				};
-			}
-
-			if (this.previous instanceof Error) {
-				return {
-					name: this.previous.name,
-					message: this.previous.message ?? null,
-					stack: this.previous.stack || null,
-				};
-			}
-
-			return {
-				name: this.previous.name,
-				message: this.previous.message ?? null,
-			};
-		}
-
-		return null;
 	}
 }

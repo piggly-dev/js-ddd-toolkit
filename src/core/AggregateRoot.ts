@@ -1,5 +1,5 @@
-import { Entity } from './Entity';
 import { EntityID } from './EntityID';
+import { Entity } from './Entity';
 
 /**
  * @file Aggregate root base class.

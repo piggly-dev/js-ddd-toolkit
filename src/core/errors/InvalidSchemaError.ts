@@ -12,7 +12,7 @@ export class InvalidSchemaError extends DomainError {
 			message ?? 'One or more values are invalid in current schema.',
 			422,
 			hint,
-			{ errors }
+			{ errors },
 		);
 	}
 }

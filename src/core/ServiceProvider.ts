@@ -16,6 +16,56 @@ export class ServiceProvider {
 	private static _services: Map<string, any> = new Map();
 
 	/**
+	 * Clear all services.
+	 *
+	 * @returns {void}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static clear(): void {
+		this._services.clear();
+	}
+
+	/**
+	 * Get a service.
+	 *
+	 * @param {string} name
+	 * @returns {ServiceInstance|undefined}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static get<ServiceInstance = any>(
+		name: string,
+	): ServiceInstance | undefined {
+		if (this._services.has(name) === false) {
+			return undefined;
+		}
+
+		return this._services.get(name) as ServiceInstance;
+	}
+
+	/**
+	 * Check if has a service.
+	 *
+	 * @param {string} name
+	 * @returns {boolean}
+	 * @public
+	 * @static
+	 * @memberof ServiceProvider
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static has(name: string): boolean {
+		return this._services.has(name);
+	}
+
+	/**
 	 * Register a new service.
 	 *
 	 * @param {string} name
@@ -30,7 +80,7 @@ export class ServiceProvider {
 	 */
 	public static register<ServiceInstance = any>(
 		name: string,
-		instance: ServiceInstance
+		instance: ServiceInstance,
 	): void {
 		if (this._services.has(name)) {
 			throw new Error(`Service "${name}" already registered.`);
@@ -53,39 +103,10 @@ export class ServiceProvider {
 	 */
 	public static replace<ServiceInstance = any>(
 		name: string,
-		instance: ServiceInstance
+		instance: ServiceInstance,
 	): void {
 		this.unregister(name);
 		this._services.set(name, instance);
-	}
-
-	/**
-	 * Unregister a service.
-	 *
-	 * @param {string} name
-	 * @returns {boolean}
-	 * @public
-	 * @static
-	 * @memberof ServiceProvider
-	 * @since 2.1.2
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public static unregister(name: string): boolean {
-		return this._services.delete(name);
-	}
-
-	/**
-	 * Clear all services.
-	 *
-	 * @returns {void}
-	 * @public
-	 * @static
-	 * @memberof ServiceProvider
-	 * @since 2.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public static clear(): void {
-		this._services.clear();
 	}
 
 	/**
@@ -109,38 +130,17 @@ export class ServiceProvider {
 	}
 
 	/**
-	 * Check if has a service.
+	 * Unregister a service.
 	 *
 	 * @param {string} name
 	 * @returns {boolean}
 	 * @public
 	 * @static
 	 * @memberof ServiceProvider
-	 * @since 1.0.0
+	 * @since 2.1.2
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static has(name: string): boolean {
-		return this._services.has(name);
-	}
-
-	/**
-	 * Get a service.
-	 *
-	 * @param {string} name
-	 * @returns {ServiceInstance|undefined}
-	 * @public
-	 * @static
-	 * @memberof ServiceProvider
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public static get<ServiceInstance = any>(
-		name: string
-	): ServiceInstance | undefined {
-		if (this._services.has(name) === false) {
-			return undefined;
-		}
-
-		return this._services.get(name) as ServiceInstance;
+	public static unregister(name: string): boolean {
+		return this._services.delete(name);
 	}
 }

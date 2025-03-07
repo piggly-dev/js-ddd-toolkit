@@ -1,6 +1,6 @@
-import { EntityID } from './EntityID';
-import { DomainError } from './errors/DomainError';
 import { EntityIdMismatchError } from './errors/EntityIdMismatchError';
+import { DomainError } from './errors/DomainError';
+import { EntityID } from './EntityID';
 import { Result } from './Result';
 import { IEntity } from './types';
 
@@ -10,7 +10,7 @@ import { IEntity } from './types';
  */
 export class OptionalEntity<
 	Entity extends IEntity<ID>,
-	ID extends EntityID<any> = EntityID<any>
+	ID extends EntityID<any> = EntityID<any>,
 > {
 	/**
 	 * The pack of the entity.
@@ -37,6 +37,94 @@ export class OptionalEntity<
 	 */
 	constructor(id: ID, entity?: Entity) {
 		this._pack = { id, entity };
+	}
+
+	/**
+	 * Get the entity.
+	 *
+	 * @type {Entity | undefined}
+	 * @public
+	 * @readonly
+	 * @memberof OptionalEntity
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get entity(): undefined | Entity {
+		return this._pack.entity;
+	}
+
+	/**
+	 * Get the identifier of the entity.
+	 *
+	 * @type {ID}
+	 * @public
+	 * @readonly
+	 * @memberof OptionalEntity
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get id(): ID {
+		return this._pack.id;
+	}
+
+	/**
+	 * Get the entity.
+	 *
+	 * @type {Entity}
+	 * @public
+	 * @readonly
+	 * @memberof OptionalEntity
+	 * @throws {Error} If the entity is not present.
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get knowableEntity(): Entity {
+		if (this._pack.entity === undefined) {
+			throw new Error('Entity is not present.');
+		}
+
+		return this._pack.entity;
+	}
+
+	/**
+	 * Clone the optional entity.
+	 *
+	 * @returns {OptionalEntity<Entity, ID>} The cloned optional entity.
+	 * @public
+	 * @memberof OptionalEntity
+	 * @since 3.3.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public clone(): OptionalEntity<Entity, ID> {
+		return new OptionalEntity<Entity, ID>(this._pack.id, this._pack.entity);
+	}
+
+	/**
+	 * Check if the entity is not present.
+	 *
+	 * @type {boolean}
+	 * @public
+	 * @readonly
+	 * @memberof OptionalEntity
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isAbsent(): boolean {
+		return this._pack.entity === undefined;
+	}
+
+	/**
+	 * Check if the entity is present.
+	 *
+	 * @type {boolean}
+	 * @public
+	 * @readonly
+	 * @memberof OptionalEntity
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isPresent(): boolean {
+		return this._pack.entity !== undefined;
 	}
 
 	/**
@@ -75,94 +163,6 @@ export class OptionalEntity<
 
 		this._pack.entity = entity;
 		return Result.ok(entity);
-	}
-
-	/**
-	 * Get the identifier of the entity.
-	 *
-	 * @type {ID}
-	 * @public
-	 * @readonly
-	 * @memberof OptionalEntity
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get id(): ID {
-		return this._pack.id;
-	}
-
-	/**
-	 * Get the entity.
-	 *
-	 * @type {Entity | undefined}
-	 * @public
-	 * @readonly
-	 * @memberof OptionalEntity
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get entity(): Entity | undefined {
-		return this._pack.entity;
-	}
-
-	/**
-	 * Get the entity.
-	 *
-	 * @type {Entity}
-	 * @public
-	 * @readonly
-	 * @memberof OptionalEntity
-	 * @throws {Error} If the entity is not present.
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get knowableEntity(): Entity {
-		if (this._pack.entity === undefined) {
-			throw new Error('Entity is not present.');
-		}
-
-		return this._pack.entity;
-	}
-
-	/**
-	 * Check if the entity is present.
-	 *
-	 * @type {boolean}
-	 * @public
-	 * @readonly
-	 * @memberof OptionalEntity
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isPresent(): boolean {
-		return this._pack.entity !== undefined;
-	}
-
-	/**
-	 * Check if the entity is not present.
-	 *
-	 * @type {boolean}
-	 * @public
-	 * @readonly
-	 * @memberof OptionalEntity
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isAbsent(): boolean {
-		return this._pack.entity === undefined;
-	}
-
-	/**
-	 * Clone the optional entity.
-	 *
-	 * @returns {OptionalEntity<Entity, ID>} The cloned optional entity.
-	 * @public
-	 * @memberof OptionalEntity
-	 * @since 3.3.2
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public clone(): OptionalEntity<Entity, ID> {
-		return new OptionalEntity<Entity, ID>(this._pack.id, this._pack.entity);
 	}
 
 	/**

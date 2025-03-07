@@ -1,6 +1,7 @@
 import type { EntityID } from './EntityID';
-import { CollectionOfEntity } from './CollectionOfEntity';
 import type { IEntity } from './types';
+
+import { CollectionOfEntity } from './CollectionOfEntity';
 
 /**
  * @file A collection of entities.
@@ -8,7 +9,7 @@ import type { IEntity } from './types';
  */
 export class CollectionOfRelatedEntity<
 	Entity extends IEntity<ID>,
-	ID extends EntityID<any> = EntityID<any>
+	ID extends EntityID<any> = EntityID<any>,
 > extends CollectionOfEntity<Entity, ID> {
 	/**
 	 * Clone the collection.

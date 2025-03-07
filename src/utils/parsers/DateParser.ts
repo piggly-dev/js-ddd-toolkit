@@ -1,10 +1,27 @@
 import moment from 'moment-timezone';
-import { TDateInput, TOrEmpty, TOrNull, TOrUndefined } from '@/types';
+
+import { TOrUndefined, TDateInput, TOrEmpty, TOrNull } from '@/types';
 
 export class DateParser {
+	public static format(
+		date: TOrEmpty<moment.Moment>,
+		format = 'YYYY-MM-DD HH:mm:ss',
+	): TOrNull<string> {
+		return DateParser.formatInTimezone(date, format, 'UTC');
+	}
+
+	public static formatInTimezone(
+		date: TOrEmpty<moment.Moment>,
+		format = 'YYYY-MM-DD HH:mm:ss',
+		tz = 'UTC',
+	): TOrNull<string> {
+		if (!date) return null;
+		return moment(date.utc()).tz(tz).format(format);
+	}
+
 	public static get(
 		date: TOrEmpty<TDateInput>,
-		_default: TDateInput
+		_default: TDateInput,
 	): moment.Moment {
 		if (date === undefined || date === null) {
 			return DateParser.toMoment(_default);
@@ -15,7 +32,7 @@ export class DateParser {
 
 	public static getAsNull(
 		date: TOrEmpty<TDateInput>,
-		_default: TOrNull<TDateInput> = null
+		_default: TOrNull<TDateInput> = null,
 	): TOrNull<moment.Moment> {
 		if (_default && date === undefined) {
 			return DateParser.toMoment(_default);
@@ -30,7 +47,7 @@ export class DateParser {
 
 	public static getAsUndefined(
 		date: TOrEmpty<TDateInput>,
-		_default: TOrUndefined<TDateInput> = undefined
+		_default: TOrUndefined<TDateInput> = undefined,
 	): TOrUndefined<moment.Moment> {
 		if (_default && date === null) {
 			return DateParser.toMoment(_default);
@@ -45,22 +62,6 @@ export class DateParser {
 
 	public static toDatabase(date: TOrEmpty<moment.Moment>): TOrUndefined<string> {
 		return date?.utc().format('YYYY-MM-DD HH:mm:ss') || undefined;
-	}
-
-	public static format(
-		date: TOrEmpty<moment.Moment>,
-		format = 'YYYY-MM-DD HH:mm:ss'
-	): TOrNull<string> {
-		return DateParser.formatInTimezone(date, format, 'UTC');
-	}
-
-	public static formatInTimezone(
-		date: TOrEmpty<moment.Moment>,
-		format = 'YYYY-MM-DD HH:mm:ss',
-		tz = 'UTC'
-	): TOrNull<string> {
-		if (!date) return null;
-		return moment(date.utc()).tz(tz).format(format);
 	}
 
 	public static toMoment(date: TDateInput, tz = 'UTC'): moment.Moment {

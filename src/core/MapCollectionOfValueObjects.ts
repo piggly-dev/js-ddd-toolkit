@@ -6,7 +6,7 @@ import { ValueObject as BaseValueObject } from './ValueObject';
  */
 export class MapCollectionOfValueObjects<
 	Key,
-	ValueObject extends BaseValueObject<any>
+	ValueObject extends BaseValueObject<any>,
 > {
 	/**
 	 * An array of value objects.
@@ -34,6 +34,32 @@ export class MapCollectionOfValueObjects<
 	}
 
 	/**
+	 * Return the value objects as an array.
+	 *
+	 * @returns {Array<ValueObject>}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get arrayOf(): Array<ValueObject> {
+		return Array.from(this._items.values());
+	}
+
+	/**
+	 * Return the number of value objects.
+	 *
+	 * @returns {number}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get length(): number {
+		return this._items.size;
+	}
+
+	/**
 	 * Add an value object to the collection.
 	 *
 	 * @param {Key} key
@@ -50,40 +76,17 @@ export class MapCollectionOfValueObjects<
 	}
 
 	/**
-	 * Remove an value object from the collection.
+	 * Get an value object by its key from the collection.
 	 *
 	 * @param {Key} key
-	 * @returns {this}
+	 * @returns {ValueObject | undefined}
 	 * @public
 	 * @memberof CollectionOfValueObject
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public remove(key: Key): this {
-		this._items.delete(key);
-		return this;
-	}
-
-	/**
-	 * Remove an value object from the collection.
-	 *
-	 * @param {ValueObject} item
-	 * @returns {this}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public removeVO(item: ValueObject): this {
-		/* eslint-disable no-restricted-syntax */
-		for (const [key, vo] of this._items) {
-			if (item.equals(vo)) {
-				this._items.delete(key);
-				break;
-			}
-		}
-
-		return this;
+	public get(key: Key): ValueObject | undefined {
+		return this._items.get(key);
 	}
 
 	/**
@@ -98,30 +101,6 @@ export class MapCollectionOfValueObjects<
 	 */
 	public has(key: Key): boolean {
 		return this._items.has(key);
-	}
-
-	/**
-	 * Check if the collection has an value object.
-	 *
-	 * @param {ValueObject} item
-	 * @returns {boolean}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public hasVO(item: ValueObject): boolean {
-		let has = false;
-
-		/* eslint-disable no-restricted-syntax */
-		for (const [_, vo] of this._items) {
-			if (item.equals(vo)) {
-				has = true;
-				break;
-			}
-		}
-
-		return has;
 	}
 
 	/**
@@ -153,42 +132,61 @@ export class MapCollectionOfValueObjects<
 	}
 
 	/**
-	 * Get an value object by its key from the collection.
+	 * Check if the collection has an value object.
+	 *
+	 * @param {ValueObject} item
+	 * @returns {boolean}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasVO(item: ValueObject): boolean {
+		let has = false;
+
+		for (const [_, vo] of this._items) {
+			if (item.equals(vo)) {
+				has = true;
+				break;
+			}
+		}
+
+		return has;
+	}
+
+	/**
+	 * Remove an value object from the collection.
 	 *
 	 * @param {Key} key
-	 * @returns {ValueObject | undefined}
+	 * @returns {this}
 	 * @public
 	 * @memberof CollectionOfValueObject
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get(key: Key): ValueObject | undefined {
-		return this._items.get(key);
+	public remove(key: Key): this {
+		this._items.delete(key);
+		return this;
 	}
 
 	/**
-	 * Return the value objects as an array.
+	 * Remove an value object from the collection.
 	 *
-	 * @returns {Array<ValueObject>}
+	 * @param {ValueObject} item
+	 * @returns {this}
 	 * @public
 	 * @memberof CollectionOfValueObject
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get arrayOf(): Array<ValueObject> {
-		return Array.from(this._items.values());
-	}
+	public removeVO(item: ValueObject): this {
+		for (const [key, vo] of this._items) {
+			if (item.equals(vo)) {
+				this._items.delete(key);
+				break;
+			}
+		}
 
-	/**
-	 * Return the number of value objects.
-	 *
-	 * @returns {number}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get length(): number {
-		return this._items.size;
+		return this;
 	}
 }

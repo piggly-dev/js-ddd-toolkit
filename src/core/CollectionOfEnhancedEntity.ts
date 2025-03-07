@@ -8,5 +8,5 @@ import { IEntity } from './types';
  */
 export class CollectionOfEnhancedEntity<
 	Entity extends IEntity<ID>,
-	ID extends EntityID<any> = EntityID<any>
+	ID extends EntityID<any> = EntityID<any>,
 > extends CollectionOfEntity<Entity, ID> {}

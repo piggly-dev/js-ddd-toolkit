@@ -10,9 +10,9 @@ export class InvalidPayloadError extends BusinessRuleViolationError {
 		message: string,
 		hint: string,
 		extra?: {
-			formErrors?: string[];
 			fieldErrors?: Record<string, any>;
-		}
+			formErrors?: string[];
+		},
 	) {
 		const errors: any = { form: ['Invalid payload.'] };
 

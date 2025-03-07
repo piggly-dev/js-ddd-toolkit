@@ -155,3 +155,16 @@
 ## 3.7.1 at `2025-03-01`
 
 * [Fix] `CollectionOfEnhancedAttributes` should extend `AbstractCollectionOfEnhancedAttributes`.
+
+## 4.0.0 at `2025-03-07`
+
+* [Breaking] Remove `joi` as a dependency;
+* [Breaking] Remove `SchemaValidator` class;
+* [Breaking] Remove `schemaValidator` function, use `evaluateSchema` instead;
+* [Add] `zod` as a dependency, add `evaluateSchema` function as zod compatible, and add `InvalidPayloadSchemaError` error;
+* [Add] `LoggerService` class to handle logging, moved from `@piggly/fastify-chassis`;
+* [Add] `JWTBuilderService` class to handle JWT (`jose` is optional dependency, should be installed when needed), moved from `@piggly/fastify-chassis`;
+* [Add] `CryptoService` class to handle crypto (`bcrypt` is optional dependency, should be installed when needed), moved from `@piggly/fastify-chassis`.
+* [Add] `EnvironmentType` type to handle environment types.
+* [Add] `loadConfigIni`, `loadDotEnv` and `loadYaml` (`js-yaml` and `dotenv` are optional dependencies, should be installed when needed) functions to handle configuration files.
+* [Add] `sanitizeRecursively` function to sanitize a param recursively.

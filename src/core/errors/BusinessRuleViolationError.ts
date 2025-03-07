@@ -1,4 +1,5 @@
 import crc from 'crc';
+
 import { DomainError } from './DomainError';
 
 /**
@@ -8,10 +9,10 @@ import { DomainError } from './DomainError';
 export class BusinessRuleViolationError extends DomainError {
 	constructor(
 		name: string,
-		message: string | string[],
-		hint: string | string[] = 'Try again later.',
+		message: string[] | string,
+		hint: string[] | string = 'Try again later.',
 		code = 422,
-		extra?: Record<string, any>
+		extra?: Record<string, any>,
 	) {
 		super(
 			name,
@@ -19,7 +20,7 @@ export class BusinessRuleViolationError extends DomainError {
 			typeof message === 'string' ? message : message.join(', '),
 			code,
 			typeof hint === 'string' ? hint : hint.join(', '),
-			extra
+			extra,
 		);
 	}
 }

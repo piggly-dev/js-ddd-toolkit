@@ -1,4 +1,5 @@
 import { TOrNull } from '@/types';
+
 import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './types';
 
 /**
@@ -6,6 +7,19 @@ import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './typ
  * @copyright Piggly Lab 2023
  */
 export class DomainError implements IDomainError {
+	/**
+	 * The error context.
+	 * Better to add data to inspect response.
+	 *
+	 * @type {Record<string, any>}
+	 * @protected
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _context?: Record<string, any>;
+
 	/**
 	 * The error class name.
 	 *
@@ -19,30 +33,6 @@ export class DomainError implements IDomainError {
 	protected _is: Array<string> = ['DomainError'];
 
 	/**
-	 * The error name.
-	 *
-	 * @type {string}
-	 * @public
-	 * @readonly
-	 * @memberof DomainError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly name: string;
-
-	/**
-	 * The error message.
-	 *
-	 * @type {string}
-	 * @public
-	 * @readonly
-	 * @memberof DomainError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly message: string;
-
-	/**
 	 * The error internal code.
 	 *
 	 * @type {number}
@@ -53,30 +43,6 @@ export class DomainError implements IDomainError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly code: number;
-
-	/**
-	 * The error HTTP status code.
-	 *
-	 * @type {number}
-	 * @public
-	 * @readonly
-	 * @memberof DomainError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly status: number;
-
-	/**
-	 * The error hint.
-	 *
-	 * @type {string | undefined}
-	 * @public
-	 * @readonly
-	 * @memberof DomainError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly hint?: string;
 
 	/**
 	 * The extra error data.
@@ -92,17 +58,52 @@ export class DomainError implements IDomainError {
 	public readonly extra?: Record<string, any>;
 
 	/**
-	 * The error context.
-	 * Better to add data to inspect response.
+	 * The error hint.
 	 *
-	 * @type {Record<string, any>}
-	 * @protected
+	 * @type {string | undefined}
+	 * @public
 	 * @readonly
 	 * @memberof DomainError
-	 * @since 3.2.0
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _context?: Record<string, any>;
+	public readonly hint?: string;
+
+	/**
+	 * The error message.
+	 *
+	 * @type {string}
+	 * @public
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly message: string;
+
+	/**
+	 * The error name.
+	 *
+	 * @type {string}
+	 * @public
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly name: string;
+
+	/**
+	 * The error HTTP status code.
+	 *
+	 * @type {number}
+	 * @public
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly status: number;
 
 	/**
 	 * Creates an instance of DomainError.
@@ -125,7 +126,7 @@ export class DomainError implements IDomainError {
 		message?: string,
 		status?: number,
 		hint?: string,
-		extra?: Record<string, any>
+		extra?: Record<string, any>,
 	) {
 		if (extra && typeof extra !== 'object') {
 			throw new Error('Extra must be an object.');
@@ -137,6 +138,20 @@ export class DomainError implements IDomainError {
 		this.status = status ?? 500;
 		this.hint = hint;
 		this.extra = extra !== undefined ? Object.freeze(extra) : undefined;
+	}
+
+	/**
+	 * Check if the error is an instance of the given class.
+	 *
+	 * @param {string} class_name
+	 * @returns {boolean}
+	 * @public
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public is(class_name: string): boolean {
+		return this._is.includes(class_name);
 	}
 
 	/**
@@ -152,10 +167,10 @@ export class DomainError implements IDomainError {
 	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
 		const object = {
 			code: this.code,
-			name: this.name,
-			message: this.message,
-			hint: this.hint ?? null,
 			extra: this.extra ?? null,
+			hint: this.hint ?? null,
+			message: this.message,
+			name: this.name,
 		};
 
 		hidden.forEach(prop => {
@@ -174,28 +189,14 @@ export class DomainError implements IDomainError {
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toObject(): DomainErrorJSON & { context: TOrNull<Record<string, any>> } {
+	public toObject(): { context: TOrNull<Record<string, any>> } & DomainErrorJSON {
 		return {
 			code: this.code,
-			name: this.name,
-			message: this.message,
-			hint: this.hint ?? null,
-			extra: this.extra ?? null,
 			context: this._context ?? null,
+			extra: this.extra ?? null,
+			hint: this.hint ?? null,
+			message: this.message,
+			name: this.name,
 		};
-	}
-
-	/**
-	 * Check if the error is an instance of the given class.
-	 *
-	 * @param {string} class_name
-	 * @returns {boolean}
-	 * @public
-	 * @memberof DomainError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public is(class_name: string): boolean {
-		return this._is.includes(class_name);
 	}
 }

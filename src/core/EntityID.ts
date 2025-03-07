@@ -1,10 +1,21 @@
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'node:crypto';
 
 /**
  * @file Manages entity identifier.
  * @copyright Piggly Lab 2023
  */
 export class EntityID<Value = string> {
+	/**
+	 * Indicates if identifier was randomly generated.
+	 *
+	 * @type {boolean}
+	 * @protected
+	 * @memberof EntityUUID
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _random: boolean;
+
 	/**
 	 * The raw value of the identifier.
 	 *
@@ -16,17 +27,6 @@ export class EntityID<Value = string> {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly value: Value;
-
-	/**
-	 * Indicates if identifier was randomly generated.
-	 *
-	 * @type {boolean}
-	 * @protected
-	 * @memberof EntityUUID
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _random: boolean;
 
 	/**
 	 * Creates an instance of EntityID.
@@ -92,6 +92,23 @@ export class EntityID<Value = string> {
 	}
 
 	/**
+	 * Returns an integer representation of the identifier.
+	 *
+	 * @returns {number}
+	 * @public
+	 * @memberof EntityID
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public toNumber(): number {
+		if (typeof this.value === 'number') {
+			return this.value;
+		}
+
+		return Number(this.value);
+	}
+
+	/**
 	 * Returns a string representation of the identifier.
 	 *
 	 * @returns {string}
@@ -114,23 +131,6 @@ export class EntityID<Value = string> {
 	}
 
 	/**
-	 * Returns an integer representation of the identifier.
-	 *
-	 * @returns {number}
-	 * @public
-	 * @memberof EntityID
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public toNumber(): number {
-		if (typeof this.value === 'number') {
-			return this.value;
-		}
-
-		return Number(this.value);
-	}
-
-	/**
 	 * Generate a random value to entity id.
 	 *
 	 * @protected
@@ -139,6 +139,6 @@ export class EntityID<Value = string> {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected generateRandom(): Value {
-		return uuidv4() as Value;
+		return crypto.randomUUID() as Value;
 	}
 }

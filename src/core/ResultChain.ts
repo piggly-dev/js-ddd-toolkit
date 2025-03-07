@@ -1,6 +1,6 @@
 import { DomainError } from './errors/DomainError';
-import { Result } from './Result';
 import { ResultFn } from './types';
+import { Result } from './Result';
 
 /**
  * @file Base result  chainclass.
@@ -8,16 +8,15 @@ import { ResultFn } from './types';
  */
 export class ResultChain {
 	/**
-	 * Collection of successful results.
+	 * Check if the chain has been canceled.
 	 *
-	 * @type {Map<string, Result<any, DomainError>>}
 	 * @protected
 	 * @readonly
 	 * @memberof ResultChain
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _results?: Map<string, Result<any, DomainError>>;
+	protected _cancel = false;
 
 	/**
 	 * Collection of functions to be executed.
@@ -32,6 +31,17 @@ export class ResultChain {
 	protected _chain?: Map<string, ResultFn<any, any, DomainError>>;
 
 	/**
+	 * Check if the chain has been executed.
+	 *
+	 * @protected
+	 * @readonly
+	 * @memberof ResultChain
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _executed = false;
+
+	/**
 	 * Last result.
 	 *
 	 * @type {Result<any, DomainError>}
@@ -44,52 +54,16 @@ export class ResultChain {
 	protected _last: Result<any, DomainError> = Result.ok(false);
 
 	/**
-	 * Check if the chain has been executed.
+	 * Collection of successful results.
 	 *
+	 * @type {Map<string, Result<any, DomainError>>}
 	 * @protected
 	 * @readonly
 	 * @memberof ResultChain
 	 * @since 3.2.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _executed = false;
-
-	/**
-	 * Check if the chain has been canceled.
-	 *
-	 * @protected
-	 * @readonly
-	 * @memberof ResultChain
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _cancel = false;
-
-	/**
-	 * Check if the chain is initialized.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof ResultChain
-	 * @since 3.2.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isInitialized(): boolean {
-		return this._results !== undefined && this._chain !== undefined;
-	}
-
-	/**
-	 * Check if the chain has finished.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof ResultChain
-	 * @since 3.2.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public hasFinished(): boolean {
-		return this._executed;
-	}
+	protected _results?: Map<string, Result<any, DomainError>>;
 
 	/**
 	 * Begin the chain.
@@ -137,7 +111,7 @@ export class ResultChain {
 	 */
 	public chain<PrevData, NextData, NextError extends DomainError = DomainError>(
 		key: string,
-		fn: ResultFn<PrevData, NextData, NextError>
+		fn: ResultFn<PrevData, NextData, NextError>,
 	): this {
 		if (!this.isInitialized()) {
 			throw new Error('ResultChain not initialized.');
@@ -152,6 +126,32 @@ export class ResultChain {
 	}
 
 	/**
+	 * Check if the chain has finished.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof ResultChain
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasFinished(): boolean {
+		return this._executed;
+	}
+
+	/**
+	 * Check if the chain is initialized.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof ResultChain
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isInitialized(): boolean {
+		return this._results !== undefined && this._chain !== undefined;
+	}
+
+	/**
 	 * Get a result from the chain.
 	 *
 	 * @param {string} key
@@ -162,15 +162,14 @@ export class ResultChain {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public resultFor<ResponseData, ResponseError extends DomainError = DomainError>(
-		key: string
+		key: string,
 	): Result<ResponseData, ResponseError> {
 		if (!this._results || !this._results.has(key)) {
 			throw new Error(
-				`Result for key "${key}" is not available. Did you forget to run the chain?`
+				`Result for key "${key}" is not available. Did you forget to run the chain?`,
 			);
 		}
 
-		/* eslint-disable @typescript-eslint/no-non-null-assertion */
 		return this._results.get(key)! as Result<ResponseData, ResponseError>;
 	}
 
@@ -185,7 +184,7 @@ export class ResultChain {
 	 */
 	public async run<
 		ResponseData,
-		ResponseError extends DomainError = DomainError
+		ResponseError extends DomainError = DomainError,
 	>(): Promise<Result<ResponseData, ResponseError>> {
 		if (!this.isInitialized()) {
 			throw new Error('ResultChain not initialized.');
@@ -195,9 +194,7 @@ export class ResultChain {
 			throw new Error('ResultChain already finished. Restart the chain.');
 		}
 
-		/* eslint-disable no-restricted-syntax */
 		for (const [key, fn] of this._chain?.entries() ?? []) {
-			/* eslint-disable no-await-in-loop */
 			this._last = await Promise.resolve(fn(this._last));
 			this._results?.set(key, this._last);
 

@@ -6,7 +6,7 @@ import { EnhancedAttribute } from './EnhancedAttribute';
  * @copyright Piggly Lab 2025
  */
 export class CollectionOfEnhancedAttributes<
-	Attribute extends EnhancedAttribute<any>
+	Attribute extends EnhancedAttribute<any>,
 > extends AbstractCollectionOfEnhancedAttributes<Attribute> {
 	/**
 	 * Return the attributes as an array.
