@@ -31,6 +31,32 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	}
 
 	/**
+	 * Return the value objects as an array.
+	 *
+	 * @returns {Array<ValueObject>}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get arrayOf(): Array<ValueObject> {
+		return this._items;
+	}
+
+	/**
+	 * Return the number of value objects.
+	 *
+	 * @returns {number}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get length(): number {
+		return this._items.length;
+	}
+
+	/**
 	 * Add an value object to the collection.
 	 *
 	 * @param {ValueObject} item
@@ -50,24 +76,31 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	}
 
 	/**
-	 * Remove an value object from the collection.
+	 * Find an value object by its content from the collection.
 	 *
 	 * @param {ValueObject} item
-	 * @returns {this}
+	 * @returns {ValueObject | undefined}
 	 * @public
 	 * @memberof CollectionOfValueObject
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public remove(item: ValueObject): this {
-		const index = this._items.indexOf(item);
+	public find(item: ValueObject): ValueObject | undefined {
+		return this._items.find(_item => _item.equals(item));
+	}
 
-		if (index === -1) {
-			return this;
-		}
-
-		this._items.splice(index, 1);
-		return this;
+	/**
+	 * Get an value object by its index from the collection.
+	 *
+	 * @param {number} index
+	 * @returns {ValueObject | undefined}
+	 * @public
+	 * @memberof CollectionOfValueObject
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get(index: number): ValueObject | undefined {
+		return this._items[index] || undefined;
 	}
 
 	/**
@@ -113,56 +146,23 @@ export class CollectionOfValueObjects<ValueObject extends BaseValueObject<any>> 
 	}
 
 	/**
-	 * Get an value object by its index from the collection.
-	 *
-	 * @param {number} index
-	 * @returns {ValueObject | undefined}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get(index: number): ValueObject | undefined {
-		return this._items[index] || undefined;
-	}
-
-	/**
-	 * Find an value object by its content from the collection.
+	 * Remove an value object from the collection.
 	 *
 	 * @param {ValueObject} item
-	 * @returns {ValueObject | undefined}
+	 * @returns {this}
 	 * @public
 	 * @memberof CollectionOfValueObject
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public find(item: ValueObject): ValueObject | undefined {
-		return this._items.find(_item => _item.equals(item));
-	}
+	public remove(item: ValueObject): this {
+		const index = this._items.indexOf(item);
 
-	/**
-	 * Return the value objects as an array.
-	 *
-	 * @returns {Array<ValueObject>}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 2.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get arrayOf(): Array<ValueObject> {
-		return this._items;
-	}
+		if (index === -1) {
+			return this;
+		}
 
-	/**
-	 * Return the number of value objects.
-	 *
-	 * @returns {number}
-	 * @public
-	 * @memberof CollectionOfValueObject
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get length(): number {
-		return this._items.length;
+		this._items.splice(index, 1);
+		return this;
 	}
 }

@@ -1,71 +1,71 @@
 import type {
-	JSONExportable,
 	ObjectExportable,
-	TOrNullable,
+	JSONExportable,
 	TOrUndefined,
+	TOrNullable,
 } from '@/types';
+
+export type ApplicationErrorJSON = {
+	previous?: TOrNullable<PreviousErrorJSON>;
+} & DomainErrorJSON;
+
+export type DomainErrorHiddenProp = 'message' | 'extra' | 'code' | 'name' | 'hint';
 
 export type DomainErrorJSON = {
 	code: number;
-	name: string;
-	message: TOrNullable<string>;
-	hint: TOrNullable<string>;
 	extra: TOrNullable<Record<any, any>>;
-};
-
-export type ApplicationErrorJSON = DomainErrorJSON & {
-	previous?: TOrNullable<PreviousErrorJSON>;
-};
-
-export type RuntimeErrorJSON = {
-	name: string;
-	message: string;
-	stack?: TOrNullable<string>;
-};
-
-export type PreviousErrorJSON = {
-	name: string;
+	hint: TOrNullable<string>;
 	message: TOrNullable<string>;
-	stack?: TOrNullable<string | PreviousErrorJSON>;
+	name: string;
 };
 
-export type PreviousError = IApplicationError | IDomainError | IRuntimeError | Error;
-
-export type DomainErrorHiddenProp = 'code' | 'name' | 'message' | 'hint' | 'extra';
+export interface IApplicationError extends IDomainError {
+	previousToObject(): TOrNullable<PreviousErrorJSON>;
+	getPrevious(): TOrUndefined<PreviousError>;
+	previous?: PreviousError;
+}
 
 export interface IDomainError
 	extends JSONExportable<DomainErrorHiddenProp, DomainErrorJSON>,
 		ObjectExportable<DomainErrorJSON> {
+	is(class_name: string): boolean;
+	extra?: Record<any, any>;
+	message?: string;
+	status: number;
+	hint?: string;
 	code: number;
 	name: string;
-	status: number;
-	message?: string;
-	hint?: string;
-	extra?: Record<any, any>;
-	is(class_name: string): boolean;
-}
-
-export interface IApplicationError extends IDomainError {
-	previous?: PreviousError;
-	getPrevious(): TOrUndefined<PreviousError>;
-	previousToObject(): TOrNullable<PreviousErrorJSON>;
 }
 
 export interface IRuntimeError
 	extends JSONExportable<
-			'code' | 'name' | 'message' | 'hint' | 'extra',
+			'message' | 'extra' | 'code' | 'name' | 'hint',
 			DomainErrorJSON
 		>,
 		ObjectExportable<DomainErrorJSON>,
 		Error {
+	previousToObject(): TOrNullable<PreviousErrorJSON>;
+	getPrevious(): TOrUndefined<PreviousError>;
+	extra?: TOrNullable<Record<any, any>>;
+	is(class_name: string): boolean;
+	hint?: TOrNullable<string>;
+	previous?: PreviousError;
+	message: string;
+	status: number;
 	code: number;
 	name: string;
-	status: number;
-	message: string;
-	hint?: TOrNullable<string>;
-	extra?: TOrNullable<Record<any, any>>;
-	previous?: PreviousError;
-	getPrevious(): TOrUndefined<PreviousError>;
-	previousToObject(): TOrNullable<PreviousErrorJSON>;
-	is(class_name: string): boolean;
 }
+
+export type PreviousError = IApplicationError | IRuntimeError | IDomainError | Error;
+
+export type PreviousErrorJSON = {
+	message: TOrNullable<string>;
+	name: string;
+	stack?: TOrNullable<PreviousErrorJSON | string>;
+};
+
+export type RuntimeErrorJSON = {
+	message: string;
+	name: string;
+	stack?: TOrNullable<string>;
+};

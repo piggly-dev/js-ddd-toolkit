@@ -1,6 +1,6 @@
 import { EventEmmiter } from './EventEmmiter';
-import { IAttribute } from './types';
 import { Attribute } from './Attribute';
+import { IAttribute } from './types';
 
 /**
  * @file Base attribute class.

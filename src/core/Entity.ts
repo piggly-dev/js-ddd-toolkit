@@ -1,5 +1,6 @@
-import { EntityID } from './EntityID';
 import type { IEntity } from './types';
+
+import { EntityID } from './EntityID';
 
 /**
  * @file Base entity class.

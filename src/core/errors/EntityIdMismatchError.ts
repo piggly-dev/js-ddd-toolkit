@@ -10,7 +10,7 @@ export class EntityIdMismatchError extends BusinessRuleViolationError {
 			'EntityIdMismatchError',
 			'Entity ID mismatch.',
 			'Entity ID does not match.',
-			422
+			422,
 		);
 	}
 }

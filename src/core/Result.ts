@@ -6,18 +6,6 @@ import { DomainError } from './errors/DomainError';
  */
 export class Result<Data, Error extends DomainError> {
 	/**
-	 * Success flag.
-	 *
-	 * @type {boolean}
-	 * @protected
-	 * @readonly
-	 * @memberof Result
-	 * @since 2.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly isSuccess: boolean;
-
-	/**
 	 * Available data when successful.
 	 *
 	 * @type {Data}
@@ -42,6 +30,18 @@ export class Result<Data, Error extends DomainError> {
 	private readonly _error?: DomainError;
 
 	/**
+	 * Success flag.
+	 *
+	 * @type {boolean}
+	 * @protected
+	 * @readonly
+	 * @memberof Result
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly isSuccess: boolean;
+
+	/**
 	 * Creates a new result.
 	 *
 	 * @param {boolean} isSuccess
@@ -61,19 +61,6 @@ export class Result<Data, Error extends DomainError> {
 		this.isSuccess = isSuccess;
 		this._data = data;
 		this._error = error;
-	}
-
-	/**
-	 * Checks if the result is a failure.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof Result
-	 * @since 2.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get isFailure(): boolean {
-		return !this.isSuccess;
 	}
 
 	/**
@@ -111,18 +98,16 @@ export class Result<Data, Error extends DomainError> {
 	}
 
 	/**
-	 * Creates a new successful result.
+	 * Checks if the result is a failure.
 	 *
-	 * @static
-	 * @template Success
-	 * @param {Success} data
-	 * @returns {Result<Success, never>}
+	 * @returns {boolean}
 	 * @public
 	 * @memberof Result
 	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static ok<Success>(data: Success): Result<Success, never> {
-		return new Result<Success, never>(true, data);
+	public get isFailure(): boolean {
+		return !this.isSuccess;
 	}
 
 	/**
@@ -137,8 +122,23 @@ export class Result<Data, Error extends DomainError> {
 	 * @since 2.0.0
 	 */
 	public static fail<Error extends DomainError>(
-		error: Error
+		error: Error,
 	): Result<never, DomainError> {
 		return new Result<never, DomainError>(false, undefined, error);
+	}
+
+	/**
+	 * Creates a new successful result.
+	 *
+	 * @static
+	 * @template Success
+	 * @param {Success} data
+	 * @returns {Result<Success, never>}
+	 * @public
+	 * @memberof Result
+	 * @since 2.0.0
+	 */
+	public static ok<Success>(data: Success): Result<Success, never> {
+		return new Result<Success, never>(true, data);
 	}
 }

@@ -1,6 +1,7 @@
+import type { IEntity } from './types';
+
 import { AbstractCollectionOfEntities } from './AbstractCollectionOfEntities';
 import { EntityID } from './EntityID';
-import type { IEntity } from './types';
 
 /**
  * @file A collection of entities.
@@ -8,7 +9,7 @@ import type { IEntity } from './types';
  */
 export class CollectionOfEntity<
 	Entity extends IEntity<ID>,
-	ID extends EntityID<any> = EntityID<any>
+	ID extends EntityID<any> = EntityID<any>,
 > extends AbstractCollectionOfEntities<string, Entity, ID> {
 	/**
 	 * Return the entities as an array.
@@ -22,48 +23,6 @@ export class CollectionOfEntity<
 	 */
 	public get entities(): Array<Entity> {
 		return this.knowableEntities;
-	}
-
-	/**
-	 * Get the key for an item.
-	 *
-	 * @param {Value} item
-	 * @returns {Key}
-	 * @protected
-	 * @memberof AbstractCollectionOfSome
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected getKeyFor(item: Entity): string {
-		return item.id.toString();
-	}
-
-	/**
-	 * Get the id for an item.
-	 *
-	 * @param {Value} item
-	 * @returns {ID}
-	 * @protected
-	 * @memberof AbstractCollectionOfEntities
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected getIdFor(item: Entity): ID {
-		return item.id;
-	}
-
-	/**
-	 * Get the key for a raw key.
-	 *
-	 * @param {ID} id
-	 * @returns {Key}
-	 * @protected
-	 * @memberof AbstractCollectionOfEntities
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected idToKey(id: ID): string {
-		return id.toString();
 	}
 
 	/**
@@ -83,5 +42,47 @@ export class CollectionOfEntity<
 		});
 
 		return collection;
+	}
+
+	/**
+	 * Get the id for an item.
+	 *
+	 * @param {Value} item
+	 * @returns {ID}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected getIdFor(item: Entity): ID {
+		return item.id;
+	}
+
+	/**
+	 * Get the key for an item.
+	 *
+	 * @param {Value} item
+	 * @returns {Key}
+	 * @protected
+	 * @memberof AbstractCollectionOfSome
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected getKeyFor(item: Entity): string {
+		return item.id.toString();
+	}
+
+	/**
+	 * Get the key for a raw key.
+	 *
+	 * @param {ID} id
+	 * @returns {Key}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected idToKey(id: ID): string {
+		return id.toString();
 	}
 }

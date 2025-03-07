@@ -1,5 +1,7 @@
+import crypto from 'node:crypto';
+
 import moment from 'moment-timezone';
-import { v4 as uuidv4 } from 'uuid';
+
 import { IDomainEvent } from './types';
 
 /**
@@ -9,30 +11,6 @@ import { IDomainEvent } from './types';
 export class DomainEvent<Payload extends Record<string, any>>
 	implements IDomainEvent<Payload>
 {
-	/**
-	 * Event id.
-	 *
-	 * @type {string}
-	 * @public
-	 * @readonly
-	 * @since 1.0.0
-	 * @memberof EventPayload
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	readonly id: string;
-
-	/**
-	 * Event name.
-	 *
-	 * @type {string}
-	 * @public
-	 * @readonly
-	 * @since 1.0.0
-	 * @memberof EventPayload
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	readonly name: string;
-
 	/**
 	 * Event data, where EventData may be an object.
 	 *
@@ -46,6 +24,18 @@ export class DomainEvent<Payload extends Record<string, any>>
 	readonly data: Payload;
 
 	/**
+	 * Event id.
+	 *
+	 * @type {string}
+	 * @public
+	 * @readonly
+	 * @since 1.0.0
+	 * @memberof EventPayload
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	readonly id: string;
+
+	/**
 	 * Event issued at timestamp.
 	 *
 	 * @type {number}
@@ -56,6 +46,18 @@ export class DomainEvent<Payload extends Record<string, any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	readonly issued_at: number;
+
+	/**
+	 * Event name.
+	 *
+	 * @type {string}
+	 * @public
+	 * @readonly
+	 * @since 1.0.0
+	 * @memberof EventPayload
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	readonly name: string;
 
 	/**
 	 * Constructor with event name and data.
@@ -85,6 +87,6 @@ export class DomainEvent<Payload extends Record<string, any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public generateId(): string {
-		return uuidv4();
+		return crypto.randomUUID();
 	}
 }

@@ -31,21 +31,21 @@ export class EventEmmiter {
 	}
 
 	/**
-	 * Register a new event listener.
+	 * Emit a event.
 	 *
 	 * @param {string} event
-	 * @param {EventListener} listener
+	 * @param {...any} args
 	 * @returns {void}
 	 * @public
 	 * @memberof EventEmmiter
 	 * @since 3.0.5
 	 */
-	public on(event: string, listener: EventListener): void {
+	public emit(event: string, ...args: any[]): void {
 		if (!this.events.has(event)) {
-			this.events.set(event, []);
+			return;
 		}
 
-		this.events.get(event)?.push(listener);
+		this.events.get(event)?.forEach(listener => listener(...args));
 	}
 
 	/**
@@ -70,25 +70,25 @@ export class EventEmmiter {
 
 		this.events.set(
 			event,
-			this.events.get(event)?.filter(l => l !== listener) ?? []
+			this.events.get(event)?.filter(l => l !== listener) ?? [],
 		);
 	}
 
 	/**
-	 * Emit a event.
+	 * Register a new event listener.
 	 *
 	 * @param {string} event
-	 * @param {...any} args
+	 * @param {EventListener} listener
 	 * @returns {void}
 	 * @public
 	 * @memberof EventEmmiter
 	 * @since 3.0.5
 	 */
-	public emit(event: string, ...args: any[]): void {
+	public on(event: string, listener: EventListener): void {
 		if (!this.events.has(event)) {
-			return;
+			this.events.set(event, []);
 		}
 
-		this.events.get(event)?.forEach(listener => listener(...args));
+		this.events.get(event)?.push(listener);
 	}
 }

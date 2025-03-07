@@ -1,9 +1,16 @@
-import Joi from 'joi';
-import moment from 'moment-timezone';
+import type { ZodObject, ZodSchema } from 'zod';
+
 import crypto from 'crypto';
+import fs from 'fs';
+
+import moment from 'moment-timezone';
+import sanitize from 'sanitize-html';
 
 import type { TDateInput, TOrEmpty } from '@/types';
-import { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
+
+import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
+import { DomainError } from '@/core/errors/DomainError';
+import { EnvironmentType } from '@/utils/types';
 import { Result } from '@/core/Result';
 
 import { DateParser } from './parsers/DateParser';
@@ -16,7 +23,7 @@ export function commaStringAsArray(str?: string): Array<string> {
 export const lastAvailableString = (
 	entry: string[] | string,
 	defaultValue: string,
-	separator = ','
+	separator = ',',
 ) => {
 	if (!entry) {
 		return defaultValue;
@@ -44,7 +51,7 @@ export const lastAvailableString = (
 
 export function deleteKeys<T extends Record<string, any>>(
 	obj: T,
-	keys: string[]
+	keys: string[],
 ): Partial<T> {
 	// TODO :: internal exclusion with dot
 	if (keys.length === 0) return obj;
@@ -173,7 +180,7 @@ export function toJSON(obj: string | object): object {
  * @since 3.0.0
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export function toArray<T>(val?: T | Array<T>): Array<T> {
+export function toArray<T>(val?: Array<T> | T): Array<T> {
 	if (!val) return [];
 	if (Array.isArray(val)) return val;
 	return [val];
@@ -237,29 +244,177 @@ export function splitAndTrim(str: string, separator: string): Array<string> {
 }
 
 /**
- * Validate an entry against the schema.
+ * Evaluate a schema.
  *
- * @param {Joi.Schema} schema
- * @param {any} entry
- * @param {Joi.LanguageMessages} [messages]
- * @since 2.0.2
+ * @param {string} type
+ * @param {any} input
+ * @param {ZodSchema<any>} schema
+ * @param {string} hint
+ * @param {Record<string, string>} map The map of fields. { field: 'Returning Label' }
+ * @returns {Result<any, DomainError>}
+ * @since 4.0.0
  * @returns {Result<Payload, InvalidSchemaError>}
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export const schemaValidator = <Payload>(
-	schema: Joi.Schema,
-	entry: any,
-	messages?: Joi.LanguageMessages
-): Result<Payload, InvalidSchemaError> => {
-	const { error, value } = schema.validate(entry ?? {}, {
-		messages,
-	});
+export const evaluateSchema = <Schema = any>(
+	type: string,
+	input: any,
+	schema: ZodSchema<Schema>,
+	hint?: string,
+	map?: Record<string, string>,
+): Result<Schema, DomainError> => {
+	const result = schema.safeParse(input);
 
-	if (error) {
-		return Result.fail<InvalidSchemaError>(
-			new InvalidSchemaError(error.details.map(val => val.message))
+	if (!result.success) {
+		return Result.fail(
+			new InvalidPayloadSchemaError(
+				'InvalidPayloadSchemaError',
+				hint ?? `Invalid ${type} schema. Check the payload before continue.`,
+				result.error.issues,
+				map,
+			),
 		);
 	}
 
-	return Result.ok<Payload>(value);
+	return Result.ok(result.data as Schema);
+};
+
+/**
+ * Sanitize a string recursively.
+ *
+ * @param {any} data
+ * @returns {any}
+ * @since 4.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const sanitizeRecursively = <T = any>(data: T): T => {
+	if (typeof data === 'string') {
+		return sanitize(data) as T;
+	}
+
+	if (Array.isArray(data)) {
+		return data.map(sanitizeRecursively) as T;
+	}
+
+	if (data !== null && typeof data === 'object') {
+		const sanitizedObj: any = {};
+
+		for (const key in data) {
+			sanitizedObj[key] = sanitizeRecursively(data[key]);
+		}
+
+		return sanitizedObj as T;
+	}
+
+	return data as T;
+};
+
+/**
+ * Load configuration from a ini file.
+ *
+ * @param {string} absolute_path
+ * @param {string} file_name Without the ini extension.
+ * @param {ZodObject<any>} schema
+ * @returns {string}
+ * @since 4.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const loadConfigIni = async <
+	Schema extends Record<string, any> = Record<string, any>,
+>(
+	absolute_path: string,
+	file_name: string,
+	schema: ZodObject<any>,
+): Promise<Schema> => {
+	const ini = await import('ini');
+
+	return new Promise<Schema>((res, rej) => {
+		fs.readFile(`${absolute_path}/${file_name}.ini`, 'utf-8', (err, data) => {
+			if (err) {
+				return rej(err);
+			}
+
+			schema
+				.safeParseAsync(ini.parse(data))
+				.then(parsed => {
+					if (parsed.error) {
+						return rej(new Error(parsed.error.message));
+					}
+
+					return res(parsed.data as Schema);
+				})
+				.catch(err => rej(err));
+		});
+	});
+};
+
+/**
+ * Load configuration from a dotenv file.
+ *
+ * @param {EnvironmentType} type Will be used to load the correct file: .env.develoment, .env.test, etc.
+ * @param {string} absolute_path
+ * @param {ZodObject<any>} schema
+ * @returns {string}
+ * @since 4.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const loadDotEnv = async <
+	Schema extends Record<string, any> = Record<string, any>,
+>(
+	type: EnvironmentType,
+	absolute_path: string,
+	schema: ZodObject<any>,
+): Promise<Schema> => {
+	const dotenv = await import('dotenv');
+
+	dotenv.config({
+		path: `${absolute_path}/.env.${type}`,
+	});
+
+	const parsed = schema.safeParse(process.env);
+
+	if (parsed.error) {
+		throw new Error(parsed.error.message);
+	}
+
+	return parsed.data as Schema;
+};
+
+/**
+ * Load configuration from a yaml file.
+ *
+ * @param {string} absolute_path
+ * @param {string} file_name Without the yml extension.
+ * @param {ZodObject<any>} schema
+ * @returns {string}
+ * @since 4.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const loadYaml = async <
+	Schema extends Record<string, any> = Record<string, any>,
+>(
+	absolute_path: string,
+	file_name: string,
+	schema: ZodObject<any>,
+): Promise<Schema> => {
+	const yaml = await import('js-yaml');
+
+	return new Promise<Schema>((res, rej) => {
+		fs.readFile(`${absolute_path}/${file_name}.yml`, 'utf-8', (err, data) => {
+			if (err) {
+				return rej(err);
+			}
+
+			schema
+				.safeParseAsync(yaml.load(data))
+				.then(parsed => {
+					if (parsed.error) {
+						return rej(new Error(parsed.error.message));
+					}
+
+					return res(parsed.data as Schema);
+				})
+				.catch(err => rej(err));
+		});
+	});
 };

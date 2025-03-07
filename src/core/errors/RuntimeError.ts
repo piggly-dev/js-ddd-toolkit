@@ -1,21 +1,34 @@
-import type { TOrNull, TOrNullable, TOrUndefined } from '@/types';
-
-import { DomainError } from './DomainError';
+import type { TOrUndefined, TOrNullable, TOrNull } from '@/types';
 
 import type {
-	ApplicationErrorJSON,
 	DomainErrorHiddenProp,
+	ApplicationErrorJSON,
+	PreviousErrorJSON,
 	DomainErrorJSON,
 	IRuntimeError,
 	PreviousError,
-	PreviousErrorJSON,
 } from './types';
+
+import { DomainError } from './DomainError';
 
 /**
  * @file Abstract runtime error class.
  * @copyright Piggly Lab 2024
  */
 export abstract class RuntimeError extends Error implements IRuntimeError {
+	/**
+	 * The error context.
+	 * Better to add data to inspect response.
+	 *
+	 * @type {Record<string, any>}
+	 * @protected
+	 * @readonly
+	 * @memberof DomainError
+	 * @since 3.2.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _context?: Record<string, any>;
+
 	/**
 	 * The error class name.
 	 *
@@ -29,18 +42,6 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	protected _is: Array<string> = ['RuntimeError'];
 
 	/**
-	 * The error name.
-	 *
-	 * @type {string}
-	 * @public
-	 * @readonly
-	 * @memberof RuntimeError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly name: string;
-
-	/**
 	 * The error internal code.
 	 *
 	 * @type {number}
@@ -51,30 +52,6 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly code: number;
-
-	/**
-	 * The error HTTP status code.
-	 *
-	 * @type {number}
-	 * @public
-	 * @readonly
-	 * @memberof RuntimeError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly status: number;
-
-	/**
-	 * The error hint.
-	 *
-	 * @type {string | undefined}
-	 * @public
-	 * @readonly
-	 * @memberof RuntimeError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public readonly hint?: string;
 
 	/**
 	 * The extra error data.
@@ -90,17 +67,28 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	public readonly extra?: Record<string, any>;
 
 	/**
-	 * The error context.
-	 * Better to add data to inspect response.
+	 * The error hint.
 	 *
-	 * @type {Record<string, any>}
-	 * @protected
+	 * @type {string | undefined}
+	 * @public
 	 * @readonly
-	 * @memberof DomainError
-	 * @since 3.2.0
+	 * @memberof RuntimeError
+	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _context?: Record<string, any>;
+	public readonly hint?: string;
+
+	/**
+	 * The error name.
+	 *
+	 * @type {string}
+	 * @public
+	 * @readonly
+	 * @memberof RuntimeError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly name: string;
 
 	/**
 	 * The previous error.
@@ -112,6 +100,18 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public readonly previous?: PreviousError;
+
+	/**
+	 * The error HTTP status code.
+	 *
+	 * @type {number}
+	 * @public
+	 * @readonly
+	 * @memberof RuntimeError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public readonly status: number;
 
 	/**
 	 * Creates an instance of DomainError.
@@ -135,7 +135,7 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 		status: number,
 		hint?: string,
 		extra?: Record<string, any>,
-		previous?: PreviousError
+		previous?: PreviousError,
 	) {
 		if (extra && typeof extra !== 'object') {
 			throw new Error('Extra must be an object.');
@@ -152,34 +152,6 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	}
 
 	/**
-	 * Get the object representation of the error.
-	 * Will hide the properties defined in the `hidden` array.
-	 * Also it will always hide the previous error.
-	 *
-	 * @returns {ApplicationErrorJSON}
-	 * @public
-	 * @memberof RuntimeError
-	 * @since 3.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
-		const object = {
-			code: this.code,
-			name: this.name,
-			message: this.message,
-			hint: this.hint ?? null,
-			extra: this.extra ?? null,
-			context: this._context ?? null,
-		};
-
-		hidden.forEach((key: DomainErrorHiddenProp) => {
-			delete object[key];
-		});
-
-		return object;
-	}
-
-	/**
 	 * Get the previous error.
 	 *
 	 * @returns {PreviousError}
@@ -193,26 +165,17 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	}
 
 	/**
-	 * Get the object representation of the error.
+	 * Check if the error is an instance of the given class.
 	 *
-	 * @returns {ApplicationErrorJSON}
+	 * @param {string} class_name
+	 * @returns {boolean}
 	 * @public
-	 * @memberof RuntimeError
+	 * @memberof DomainError
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toObject(): ApplicationErrorJSON & {
-		context: TOrNull<Record<string, any>>;
-	} {
-		return {
-			code: this.code,
-			name: this.name,
-			message: this.message,
-			hint: this.hint ?? null,
-			extra: this.extra ?? null,
-			context: this._context ?? null,
-			previous: this.previousToObject(),
-		};
+	public is(class_name: string): boolean {
+		return this._is.includes(class_name);
 	}
 
 	/**
@@ -228,31 +191,31 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 		if (this.previous) {
 			if (this.previous instanceof RuntimeError) {
 				return {
-					name: this.previous.name,
 					message: this.previous.message,
+					name: this.previous.name,
 					stack: this.previous.previousToObject(),
 				};
 			}
 
 			if (this.previous instanceof DomainError) {
 				return {
-					name: this.previous.name,
 					message: this.previous.message,
+					name: this.previous.name,
 					stack: null,
 				};
 			}
 
 			if (this.previous instanceof Error) {
 				return {
-					name: this.previous.name,
 					message: this.previous.message ?? null,
+					name: this.previous.name,
 					stack: this.previous.stack || null,
 				};
 			}
 
 			return {
-				name: this.previous.name,
 				message: this.previous.message ?? null,
+				name: this.previous.name,
 			};
 		}
 
@@ -260,16 +223,53 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 	}
 
 	/**
-	 * Check if the error is an instance of the given class.
+	 * Get the object representation of the error.
+	 * Will hide the properties defined in the `hidden` array.
+	 * Also it will always hide the previous error.
 	 *
-	 * @param {string} class_name
-	 * @returns {boolean}
+	 * @returns {ApplicationErrorJSON}
 	 * @public
-	 * @memberof DomainError
+	 * @memberof RuntimeError
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public is(class_name: string): boolean {
-		return this._is.includes(class_name);
+	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
+		const object = {
+			code: this.code,
+			context: this._context ?? null,
+			extra: this.extra ?? null,
+			hint: this.hint ?? null,
+			message: this.message,
+			name: this.name,
+		};
+
+		hidden.forEach((key: DomainErrorHiddenProp) => {
+			delete object[key];
+		});
+
+		return object;
+	}
+
+	/**
+	 * Get the object representation of the error.
+	 *
+	 * @returns {ApplicationErrorJSON}
+	 * @public
+	 * @memberof RuntimeError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public toObject(): {
+		context: TOrNull<Record<string, any>>;
+	} & ApplicationErrorJSON {
+		return {
+			code: this.code,
+			context: this._context ?? null,
+			extra: this.extra ?? null,
+			hint: this.hint ?? null,
+			message: this.message,
+			name: this.name,
+			previous: this.previousToObject(),
+		};
 	}
 }

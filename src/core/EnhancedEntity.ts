@@ -1,7 +1,9 @@
 import moment from 'moment-timezone';
-import { EntityID } from './EntityID';
-import { EventEmmiter } from './EventEmmiter';
+
 import type { IEntity } from './types';
+
+import { EventEmmiter } from './EventEmmiter';
+import { EntityID } from './EntityID';
 
 /**
  * @file Base entity class.
@@ -9,7 +11,7 @@ import type { IEntity } from './types';
  */
 export abstract class EnhancedEntity<
 	Props extends { updated_at: moment.Moment },
-	Id extends EntityID<any>
+	Id extends EntityID<any>,
 > implements IEntity<Id>
 {
 	/**
@@ -24,17 +26,6 @@ export abstract class EnhancedEntity<
 	protected _id: Id;
 
 	/**
-	 * The entity props.
-	 *
-	 * @type {Props}
-	 * @protected
-	 * @memberof EnhancedEntity
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _props: Props;
-
-	/**
 	 * Indicates if the entity was modified.
 	 *
 	 * @type {boolean}
@@ -44,6 +35,17 @@ export abstract class EnhancedEntity<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected _modified: boolean;
+
+	/**
+	 * The entity props.
+	 *
+	 * @type {Props}
+	 * @protected
+	 * @memberof EnhancedEntity
+	 * @since 1.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _props: Props;
 
 	/**
 	 * The event emmiter.
@@ -73,46 +75,6 @@ export abstract class EnhancedEntity<
 		this._modified = false;
 
 		this.emmiter = new EventEmmiter();
-	}
-
-	/**
-	 * Evaluate if the entity is modified.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof EnhancedEntity
-	 * @since 3.1.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isModified(): boolean {
-		return this._modified;
-	}
-
-	/**
-	 * Mark the entity as persisted.
-	 *
-	 * @public
-	 * @memberof EnhancedEntity
-	 * @since 3.1.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public markAsPersisted(): void {
-		this._modified = false;
-		this.emmiter.emit('persisted', this);
-	}
-
-	/**
-	 * Mark the entity as modified.
-	 *
-	 * @public
-	 * @memberof EnhancedEntity
-	 * @since 3.1.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected markAsModified(): void {
-		this._props.updated_at = moment().utc();
-		this._modified = true;
-		this.emmiter.emit('modified', this);
 	}
 
 	/**
@@ -151,6 +113,32 @@ export abstract class EnhancedEntity<
 	}
 
 	/**
+	 * Evaluate if the entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof EnhancedEntity
+	 * @since 3.1.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isModified(): boolean {
+		return this._modified;
+	}
+
+	/**
+	 * Mark the entity as persisted.
+	 *
+	 * @public
+	 * @memberof EnhancedEntity
+	 * @since 3.1.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public markAsPersisted(): void {
+		this._modified = false;
+		this.emmiter.emit('persisted', this);
+	}
+
+	/**
 	 * Generate a new entity id object.
 	 *
 	 * @returns {Id}
@@ -161,6 +149,20 @@ export abstract class EnhancedEntity<
 	 */
 	protected generateId(): Id {
 		return new EntityID() as Id;
+	}
+
+	/**
+	 * Mark the entity as modified.
+	 *
+	 * @public
+	 * @memberof EnhancedEntity
+	 * @since 3.1.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected markAsModified(): void {
+		this._props.updated_at = moment().utc();
+		this._modified = true;
+		this.emmiter.emit('modified', this);
 	}
 
 	/**

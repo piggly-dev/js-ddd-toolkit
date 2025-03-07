@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+
 import type { IAttribute } from './types';
 
 /**
@@ -49,22 +50,6 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	}
 
 	/**
-	 * Hash the attribute.
-	 *
-	 * @returns {string}
-	 * @public
-	 * @memberof Attribute
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public hash(): string {
-		return crypto
-			.createHash('sha256')
-			.update(JSON.stringify(this._props))
-			.digest('hex');
-	}
-
-	/**
 	 * Checks if two attributes are equal.
 	 *
 	 * @param {(Attribute|undefined|null)} [attr]
@@ -80,6 +65,22 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 		}
 
 		return this.hash() === attr.hash();
+	}
+
+	/**
+	 * Hash the attribute.
+	 *
+	 * @returns {string}
+	 * @public
+	 * @memberof Attribute
+	 * @since 3.4.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hash(): string {
+		return crypto
+			.createHash('sha256')
+			.update(JSON.stringify(this._props))
+			.digest('hex');
 	}
 
 	/**

@@ -1,12 +1,13 @@
-import { AbstractCollectionOfAttributes } from './AbstractCollectionOfAttributes';
 import type { IAttribute } from './types';
+
+import { AbstractCollectionOfAttributes } from './AbstractCollectionOfAttributes';
 
 /**
  * @file A collection of attributes.
  * @copyright Piggly Lab 2025
  */
 export class CollectionOfAttributes<
-	Attribute extends IAttribute<any>
+	Attribute extends IAttribute<any>,
 > extends AbstractCollectionOfAttributes<Attribute> {
 	/**
 	 * Return the attributes as an array.
