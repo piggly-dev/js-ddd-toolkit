@@ -7,7 +7,19 @@ import { DomainError } from './DomainError';
  * @copyright Piggly Lab 2024
  */
 export class BusinessRuleViolationError extends DomainError {
-	constructor(
+	/**
+	 * Create a new error.
+	 *
+	 * @param {string} name The name of the error.
+	 * @param {string} message The message of the error.
+	 * @param {PreviousError | undefined} previous The previous error.
+	 * @public
+	 * @constructor
+	 * @memberof BusinessRuleViolationError
+	 * @since 4.1.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public constructor(
 		name: string,
 		message: string[] | string,
 		hint: string[] | string = 'Try again later.',
