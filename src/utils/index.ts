@@ -1,6 +1,7 @@
 import type { ZodObject, ZodSchema } from 'zod';
 
 import crypto from 'crypto';
+import path from 'path';
 import fs from 'fs';
 
 import moment from 'moment-timezone';
@@ -474,4 +475,32 @@ export const displayLog = (
 		display,
 		message: `[${moment().utc().format()}] [${uuid}] ${display}\n`,
 	};
+};
+
+/**
+ * Parse the absolute path.
+ *
+ * @param abspath - The absolute path to parse.
+ * @returns The absolute path.
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const parseAbspath = (abspath?: string): string => {
+	if (!abspath) {
+		abspath = './';
+	}
+
+	if (abspath.startsWith('./') === true) {
+		abspath = path.resolve(process.cwd(), abspath);
+	}
+
+	if (abspath.startsWith('/') === false) {
+		throw new Error('Absolute path is required and must be absolute.');
+	}
+
+	if (fs.existsSync(abspath) === false) {
+		throw new Error('The absolute path does not exist.');
+	}
+
+	return abspath;
 };

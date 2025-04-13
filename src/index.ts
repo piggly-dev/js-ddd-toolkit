@@ -69,6 +69,7 @@ export {
 	getTimestamp,
 	randomString,
 	splitAndTrim,
+	parseAbspath,
 	parseToJson,
 	removeIndex,
 	loadDotEnv,
