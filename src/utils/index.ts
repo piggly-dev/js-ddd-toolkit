@@ -504,3 +504,25 @@ export const parseAbspath = (abspath?: string): string => {
 
 	return abspath;
 };
+
+/**
+ * Generate a random string.
+ * Unsafe, use only for non-critical purposes.
+ *
+ * @param size - The size of the string
+ * @returns The string
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const generateString = (
+	size: number = 6,
+	characters: string = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789',
+) => {
+	let result = '';
+
+	for (let i = 0; i < size; i++) {
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+
+	return result;
+};
