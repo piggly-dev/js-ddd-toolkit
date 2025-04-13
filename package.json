@@ -97,6 +97,7 @@
 	},
 	"dependencies": {
 		"crc": "^4.3.2",
+		"debug": "^4.4.0",
 		"moment-timezone": "^0.5.45",
 		"sanitize-html": "^2.14.0",
 		"shallow-equal-object": "^1.1.1",
@@ -109,7 +110,7 @@
 		"bcrypt": ">=5.1",
 		"dotenv": ">=16.4",
 		"ini": ">=5.0",
-		"js-yaml": ">=4.1",
-		"jose": ">=6.0"
+		"jose": ">=6.0",
+		"js-yaml": ">=4.1"
 	}
 }

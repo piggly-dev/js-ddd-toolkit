@@ -168,3 +168,14 @@
 * [Add] `EnvironmentType` type to handle environment types.
 * [Add] `loadConfigIni`, `loadDotEnv` and `loadYaml` (`js-yaml` and `dotenv` are optional dependencies, should be installed when needed) functions to handle configuration files.
 * [Add] `sanitizeRecursively` function to sanitize a param recursively.
+
+## 4.1.0 at `2025-04-14`
+
+* [Add] `debug` dependecy to display debug logs;
+* [Fix] `toJSON` method must have optional parameters at `ApplicationError` class;
+* [Change] `InvalidSchemaError` now extends `BusinessRuleViolationError`;
+* [Fix] Overall typing issues;
+* [Change] Options for `LoggerService` class without breaking changes;
+* [Add] `FileLogStreamService` class to handle file logging with `LoggerService`;
+* [Add] `OnGoingPromisesService` class to handle ongoing promises on `LoggerService`;
+* [Add] `displayLog` utility function to handle log display;

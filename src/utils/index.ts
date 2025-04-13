@@ -9,6 +9,7 @@ import sanitize from 'sanitize-html';
 import type { TDateInput, TOrEmpty } from '@/types';
 
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
+import { CryptoService } from '@/core/services/CryptoService';
 import { DomainError } from '@/core/errors/DomainError';
 import { EnvironmentType } from '@/utils/types';
 import { Result } from '@/core/Result';
@@ -417,4 +418,60 @@ export const loadYaml = async <
 				.catch(err => rej(err));
 		});
 	});
+};
+
+/**
+ * Parse a log message. It will return an object with:
+ *
+ * - uuid: The UUID of the log.
+ * - date: The date of the log in format: `YYYY-MM-DD HH:mm:ss`.
+ * - display: The display of the log in format: `(level) "message" - arg1 - arg2 - arg3 - ...`.
+ * - message: The message of the log in format: `[date] [uuid] display\n`.
+ *
+ * @param {string} level
+ * @param {string} message
+ * @param {...any[]} args
+ * @returns {{ uuid: string; date: string; display: string; message: string }}
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const displayLog = (
+	level: 'debug' | 'error' | 'fatal' | 'info' | 'warn',
+	message: string,
+	...args: any[]
+): { uuid: string; date: string; display: string; message: string } => {
+	const uuid = CryptoService.generateUUID();
+	const date = moment().utc().format();
+
+	let display = `(${level}) "${message}"`;
+
+	if (args.length > 0) {
+		display += ` - ${args
+			.map(arg => {
+				if (arg instanceof DomainError) {
+					return JSON.stringify(arg.toJSON());
+				}
+
+				if (arg instanceof Error) {
+					return arg.stack ?? arg.message;
+				}
+
+				switch (typeof arg) {
+					case 'object':
+						return `'${JSON.stringify(arg)}'`;
+					case 'string':
+						return `"${arg}"`;
+					default:
+						return String(arg);
+				}
+			})
+			.join(' - ')}`;
+	}
+
+	return {
+		uuid,
+		date,
+		display,
+		message: `[${moment().utc().format()}] [${uuid}] ${display}\n`,
+	};
 };

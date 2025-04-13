@@ -46,13 +46,16 @@ export { RuntimeError } from '@/core/errors/RuntimeError';
 export { DateParser } from '@/utils/parsers/DateParser';
 
 export { CryptoService } from '@/core/services/CryptoService';
+export { FileLogStreamService } from '@/core/services/FileLogStreamService';
 export { JWTBuilderService } from '@/core/services/JWTBuilderService';
 export { LoggerService } from '@/core/services/LoggerService';
+export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 
 export {
 	JWTBuilderServiceSettings,
 	LoggerServiceSettings,
 	LoggerFn,
+	LogLevel,
 } from '@/core/services/types';
 
 export { EnvironmentType } from '@/utils/types';
@@ -72,6 +75,7 @@ export {
 	deleteKeys,
 	parseEmpty,
 	removeItem,
+	displayLog,
 	toRFC3339,
 	loadYaml,
 	preserve,
