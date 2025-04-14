@@ -171,11 +171,14 @@
 
 ## 4.1.0 at `2025-04-14`
 
-* [Add] `debug` dependecy to display debug logs;
-* [Fix] `toJSON` method must have optional parameters at `ApplicationError` class;
+* [Update] Overall dependecies updates;
 * [Change] `InvalidSchemaError` now extends `BusinessRuleViolationError`;
-* [Fix] Overall typing issues;
 * [Change] Options for `LoggerService` class without breaking changes;
+* [Fix] Overall typing issues;
+* [Fix] `toJSON` method must have optional parameters at `ApplicationError` class;
+* [Add] `debug` dependecy to display debug logs;
 * [Add] `FileLogStreamService` class to handle file logging with `LoggerService`;
 * [Add] `OnGoingPromisesService` class to handle ongoing promises on `LoggerService`;
+* [Add] `evaluateAbspath` and `parseAbspath` utility functions to handle abspath;
 * [Add] `displayLog` utility function to handle log display;
+* [Add] Schemas for services settings.
