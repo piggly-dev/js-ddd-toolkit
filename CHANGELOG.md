@@ -182,3 +182,7 @@
 * [Add] `evaluateAbspath` and `parseAbspath` utility functions to handle abspath;
 * [Add] `displayLog` utility function to handle log display;
 * [Add] Schemas for services settings.
+
+## 4.1.1 at `2025-04-14`
+
+* [Fix] Typing issues. Updating `tsc-alias` broke the types build.
