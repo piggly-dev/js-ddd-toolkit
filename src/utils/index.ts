@@ -506,6 +506,34 @@ export const parseAbspath = (abspath?: string): string => {
 };
 
 /**
+ * Evaluate the absolute path.
+ *
+ * @param abspath - The absolute path to evaluate.
+ * @returns True if the absolute path is valid, false otherwise.
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const evaluateAbspath = (abspath?: string): boolean => {
+	if (!abspath) {
+		return false;
+	}
+
+	if (abspath.startsWith('./') === true) {
+		return true;
+	}
+
+	if (abspath.startsWith('/') === false) {
+		return false;
+	}
+
+	if (fs.existsSync(abspath) === false) {
+		return false;
+	}
+
+	return true;
+};
+
+/**
  * Generate a random string.
  * Unsafe, use only for non-critical purposes.
  *

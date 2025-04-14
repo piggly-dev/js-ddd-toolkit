@@ -51,13 +51,24 @@ export { JWTBuilderService } from '@/core/services/JWTBuilderService';
 export { LoggerService } from '@/core/services/LoggerService';
 export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 
+export { IStoreService } from '@/core/services/types';
+
 export {
+	OnGoingPromisesServiceSettingsSchema,
+	FileLogStreamServiceSettingsSchema,
+	JWTBuilderServiceSettingsSchema,
+	OnGoingPromisesServiceSettings,
+	FileLogStreamServiceSettings,
+	OnGoingPromisesServiceEntry,
+	LoggerServiceSettingsSchema,
 	JWTBuilderServiceSettings,
+	FileLogStreamServiceEntry,
+	JWTBuilderServiceEntry,
 	LoggerServiceSettings,
-	IStoreService,
+	LoggerServiceEntry,
 	LoggerFn,
 	LogLevel,
-} from '@/core/services/types';
+} from '@/core/services/schemas';
 
 export { EnvironmentType } from '@/utils/types';
 
@@ -65,6 +76,7 @@ export {
 	lastAvailableString,
 	sanitizeRecursively,
 	commaStringAsArray,
+	evaluateAbspath,
 	evaluateSchema,
 	generateString,
 	loadConfigIni,

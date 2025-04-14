@@ -1,11 +1,15 @@
 /* eslint-disable no-console */
 import debug from 'debug';
 
+import {
+	LoggerServiceSettingsSchema,
+	LoggerServiceSettings,
+	LoggerServiceEntry,
+	LogLevel,
+} from '@/core/services/schemas';
 import { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 import { FileLogStreamService } from '@/core/services/FileLogStreamService';
 import { displayLog } from '@/utils';
-
-import type { LoggerServiceSettings, LogLevel } from './types';
 
 import { ServiceProvider } from '../ServiceProvider';
 
@@ -74,26 +78,13 @@ export class LoggerService {
 	 * @public
 	 * @constructor
 	 * @memberof LoggerService
+	 * @throws {ZodError} If settings are invalid.
 	 * @since 4.0.0
 	 * @since 4.1.0 Added ignoreLevels, trackOnGoing.
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(settings: Partial<LoggerServiceSettings> = {}) {
-		this._settings = {
-			alwaysOnConsole: settings.alwaysOnConsole ?? false,
-			callbacks: settings.callbacks ?? {},
-			file: settings.file,
-			ignoreLevels: settings.ignoreLevels ?? [],
-			ignoreUnset: settings.ignoreUnset ?? true,
-			onError: settings.onError,
-			onFlush: settings.onFlush,
-			promises: settings.promises ?? {
-				killOnLimit: false,
-				limit: 10000,
-				track: ['onError', 'onFatal'],
-			},
-		};
-
+	public constructor(settings: LoggerServiceEntry = {}) {
+		this._settings = LoggerServiceSettingsSchema.parse(settings);
 		this._ongoing = new OnGoingPromisesService(this._settings.promises);
 
 		if (this._settings.file) {

@@ -4,10 +4,11 @@ import path from 'path';
 import debug from 'debug';
 
 import {
-	PartialFileLogStreamServiceSettings,
+	FileLogStreamServiceSettingsSchema,
 	FileLogStreamServiceSettings,
+	FileLogStreamServiceEntry,
 	LogLevel,
-} from '@/core/services/types';
+} from '@/core/services/schemas';
 
 /**
  * @file FileLogStreamService.
@@ -63,20 +64,15 @@ export class FileLogStreamService {
 	/**
 	 * Constructor.
 	 *
-	 * @param {PartialFileLogStreamServiceSettings} settings
+	 * @param {FileLogStreamServiceSettings} settings
 	 * @public
 	 * @memberof FileLogStreamService
+	 * @throws {ZodError} If settings are invalid.
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(settings: PartialFileLogStreamServiceSettings) {
-		this._settings = {
-			abspath: settings.abspath,
-			errorThreshold: settings.errorThreshold ?? 10,
-			killOnLimit: settings.killOnLimit ?? false,
-			levels: settings.levels,
-			streamLimit: settings.streamLimit ?? 10000,
-		};
+	public constructor(settings: FileLogStreamServiceEntry) {
+		this._settings = FileLogStreamServiceSettingsSchema.parse(settings);
 
 		this._pending = new Map();
 		this._streams = new Map();

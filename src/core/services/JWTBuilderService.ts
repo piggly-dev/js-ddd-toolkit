@@ -1,6 +1,10 @@
 import type { JWTPayload } from 'jose';
 
-import type { JWTBuilderServiceSettings } from './types';
+import {
+	JWTBuilderServiceSettingsSchema,
+	JWTBuilderServiceSettings,
+	JWTBuilderServiceEntry,
+} from '@/core/services/schemas';
 
 import { ServiceProvider } from '../ServiceProvider';
 
@@ -15,7 +19,7 @@ export class JWTBuilderService {
 	 * @type {JWTBuilderServiceSettings}
 	 * @protected
 	 * @memberof JWTBuilderService
-	 * @since 4.0.0
+	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected _settings: JWTBuilderServiceSettings;
@@ -26,11 +30,12 @@ export class JWTBuilderService {
 	 * @public
 	 * @constructor
 	 * @memberof JWTBuilderService
-	 * @since 4.0.0
+	 * @throws {ZodError} If settings are invalid.
+	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(settings: JWTBuilderServiceSettings) {
-		this._settings = settings;
+	public constructor(settings: JWTBuilderServiceEntry) {
+		this._settings = JWTBuilderServiceSettingsSchema.parse(settings);
 	}
 
 	/**

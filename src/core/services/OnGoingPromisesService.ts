@@ -1,6 +1,9 @@
 import debug from 'debug';
 
-import { OnGoingPromisesServiceSettings } from '@/core/services/types';
+import {
+	OnGoingPromisesServiceSettingsSchema,
+	OnGoingPromisesServiceEntry,
+} from '@/core/services/schemas';
 
 export class OnGoingPromisesService {
 	/**
@@ -42,13 +45,16 @@ export class OnGoingPromisesService {
 	 * @public
 	 * @constructor
 	 * @memberof OnGoingPromisesService
+	 * @throws {ZodError} If settings are invalid.
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(settings: Partial<OnGoingPromisesServiceSettings>) {
+	public constructor(settings: OnGoingPromisesServiceEntry = {}) {
+		const options = OnGoingPromisesServiceSettingsSchema.parse(settings);
+
 		this._ongoing = new Set();
-		this._limit = settings.limit ?? 10000;
-		this._killOnLimit = settings.killOnLimit ?? false;
+		this._limit = options.limit;
+		this._killOnLimit = options.killOnLimit;
 	}
 
 	/**
