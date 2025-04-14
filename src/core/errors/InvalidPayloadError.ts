@@ -5,7 +5,13 @@ import { BusinessRuleViolationError } from './BusinessRuleViolationError';
  * @copyright Piggly Lab 2024
  */
 export class InvalidPayloadError extends BusinessRuleViolationError {
-	constructor(
+	/**
+	 * Create a new instance of the error.
+	 *
+	 * @since 4.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public constructor(
 		name: string,
 		message: string,
 		hint: string,

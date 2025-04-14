@@ -105,7 +105,8 @@ $RECYCLE.BIN/
 
 ### Node ###
 # Logs
-logs
+logs/*.log
+!/logs/.gitkeep
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -244,4 +245,5 @@ dist
 .svelte-kit
 
 *.code-workspace
+.clinic
 # End of https://www.toptal.com/developers/gitignore/api/dotenv,windows,linux,macos,visualstudiocode,node

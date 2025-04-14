@@ -46,14 +46,31 @@ export { RuntimeError } from '@/core/errors/RuntimeError';
 export { DateParser } from '@/utils/parsers/DateParser';
 
 export { CryptoService } from '@/core/services/CryptoService';
+export { FileLogStreamService } from '@/core/services/FileLogStreamService';
 export { JWTBuilderService } from '@/core/services/JWTBuilderService';
 export { LoggerService } from '@/core/services/LoggerService';
+export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
+
+export { IStoreService } from '@/core/services/types';
 
 export {
+	OnGoingPromisesServiceSettingsSchema,
+	FileLogStreamServiceSettingsSchema,
+	JWTBuilderServiceSettingsSchema,
+	OnGoingPromisesServiceSettings,
+	FileLogStreamServiceSettings,
+	OnGoingPromisesServiceEntry,
+	LoggerServiceSettingsSchema,
 	JWTBuilderServiceSettings,
+	FileLogStreamServiceEntry,
+	JWTBuilderServiceEntry,
 	LoggerServiceSettings,
+	LoggerServiceEntry,
+	LogLevelSchema,
+	LoggerFnSchema,
 	LoggerFn,
-} from '@/core/services/types';
+	LogLevel,
+} from '@/core/services/schemas';
 
 export { EnvironmentType } from '@/utils/types';
 
@@ -61,17 +78,21 @@ export {
 	lastAvailableString,
 	sanitizeRecursively,
 	commaStringAsArray,
+	evaluateAbspath,
 	evaluateSchema,
+	generateString,
 	loadConfigIni,
 	getTimestamp,
 	randomString,
 	splitAndTrim,
+	parseAbspath,
 	parseToJson,
 	removeIndex,
 	loadDotEnv,
 	deleteKeys,
 	parseEmpty,
 	removeItem,
+	displayLog,
 	toRFC3339,
 	loadYaml,
 	preserve,

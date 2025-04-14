@@ -133,9 +133,10 @@ export abstract class ApplicationError
 	 * @public
 	 * @memberof ApplicationError
 	 * @since 3.0.0
+	 * @since 4.1.0 Added default value for `hidden` parameter.
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toJSON(hidden: Array<DomainErrorHiddenProp>): DomainErrorJSON {
+	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
 		const object = {
 			code: this.code,
 			extra: this.extra ?? null,

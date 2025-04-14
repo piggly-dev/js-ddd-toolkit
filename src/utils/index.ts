@@ -1,6 +1,7 @@
 import type { ZodObject, ZodSchema } from 'zod';
 
 import crypto from 'crypto';
+import path from 'path';
 import fs from 'fs';
 
 import moment from 'moment-timezone';
@@ -9,6 +10,7 @@ import sanitize from 'sanitize-html';
 import type { TDateInput, TOrEmpty } from '@/types';
 
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
+import { CryptoService } from '@/core/services/CryptoService';
 import { DomainError } from '@/core/errors/DomainError';
 import { EnvironmentType } from '@/utils/types';
 import { Result } from '@/core/Result';
@@ -417,4 +419,138 @@ export const loadYaml = async <
 				.catch(err => rej(err));
 		});
 	});
+};
+
+/**
+ * Parse a log message. It will return an object with:
+ *
+ * - uuid: The UUID of the log.
+ * - date: The date of the log in format: `YYYY-MM-DD HH:mm:ss`.
+ * - display: The display of the log in format: `(level) "message" - arg1 - arg2 - arg3 - ...`.
+ * - message: The message of the log in format: `[date] [uuid] display\n`.
+ *
+ * @param {string} level
+ * @param {string} message
+ * @param {...any[]} args
+ * @returns {{ uuid: string; date: string; display: string; message: string }}
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const displayLog = (
+	level: 'debug' | 'error' | 'fatal' | 'info' | 'warn',
+	message: string,
+	...args: any[]
+): { uuid: string; date: string; display: string; message: string } => {
+	const uuid = CryptoService.generateUUID();
+	const date = moment().utc().format();
+
+	let display = `(${level}) "${message}"`;
+
+	if (args.length > 0) {
+		display += ` - ${args
+			.map(arg => {
+				if (arg instanceof DomainError) {
+					return JSON.stringify(arg.toJSON());
+				}
+
+				if (arg instanceof Error) {
+					return arg.stack ?? arg.message;
+				}
+
+				switch (typeof arg) {
+					case 'object':
+						return `'${JSON.stringify(arg)}'`;
+					case 'string':
+						return `"${arg}"`;
+					default:
+						return String(arg);
+				}
+			})
+			.join(' - ')}`;
+	}
+
+	return {
+		uuid,
+		date,
+		display,
+		message: `[${moment().utc().format()}] [${uuid}] ${display}\n`,
+	};
+};
+
+/**
+ * Parse the absolute path.
+ *
+ * @param abspath - The absolute path to parse.
+ * @returns The absolute path.
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const parseAbspath = (abspath?: string): string => {
+	if (!abspath) {
+		abspath = './';
+	}
+
+	if (abspath.startsWith('./') === true) {
+		abspath = path.resolve(process.cwd(), abspath);
+	}
+
+	if (abspath.startsWith('/') === false) {
+		throw new Error('Absolute path is required and must be absolute.');
+	}
+
+	if (fs.existsSync(abspath) === false) {
+		throw new Error('The absolute path does not exist.');
+	}
+
+	return abspath;
+};
+
+/**
+ * Evaluate the absolute path.
+ *
+ * @param abspath - The absolute path to evaluate.
+ * @returns True if the absolute path is valid, false otherwise.
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const evaluateAbspath = (abspath?: string): boolean => {
+	if (!abspath) {
+		return false;
+	}
+
+	if (abspath.startsWith('./') === true) {
+		return true;
+	}
+
+	if (abspath.startsWith('/') === false) {
+		return false;
+	}
+
+	if (fs.existsSync(abspath) === false) {
+		return false;
+	}
+
+	return true;
+};
+
+/**
+ * Generate a random string.
+ * Unsafe, use only for non-critical purposes.
+ *
+ * @param size - The size of the string
+ * @returns The string
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const generateString = (
+	size: number = 6,
+	characters: string = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789',
+) => {
+	let result = '';
+
+	for (let i = 0; i < size; i++) {
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+
+	return result;
 };

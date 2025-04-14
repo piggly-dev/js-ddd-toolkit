@@ -13,7 +13,7 @@ describe('Result', () => {
 		expect(result.isFailure).toBe(false);
 		expect(result.data).toBe('data');
 		expect(() => result.error).toThrowError(
-			'Cannot retrieve error of successful result.'
+			'Cannot retrieve error of successful result.',
 		);
 	});
 
@@ -23,7 +23,7 @@ describe('Result', () => {
 		expect(result.isFailure).toBe(true);
 		expect(result.error).toBeInstanceOf(DefaultDomainError);
 		expect(() => result.data).toThrowError(
-			'Cannot retrieve data of failed result.'
+			'Cannot retrieve data of failed result.',
 		);
 	});
 });

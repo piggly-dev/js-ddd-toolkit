@@ -1,5 +1,6 @@
-import { Entity, EntityIdMismatchError, OptionalEntity } from '@/index';
 import { NumberID } from '@test/__stubs__';
+
+import { EntityIdMismatchError, OptionalEntity, Entity } from '@/index';
 
 class ConcreteEntity extends Entity<{ a: number }, NumberID> {
 	protected generateId() {

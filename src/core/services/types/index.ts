@@ -1,26 +1,27 @@
-export type JWTBuilderServiceSettings = {
-	audience?: string;
-	issuer: string;
-	private_key: string;
-	public_key: string;
-};
+import type { TOrUndefined } from '@/types';
 
-export type LoggerFn = (message?: any, ...optionalParams: any[]) => Promise<void>;
-
-export type LoggerServiceSettings = {
-	callbacks: Partial<{
-		onDebug: LoggerFn;
-		onError: LoggerFn;
-		onFatal: LoggerFn;
-		onInfo: LoggerFn;
-		onWarn: LoggerFn;
-	}>;
-	// Uncatched errors
-	onError?: (error: Error) => void;
-	// Publish/flushes logs
-	onFlush?: () => Promise<void>;
-	// If true, the logger will always log to the console
-	alwaysOnConsole: boolean;
-	// The logger service will ignore any unset logger functions
-	ignoreUnset: boolean;
-};
+/**
+ * Store service.
+ *
+ * Implementation for a key-value store. It must to be able to:
+ *
+ * - Set a value with a TTL.
+ * - Get a value and delete it.
+ * - Increment a value.
+ * - Get a value.
+ * - Reset the increment value.
+ * - Delete a value.
+ * - Check if a value exists.
+ *
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export interface IStoreService {
+	set<T = any>(key: string, value: T, ttl?: number): Promise<boolean>;
+	getAndDelete(key: string): Promise<TOrUndefined<string>>;
+	increment(key: string, amount: number): Promise<number>;
+	get(key: string): Promise<TOrUndefined<string>>;
+	resetIncrement(key: string): Promise<number>;
+	delete(key: string): Promise<boolean>;
+	has(key: string): Promise<boolean>;
+}

@@ -28,7 +28,7 @@ export class CryptoService {
 	 * @since 4.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static generateClientSecret(size = 36): string {
+	public static generateClientSecret(size: number = 36): string {
 		const buffer = crypto.randomBytes(size);
 
 		return buffer
@@ -98,7 +98,7 @@ export class CryptoService {
 	 * @since 4.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static hash(data: string, algorithm = 'sha256'): string {
+	public static hash(data: string, algorithm: string = 'sha256'): string {
 		return crypto.createHash(algorithm).update(data).digest('hex');
 	}
 

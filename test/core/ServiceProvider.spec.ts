@@ -18,7 +18,7 @@ describe('ServiceProvider', () => {
 		ServiceProvider.register('service', instance);
 
 		expect(() => ServiceProvider.register('service', instance)).toThrowError(
-			`Service "service" already registered.`
+			`Service "service" already registered.`,
 		);
 	});
 
@@ -31,7 +31,7 @@ describe('ServiceProvider', () => {
 
 	it('should throw an error if service is not registered', () => {
 		expect(() => ServiceProvider.resolve('service')).toThrowError(
-			`Service "service" not found.`
+			`Service "service" not found.`,
 		);
 	});
 });
