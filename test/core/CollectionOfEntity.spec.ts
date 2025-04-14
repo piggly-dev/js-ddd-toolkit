@@ -1,5 +1,6 @@
-import { CollectionOfEntity, Entity } from '@/index';
 import { NumberID } from '@test/__stubs__';
+
+import { CollectionOfEntity, Entity } from '@/index';
 
 class ConcreteEntity extends Entity<{ a: number }, NumberID> {}
 

@@ -1,4 +1,4 @@
-import { EntityID, ValueObject } from '@/index';
+import { ValueObject, EntityID } from '@/index';
 
 class ConcreteValueObject extends ValueObject<{ a: number; b: number }> {
 	constructor(a: number, b: number) {

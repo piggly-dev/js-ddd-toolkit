@@ -1,5 +1,6 @@
-import { Entity } from '@/index';
 import { CustomValueObject, NumberID } from '@test/__stubs__';
+
+import { Entity } from '@/index';
 
 class ConcreteEntity extends Entity<{ a: number }, NumberID> {
 	protected generateId() {

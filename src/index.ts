@@ -66,6 +66,8 @@ export {
 	JWTBuilderServiceEntry,
 	LoggerServiceSettings,
 	LoggerServiceEntry,
+	LogLevelSchema,
+	LoggerFnSchema,
 	LoggerFn,
 	LogLevel,
 } from '@/core/services/schemas';

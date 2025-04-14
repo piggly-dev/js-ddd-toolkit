@@ -12,7 +12,7 @@ export const LogLevelSchema = z.enum(['debug', 'info', 'warn', 'error', 'fatal']
  */
 export type LogLevel = z.infer<typeof LogLevelSchema>;
 
-export const LoggerFnSchema = z.function().returns(z.void().promise());
+export const LoggerFnSchema = z.function().returns(z.promise(z.void()));
 
 /**
  * Logger function.

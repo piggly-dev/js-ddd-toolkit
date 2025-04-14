@@ -1,5 +1,6 @@
-import { EntityID } from '@/index';
 import { CustomValueObject, NumberID } from '@test/__stubs__';
+
+import { EntityID } from '@/index';
 
 describe('EntityID', () => {
 	it('should have a default random id as uuidv4', () => {
