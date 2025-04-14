@@ -3,7 +3,11 @@ import path from 'path';
 
 import debug from 'debug';
 
-import { LogLevel } from '@/core/services/types';
+import {
+	PartialFileLogStreamServiceSettings,
+	FileLogStreamServiceSettings,
+	LogLevel,
+} from '@/core/services/types';
 
 /**
  * @file FileLogStreamService.
@@ -13,37 +17,15 @@ import { LogLevel } from '@/core/services/types';
  */
 export class FileLogStreamService {
 	/**
-	 * The abspath to the log files.
+	 * The number of errors detected.
 	 *
-	 * @type {string}
+	 * @type {number}
 	 * @protected
 	 * @memberof FileLogStreamService
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _abspath: string;
-
-	/**
-	 * Kill on limit.
-	 *
-	 * @type {boolean}
-	 * @protected
-	 * @memberof OnGoingPromisesService
-	 * @since 4.1.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _killOnLimit: boolean;
-
-	/**
-	 * The levels to log to.
-	 *
-	 * @type {Array<LogLevel>}
-	 * @protected
-	 * @memberof FileLogStreamService
-	 * @since 4.1.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _levels: Array<LogLevel>;
+	protected _errors: number;
 
 	/**
 	 * The pending messages for each level.
@@ -57,15 +39,15 @@ export class FileLogStreamService {
 	protected _pending: Map<LogLevel, Array<string>>;
 
 	/**
-	 * The limit of pending messages for each stream.
+	 * The settings.
 	 *
-	 * @type {number}
+	 * @type {FileLogStreamServiceSettings}
 	 * @protected
 	 * @memberof FileLogStreamService
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _streamLimit: number;
+	protected _settings: FileLogStreamServiceSettings;
 
 	/**
 	 * The streams for each level.
@@ -81,30 +63,27 @@ export class FileLogStreamService {
 	/**
 	 * Constructor.
 	 *
-	 * @param {string} abspath
-	 * @param {Array<LogLevel>} levels
-	 * @param {number} streamLimit
+	 * @param {PartialFileLogStreamServiceSettings} settings
 	 * @public
 	 * @memberof FileLogStreamService
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(
-		abspath: string,
-		levels: Array<LogLevel>,
-		streamLimit: number = 10000,
-		killOnLimit: boolean = false,
-	) {
-		this._abspath = abspath;
-		this._levels = levels;
-		this._streamLimit = streamLimit;
-		this._killOnLimit = killOnLimit;
+	public constructor(settings: PartialFileLogStreamServiceSettings) {
+		this._settings = {
+			abspath: settings.abspath,
+			errorThreshold: settings.errorThreshold ?? 10,
+			killOnLimit: settings.killOnLimit ?? false,
+			levels: settings.levels,
+			streamLimit: settings.streamLimit ?? 10000,
+		};
 
-		this._streams = new Map();
 		this._pending = new Map();
+		this._streams = new Map();
+		this._errors = 0;
 
-		for (const level of this._levels) {
-			this.createStream(abspath, level);
+		for (const level of this._settings.levels) {
+			this.createStream(this._settings.abspath, level);
 		}
 	}
 
@@ -118,7 +97,7 @@ export class FileLogStreamService {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public cleanup(): void {
-		for (const level of this._levels) {
+		for (const level of this._settings.levels) {
 			this.flush(level);
 			this._pending.delete(level);
 		}
@@ -184,7 +163,7 @@ export class FileLogStreamService {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public log(level: LogLevel, message: string): void {
-		if (!this._levels.includes(level)) {
+		if (!this._settings.levels.includes(level)) {
 			return;
 		}
 
@@ -195,13 +174,13 @@ export class FileLogStreamService {
 		}
 
 		if (this._pending.has(level)) {
-			if (this._pending.get(level)!.length >= this._streamLimit) {
+			if (this._pending.get(level)!.length >= this._settings.streamLimit) {
 				/* eslint-disable no-console */
 				console.warn(
 					`[FileLogStreamService] Stream limit reached for level ${level}, message discarded`,
 				);
 
-				if (this._killOnLimit) {
+				if (this._settings.killOnLimit) {
 					debug('logger:stream')(
 						`❌ Stream limit reached for level ${level}, killing process`,
 					);
@@ -243,6 +222,17 @@ export class FileLogStreamService {
 			debug(`logger:stream:error`)(error);
 
 			this._streams.delete(level);
+			this._errors++;
+
+			if (this._errors >= this._settings.errorThreshold) {
+				debug('logger:stream')(
+					`❌ Error threshold reached for level ${level}, killing process`,
+				);
+
+				process.kill(process.pid, 'SIGTERM');
+				return;
+			}
+
 			this.createStream(abspath, level);
 			this.flush(level);
 		});

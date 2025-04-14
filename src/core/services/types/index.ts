@@ -35,6 +35,40 @@ export type JWTBuilderServiceSettings = {
 
 export type LoggerFn = (message?: any, ...optionalParams: any[]) => Promise<void>;
 
+export type LogLevel = 'debug' | 'error' | 'fatal' | 'info' | 'warn';
+
+/* Services settings */
+/**
+ * File log stream service settings.
+ *
+ * - abspath: The path to the file to log to.
+ * - killOnLimit: If true, will kill the process if the limit is reached.
+ * - levels: The levels to log to.
+ * - streamLimit: The limit of pending messages for each stream.
+ * - errorThreshold: The threshold of stream errors to kill the process.
+ *
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export type FileLogStreamServiceSettings = {
+	abspath: string;
+	errorThreshold: number;
+	killOnLimit: boolean;
+	levels: Array<LogLevel>;
+	streamLimit: number;
+};
+
+export type PartialFileLogStreamServiceSettings = Omit<
+	FileLogStreamServiceSettings,
+	'errorThreshold' | 'killOnLimit' | 'streamLimit'
+> &
+	Partial<
+		Pick<
+			FileLogStreamServiceSettings,
+			'errorThreshold' | 'killOnLimit' | 'streamLimit'
+		>
+	>;
+
 /**
  * Logger service settings.
  *
@@ -82,20 +116,25 @@ export type LoggerServiceSettings = {
 	// The logger service will ignore any log level set here
 	ignoreLevels: Array<LogLevel>;
 	// The logger service will log to a file for each level set here
-	file?: {
-		abspath: string;
-		killOnLimit?: boolean;
-		levels: Array<LogLevel>;
-		streamLimit?: number;
-	};
+	file?: FileLogStreamServiceSettings;
 	// How to handle promises
 	promises: {
-		killOnLimit?: boolean;
-		limit?: number;
 		track: Array<
 			'onDebug' | 'onError' | 'onFatal' | 'onFlush' | 'onInfo' | 'onWarn'
 		>;
-	};
+	} & OnGoingPromisesServiceSettings;
 };
 
-export type LogLevel = 'debug' | 'error' | 'fatal' | 'info' | 'warn';
+/**
+ * On going promises service settings.
+ *
+ * - killOnLimit: If true, will kill the process if the limit is reached.
+ * - limit: The limit of ongoing promises.
+ *
+ * @since 4.1.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export type OnGoingPromisesServiceSettings = {
+	killOnLimit: boolean;
+	limit: number;
+};

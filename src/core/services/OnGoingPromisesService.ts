@@ -1,5 +1,7 @@
 import debug from 'debug';
 
+import { OnGoingPromisesServiceSettings } from '@/core/services/types';
+
 export class OnGoingPromisesService {
 	/**
 	 * Kill on limit.
@@ -43,10 +45,10 @@ export class OnGoingPromisesService {
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(limit: number = 10000, killOnLimit: boolean = false) {
+	public constructor(settings: Partial<OnGoingPromisesServiceSettings>) {
 		this._ongoing = new Set();
-		this._limit = limit;
-		this._killOnLimit = killOnLimit;
+		this._limit = settings.limit ?? 10000;
+		this._killOnLimit = settings.killOnLimit ?? false;
 	}
 
 	/**

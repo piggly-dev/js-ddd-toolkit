@@ -87,21 +87,17 @@ export class LoggerService {
 			ignoreUnset: settings.ignoreUnset ?? true,
 			onError: settings.onError,
 			onFlush: settings.onFlush,
-			promises: settings.promises ?? { track: ['onError', 'onFatal'] },
+			promises: settings.promises ?? {
+				killOnLimit: false,
+				limit: 10000,
+				track: ['onError', 'onFatal'],
+			},
 		};
 
-		this._ongoing = new OnGoingPromisesService(
-			this._settings.promises.limit,
-			this._settings.promises.killOnLimit,
-		);
+		this._ongoing = new OnGoingPromisesService(this._settings.promises);
 
 		if (this._settings.file) {
-			this._file = new FileLogStreamService(
-				this._settings.file.abspath,
-				this._settings.file.levels,
-				this._settings.file.streamLimit,
-				this._settings.file.killOnLimit,
-			);
+			this._file = new FileLogStreamService(this._settings.file);
 		}
 	}
 
@@ -440,7 +436,7 @@ export class LoggerService {
 			alwaysOnConsole: false,
 			ignoreLevels: ['debug', 'info', 'warn', 'error', 'fatal'],
 			ignoreUnset: true,
-			promises: { track: [] },
+			promises: { killOnLimit: false, limit: 10000, track: [] },
 		});
 	}
 }
