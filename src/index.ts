@@ -54,6 +54,7 @@ export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 export {
 	JWTBuilderServiceSettings,
 	LoggerServiceSettings,
+	IStoreService,
 	LoggerFn,
 	LogLevel,
 } from '@/core/services/types';
