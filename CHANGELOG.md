@@ -190,3 +190,7 @@
 ## 4.1.2 at `2025-04-15`
 
 * [Fix] Build issues. Updating `tsc-alias` broke all builds.
+
+## 4.1.3 at `2025-04-15`
+
+* [Fix] `toJSON` method now can have optional parameters.

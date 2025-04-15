@@ -5,7 +5,7 @@ export interface JSONExportable<
 	Key extends string = string,
 	Return extends Record<Key, any> = Record<Key, any>,
 > {
-	toJSON(hide: Array<Key>): Return;
+	toJSON(hide?: Array<Key>): Return;
 }
 export interface ObjectExportable<
 	Return extends Record<any, any> = Record<any, any>,
