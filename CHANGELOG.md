@@ -186,3 +186,7 @@
 ## 4.1.1 at `2025-04-14`
 
 * [Fix] Typing issues. Updating `tsc-alias` broke the types build.
+
+## 4.1.2 at `2025-04-15`
+
+* [Fix] Build issues. Updating `tsc-alias` broke all builds.

@@ -1,14 +1,14 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "4.1.1",
+	"version": "4.1.2",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
 		"pre:commit": "npm run lint && npm run format && npm run check",
 		"prebuild": "npm run lint && npm run format && npm run check",
 		"build": "npm run clean && npm run build:types && npm run build:esm && npm run build:cjs",
-		"build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json && node ./fixESM.cjs",
-		"build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
+		"build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json --outDir dist/esm && node ./fixESM.cjs",
+		"build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json --outDir dist/cjs",
 		"build:types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json --outDir dist/types",
 		"check": "tsc --noEmit -p tsconfig.json",
 		"format": "prettier --write \"./src/**/*.ts\"",
