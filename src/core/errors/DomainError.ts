@@ -173,9 +173,11 @@ export class DomainError implements IDomainError {
 			name: this.name,
 		};
 
-		hidden.forEach(prop => {
-			delete object[prop];
-		});
+		if (hidden && hidden.length > 0) {
+			hidden.forEach((prop: DomainErrorHiddenProp) => {
+				delete object[prop];
+			});
+		}
 
 		return object;
 	}

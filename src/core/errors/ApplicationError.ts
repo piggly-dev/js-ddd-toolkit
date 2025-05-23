@@ -145,9 +145,11 @@ export abstract class ApplicationError
 			name: this.name,
 		};
 
-		hidden.forEach((key: DomainErrorHiddenProp) => {
-			delete object[key];
-		});
+		if (hidden && hidden.length > 0) {
+			hidden.forEach((key: DomainErrorHiddenProp) => {
+				delete object[key];
+			});
+		}
 
 		return object;
 	}
