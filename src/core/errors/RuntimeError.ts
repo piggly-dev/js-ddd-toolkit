@@ -243,7 +243,7 @@ export abstract class RuntimeError extends Error implements IRuntimeError {
 			name: this.name,
 		};
 
-		if (hidden && hidden.length > 0) {
+		if (hidden && hidden.length > 0 && Array.isArray(hidden)) {
 			hidden.forEach((key: DomainErrorHiddenProp) => {
 				delete object[key];
 			});

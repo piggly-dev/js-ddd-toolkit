@@ -173,7 +173,7 @@ export class DomainError implements IDomainError {
 			name: this.name,
 		};
 
-		if (hidden && hidden.length > 0) {
+		if (hidden && hidden.length > 0 && Array.isArray(hidden)) {
 			hidden.forEach((prop: DomainErrorHiddenProp) => {
 				delete object[prop];
 			});

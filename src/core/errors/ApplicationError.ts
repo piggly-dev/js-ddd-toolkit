@@ -145,7 +145,7 @@ export abstract class ApplicationError
 			name: this.name,
 		};
 
-		if (hidden && hidden.length > 0) {
+		if (hidden && hidden.length > 0 && Array.isArray(hidden)) {
 			hidden.forEach((key: DomainErrorHiddenProp) => {
 				delete object[key];
 			});

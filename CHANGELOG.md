@@ -198,3 +198,7 @@
 ## 4.1.4 at `2025-05-23`
 
 * [Fix] `toJSON` method now can have optional parameters.
+
+## 4.1.5 at `2025-05-23`
+
+* [Fix] `toJSON` must check if `hidden` is an array.
