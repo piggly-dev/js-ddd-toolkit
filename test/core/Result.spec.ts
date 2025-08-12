@@ -12,7 +12,7 @@ describe('Result', () => {
 		expect(result.isSuccess).toBe(true);
 		expect(result.isFailure).toBe(false);
 		expect(result.data).toBe('data');
-		expect(() => result.error).toThrowError(
+		expect(() => result.error).toThrow(
 			'Cannot retrieve error of successful result.',
 		);
 	});
@@ -22,8 +22,6 @@ describe('Result', () => {
 		expect(result.isSuccess).toBe(false);
 		expect(result.isFailure).toBe(true);
 		expect(result.error).toBeInstanceOf(DefaultDomainError);
-		expect(() => result.data).toThrowError(
-			'Cannot retrieve data of failed result.',
-		);
+		expect(() => result.data).toThrow('Cannot retrieve data of failed result.');
 	});
 });
