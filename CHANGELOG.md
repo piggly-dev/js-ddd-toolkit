@@ -207,3 +207,8 @@
 
 * [Update] Dependencies to latest version;
 * [Fix] Overall typing issues.
+
+## 4.2.0 at `2025-08-12`
+
+* [Fix] Overall typing issues with Zod;
+* [Fix] Build issues for declaration files.

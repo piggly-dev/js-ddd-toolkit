@@ -1,4 +1,4 @@
-import type { ZodIssue } from 'zod';
+import type { z } from 'zod';
 
 import { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 
@@ -22,7 +22,7 @@ export class InvalidPayloadSchemaError extends BusinessRuleViolationError {
 	constructor(
 		name: string,
 		hint: string,
-		issues: Array<ZodIssue>,
+		issues: Array<z.ZodError['issues'][number]>,
 		map?: Record<string, string>,
 	) {
 		const errors = InvalidPayloadSchemaError.prepareIssues(issues, map);
@@ -46,7 +46,7 @@ export class InvalidPayloadSchemaError extends BusinessRuleViolationError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected static prepareIssues(
-		issues: Array<ZodIssue>,
+		issues: Array<z.ZodError['issues'][number]>,
 		mapTo?: Record<string, string>,
 	): Array<{ field: string; message: string }> {
 		const errors: Array<{ field: string; message: string }> = [];

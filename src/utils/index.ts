@@ -1,4 +1,4 @@
-import type { ZodObject, ZodSchema } from 'zod';
+import type { z } from 'zod';
 
 import crypto from 'crypto';
 import path from 'path';
@@ -258,13 +258,13 @@ export function splitAndTrim(str: string, separator: string): Array<string> {
  * @returns {Result<Payload, InvalidSchemaError>}
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export const evaluateSchema = <Schema = any>(
+export const evaluateSchema = <Schema extends z.ZodType>(
 	type: string,
-	input: any,
-	schema: ZodSchema<Schema>,
+	input: z.input<Schema>,
+	schema: Schema,
 	hint?: string,
 	map?: Record<string, string>,
-): Result<Schema, DomainError> => {
+): Result<z.output<Schema>, DomainError> => {
 	const result = schema.safeParse(input);
 
 	if (!result.success) {
@@ -278,7 +278,7 @@ export const evaluateSchema = <Schema = any>(
 		);
 	}
 
-	return Result.ok(result.data as Schema);
+	return Result.ok(result.data);
 };
 
 /**
@@ -321,16 +321,14 @@ export const sanitizeRecursively = <T = any>(data: T): T => {
  * @since 4.0.0
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export const loadConfigIni = async <
-	Schema extends Record<string, any> = Record<string, any>,
->(
+export const loadConfigIni = async <Schema extends z.ZodType>(
 	absolute_path: string,
 	file_name: string,
-	schema: ZodObject<any>,
-): Promise<Schema> => {
+	schema: Schema,
+): Promise<z.output<Schema>> => {
 	const ini = await import('ini');
 
-	return new Promise<Schema>((res, rej) => {
+	return new Promise<z.output<Schema>>((res, rej) => {
 		fs.readFile(`${absolute_path}/${file_name}.ini`, 'utf-8', (err, data) => {
 			if (err) {
 				return rej(err);
@@ -343,7 +341,7 @@ export const loadConfigIni = async <
 						return rej(new Error(parsed.error.message));
 					}
 
-					return res(parsed.data as Schema);
+					return res(parsed.data);
 				})
 				.catch(err => rej(err));
 		});
@@ -360,13 +358,11 @@ export const loadConfigIni = async <
  * @since 4.0.0
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export const loadDotEnv = async <
-	Schema extends Record<string, any> = Record<string, any>,
->(
+export const loadDotEnv = async <Schema extends z.ZodType>(
 	type: EnvironmentType,
 	absolute_path: string,
-	schema: ZodObject<any>,
-): Promise<Schema> => {
+	schema: Schema,
+): Promise<z.output<Schema>> => {
 	const dotenv = await import('dotenv');
 
 	dotenv.config({
@@ -379,7 +375,7 @@ export const loadDotEnv = async <
 		throw new Error(parsed.error.message);
 	}
 
-	return parsed.data as Schema;
+	return parsed.data;
 };
 
 /**
@@ -392,12 +388,10 @@ export const loadDotEnv = async <
  * @since 4.0.0
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export const loadYaml = async <
-	Schema extends Record<string, any> = Record<string, any>,
->(
+export const loadYaml = async <Schema extends z.ZodType>(
 	absolute_path: string,
 	file_name: string,
-	schema: ZodObject<any>,
+	schema: Schema,
 ): Promise<Schema> => {
 	const yaml = await import('js-yaml');
 
