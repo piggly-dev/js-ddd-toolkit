@@ -196,7 +196,7 @@ export class LoggerService {
 		}
 
 		if (this._settings.promises.track.includes('onFlush') === false) {
-			this._settings.onFlush().catch(error => {
+			this._settings.onFlush().catch((error: unknown) => {
 				if (!this._settings.onError) {
 					console.error('LOGGER/UNCAUGHT_ERROR', error);
 					debug(`logger:uncaught`)(error);
@@ -210,7 +210,7 @@ export class LoggerService {
 		}
 
 		this._ongoing.register(
-			this._settings.onFlush().catch(error => {
+			this._settings.onFlush().catch((error: unknown) => {
 				if (!this._settings.onError) {
 					console.error('LOGGER/UNCAUGHT_ERROR', error);
 					debug(`logger:uncaught`)(error);
@@ -346,7 +346,7 @@ export class LoggerService {
 		debug(`logger:${callback}`)(args);
 
 		if (this._settings.promises.track.includes(callback) === false) {
-			fn(...args).catch(error => {
+			fn(...args).catch((error: unknown) => {
 				if (!this._settings.onError) {
 					console.error('LOGGER/UNCAUGHT_ERROR', error);
 					debug(`logger:uncaught`)(error);
@@ -360,7 +360,7 @@ export class LoggerService {
 		}
 
 		this._ongoing.register(
-			fn(...args).catch(error => {
+			fn(...args).catch((error: unknown) => {
 				if (!this._settings.onError) {
 					console.error('LOGGER/UNCAUGHT_ERROR', error);
 					debug(`logger:uncaught`)(error);

@@ -12,7 +12,9 @@ export const LogLevelSchema = z.enum(['debug', 'info', 'warn', 'error', 'fatal']
  */
 export type LogLevel = z.infer<typeof LogLevelSchema>;
 
-export const LoggerFnSchema = z.function().returns(z.promise(z.void()));
+export const LoggerFnSchema = z.custom<(...args: any[]) => Promise<void>>(
+	v => typeof v === 'function',
+);
 
 /**
  * Logger function.
@@ -99,12 +101,20 @@ export const LoggerServiceSettingsSchema = z.object({
 		})
 		.strict()
 		.optional()
-		.default({}),
+		.default({
+			onDebug: undefined,
+			onError: undefined,
+			onFatal: undefined,
+			onInfo: undefined,
+			onWarn: undefined,
+		}),
 	file: FileLogStreamServiceSettingsSchema.optional(),
 	ignoreLevels: z.array(LogLevelSchema).optional().default([]),
 	ignoreUnset: z.boolean().optional().default(true),
-	onError: z.function().returns(z.void()).optional(),
-	onFlush: z.function().returns(z.void().promise()).optional(),
+	onError: z
+		.custom<(error: unknown) => void>(v => typeof v === 'function')
+		.optional(),
+	onFlush: z.custom<() => Promise<void>>(v => typeof v === 'function').optional(),
 	promises: z
 		.object({
 			track: z
@@ -121,9 +131,13 @@ export const LoggerServiceSettingsSchema = z.object({
 				.optional()
 				.default(['onError', 'onFatal']),
 		})
-		.merge(OnGoingPromisesServiceSettingsSchema)
+		.extend(OnGoingPromisesServiceSettingsSchema.shape)
 		.optional()
-		.default({}),
+		.default({
+			killOnLimit: false,
+			limit: 10000,
+			track: ['onError', 'onFatal'],
+		}),
 });
 
 /**

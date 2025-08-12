@@ -202,3 +202,8 @@
 ## 4.1.5 at `2025-05-23`
 
 * [Fix] `toJSON` must check if `hidden` is an array.
+
+## 4.1.6 at `2025-08-12`
+
+* [Update] Dependencies to latest version;
+* [Fix] Overall typing issues.
