@@ -392,10 +392,10 @@ export const loadYaml = async <Schema extends z.ZodType>(
 	absolute_path: string,
 	file_name: string,
 	schema: Schema,
-): Promise<Schema> => {
+): Promise<z.output<Schema>> => {
 	const yaml = await import('js-yaml');
 
-	return new Promise<Schema>((res, rej) => {
+	return new Promise<z.output<Schema>>((res, rej) => {
 		fs.readFile(`${absolute_path}/${file_name}.yml`, 'utf-8', (err, data) => {
 			if (err) {
 				return rej(err);
@@ -408,7 +408,7 @@ export const loadYaml = async <Schema extends z.ZodType>(
 						return rej(new Error(parsed.error.message));
 					}
 
-					return res(parsed.data as Schema);
+					return res(parsed.data);
 				})
 				.catch(err => rej(err));
 		});
