@@ -77,11 +77,13 @@ export { EnvironmentType } from '@/utils/types';
 export {
 	lastAvailableString,
 	sanitizeRecursively,
+	slugifyAsUnderscore,
 	commaStringAsArray,
 	evaluateAbspath,
 	evaluateSchema,
 	generateString,
 	loadConfigIni,
+	slugifyAsDash,
 	getTimestamp,
 	randomString,
 	splitAndTrim,

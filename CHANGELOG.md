@@ -216,3 +216,7 @@
 ## 4.2.1 at `2025-08-13`
 
 * [Fix] `loadYaml` function now returns the correct type.
+
+## 4.2.2 at `2025-08-18`
+
+* [Add] `slugifyAsDash` and `slugifyAsUnderscore` utility functions to handle slugification.
