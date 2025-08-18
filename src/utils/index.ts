@@ -548,3 +548,41 @@ export const generateString = (
 
 	return result;
 };
+
+/**
+ * Slugify a string.
+ *
+ * @note It may produce an empty string as it not expected as an error.
+ * @param v - The string to slugify.
+ * @returns The slugified string.
+ * @since 4.2.2
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const slugifyAsDash = (v: string) => {
+	return v
+		.trim()
+		.toLowerCase()
+		.replace(/[\W\s]/gi, '-')
+		.replace(/-+/g, '-')
+		.replace(/^-+/, '')
+		.replace(/-+$/, '');
+};
+
+/**
+ * Slugify a string.
+ *
+ * @note It may produce an empty string as it not expected as an error.
+ * @param v - The string to slugify.
+ * @returns The slugified string.
+ * @since 4.2.2
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const slugifyAsUnderscore = (v: string) => {
+	return v
+		.trim()
+		.toLowerCase()
+		.replace(/[\W\s]/gi, '_')
+		.replace(/_{2,}/g, '_')
+		.replace(/^_+/, '')
+		.replace(/_+$/, '');
+};
