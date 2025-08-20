@@ -240,30 +240,6 @@ describe('CollectionOfValueObjects', () => {
 		expect(collection.hasHash(hash)).toBe(false);
 	});
 
-	it('should clone collection correctly', () => {
-		const collection = new CollectionOfValueObjects<EmailValueObject>();
-		const emails = [
-			new EmailValueObject('clone1@example.com'),
-			new EmailValueObject('clone2@example.com'),
-		];
-
-		collection.addMany(emails);
-
-		const cloned = collection.clone();
-
-		expect(cloned).toBeInstanceOf(CollectionOfValueObjects);
-		expect(cloned).not.toBe(collection);
-		expect(cloned.length).toBe(collection.length);
-
-		// Should have same content but different instances
-		emails.forEach(email => {
-			expect(cloned.has(email)).toBe(true);
-			const clonedEmail = cloned.find(email);
-			expect(clonedEmail).not.toBe(email); // Different instance due to cloning
-			expect(clonedEmail?.equals(email)).toBe(true);
-		});
-	});
-
 	it('should provide vos getter as alias for arrayOf', () => {
 		const collection = new CollectionOfValueObjects<EmailValueObject>();
 		const emails = [

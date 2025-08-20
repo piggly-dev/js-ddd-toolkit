@@ -153,17 +153,6 @@ export abstract class AbstractCollectionOfValueObjects<
 	}
 
 	/**
-	 * Clone the collection.
-	 *
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.3.2
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public abstract clone(): AbstractCollectionOfValueObjects<ValueObject>;
-
-	/**
 	 * Find an item by its hash from the collection.
 	 *
 	 * @param {ValueObject} item

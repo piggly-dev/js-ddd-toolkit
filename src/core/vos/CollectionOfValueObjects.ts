@@ -22,23 +22,4 @@ export class CollectionOfValueObjects<
 	public get vos(): Array<ValueObject> {
 		return this.arrayOf;
 	}
-
-	/**
-	 * Clone the collection.
-	 *
-	 * @returns {this}
-	 * @public
-	 * @memberof CollectionOfAttributes
-	 * @since 3.3.2
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public clone(): CollectionOfValueObjects<ValueObject> {
-		const collection = new CollectionOfValueObjects<ValueObject>();
-
-		this._items.forEach(item => {
-			collection.appendRaw(item.clone() as ValueObject);
-		});
-
-		return collection;
-	}
 }

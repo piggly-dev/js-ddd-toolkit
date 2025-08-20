@@ -46,7 +46,6 @@ export interface IValueObject<
 	Props extends Record<string, any> = Record<string, any>,
 > extends IComponent {
 	equals(a: IValueObject<Props> | undefined | null): boolean;
-	clone(): IValueObject<Props>;
 	hash(): string;
 	props: Props;
 }

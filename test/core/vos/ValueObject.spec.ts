@@ -59,17 +59,6 @@ describe('ValueObjects', () => {
 		expect(vo.b).toBe(10);
 	});
 
-	it('should clone value object correctly', () => {
-		const original = new ConcreteValueObject(1, 2);
-		const cloned = original.clone();
-
-		expect(cloned).toBeInstanceOf(ValueObject);
-		expect(cloned.equals(original)).toBe(true);
-		expect(cloned).not.toBe(original);
-		expect(cloned.props).toEqual(original.props);
-		expect(cloned.props).not.toBe(original.props);
-	});
-
 	it('should generate consistent hash for same props', () => {
 		const vo1 = new ConcreteValueObject(1, 2);
 		const vo2 = new ConcreteValueObject(1, 2);

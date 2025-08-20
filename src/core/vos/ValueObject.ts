@@ -56,19 +56,6 @@ export class ValueObject<Props extends Record<string, any> = Record<string, any>
 	}
 
 	/**
-	 * Clone the attribute.
-	 *
-	 * @returns {Attribute<Props>}
-	 * @public
-	 * @memberof Attribute
-	 * @since 5.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public clone(): ValueObject<Props> {
-		return new ValueObject({ ...this._props });
-	}
-
-	/**
 	 * Checks if two value objects are equal.
 	 *
 	 * @param {(ValueObject|undefined|null)} [vo]
