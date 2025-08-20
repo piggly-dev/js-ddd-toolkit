@@ -42,24 +42,22 @@ describe('CollectionOfValueObjects', () => {
 		expect(collection.find(email)).toBeUndefined();
 
 		collection.add(email);
-		const emailHash = email.hash();
 
 		expect(collection.length).toBe(1);
-		expect(collection.get(emailHash)).toBe(email);
 		expect(collection.has(email)).toBe(true);
 		expect(collection.find(email)).toStrictEqual(email);
 		expect(collection.arrayOf).toStrictEqual([email]);
 
-		// will not add
-		collection.add(email);
+		// will add again (Set allows duplicates with same content but different references)
+		const sameEmail = new EmailValueObject('john@doe.com');
+		collection.add(sameEmail);
 
-		expect(collection.length).toBe(1);
-		expect(collection.get('nonexistent')).toBeUndefined();
+		expect(collection.length).toBe(1); // Should still be 1 because Set uses equals for duplicates
+		expect(collection.has(sameEmail)).toBe(true);
 
 		collection.remove(email);
 
 		expect(collection.length).toBe(0);
-		expect(collection.get(emailHash)).toBeUndefined();
 		expect(collection.has(email)).toBe(false);
 		expect(collection.find(email)).toBeUndefined();
 
@@ -87,12 +85,11 @@ describe('CollectionOfValueObjects', () => {
 			new EmailValueObject('alfred@doe.com'),
 		];
 
-		const collection = new CollectionOfValueObjects<EmailValueObject>(
-			new Map([
-				['alice@doe.com', new EmailValueObject('alice@doe.com')],
-				['john@doe.com', new EmailValueObject('john@doe.com')],
-			]),
-		);
+		const collection = new CollectionOfValueObjects<EmailValueObject>();
+		collection.addMany([
+			new EmailValueObject('alice@doe.com'),
+			new EmailValueObject('john@doe.com'),
+		]);
 
 		expect(collection.hasAll(emails)).toBe(false);
 	});
@@ -103,15 +100,11 @@ describe('CollectionOfValueObjects', () => {
 			new EmailValueObject('alice@doe.com'),
 		];
 
-		const collection = new CollectionOfValueObjects<EmailValueObject>(
-			new Map([
-				[
-					'ea07f1daccbf28fd709d51c82a16991d501e85d151b07786542820698881a229',
-					new EmailValueObject('john@doe.com'),
-				],
-				['alfred@doe.com', new EmailValueObject('alfred@doe.com')],
-			]),
-		);
+		const collection = new CollectionOfValueObjects<EmailValueObject>();
+		collection.addMany([
+			new EmailValueObject('john@doe.com'),
+			new EmailValueObject('alfred@doe.com'),
+		]);
 
 		expect(collection.hasAny(emails)).toBe(true);
 	});
@@ -122,25 +115,21 @@ describe('CollectionOfValueObjects', () => {
 			new EmailValueObject('alice@doe.com'),
 		];
 
-		const collection = new CollectionOfValueObjects<EmailValueObject>(
-			new Map([
-				['alfred@doe.com', new EmailValueObject('alfred@doe.com')],
-				['john@doe.com', new EmailValueObject('john@doe.com')],
-			]),
-		);
+		const collection = new CollectionOfValueObjects<EmailValueObject>();
+		collection.addMany([
+			new EmailValueObject('alfred@doe.com'),
+			new EmailValueObject('john@doe.com'),
+		]);
 
 		expect(collection.hasAny(emails)).toBe(false);
 	});
 
-	it('should initialize with Map of value objects', () => {
+	it('should initialize with Set of value objects', () => {
 		const email1 = new EmailValueObject('john@example.com');
 		const email2 = new EmailValueObject('jane@example.com');
-		const initialMap = new Map([
-			[email1.hash(), email1],
-			[email2.hash(), email2],
-		]);
+		const initialSet = new Set([email1, email2]);
 
-		const collection = new CollectionOfValueObjects<EmailValueObject>(initialMap);
+		const collection = new CollectionOfValueObjects<EmailValueObject>(initialSet);
 
 		expect(collection.length).toBe(2);
 		expect(collection.has(email1)).toBe(true);
@@ -155,7 +144,7 @@ describe('CollectionOfValueObjects', () => {
 		collection.add(email1);
 		collection.add(email2);
 
-		// Test arrayOf instead of trying to iterate over iterators directly
+		// Test arrayOf
 		expect(collection.arrayOf).toHaveLength(2);
 		expect(collection.arrayOf).toContain(email1);
 		expect(collection.arrayOf).toContain(email2);
@@ -167,77 +156,6 @@ describe('CollectionOfValueObjects', () => {
 		// Test that values returns an iterator
 		const valuesIterator = collection.values;
 		expect(typeof valuesIterator.next).toBe('function');
-	});
-
-	it('should sync items to collection', () => {
-		const collection = new CollectionOfValueObjects<EmailValueObject>();
-		const email = new EmailValueObject('sync@example.com');
-
-		collection.sync(email);
-		expect(collection.length).toBe(1);
-		expect(collection.has(email)).toBe(true);
-
-		// Sync again should not increase length (replaces existing)
-		collection.sync(email);
-		expect(collection.length).toBe(1);
-
-		// Sync different email with same hash (edge case test)
-		const sameHashEmail = new EmailValueObject('sync@example.com');
-		collection.sync(sameHashEmail);
-		expect(collection.length).toBe(1);
-		expect(collection.get(email.hash())).toBe(sameHashEmail);
-	});
-
-	it('should sync many items to collection', () => {
-		const collection = new CollectionOfValueObjects<EmailValueObject>();
-		const emails = [
-			new EmailValueObject('sync1@example.com'),
-			new EmailValueObject('sync2@example.com'),
-			new EmailValueObject('sync3@example.com'),
-		];
-
-		collection.syncMany(emails);
-
-		expect(collection.length).toBe(3);
-		emails.forEach(email => {
-			expect(collection.has(email)).toBe(true);
-		});
-	});
-
-	it('should append raw items to collection', () => {
-		const collection = new CollectionOfValueObjects<EmailValueObject>();
-		const email1 = new EmailValueObject('append1@example.com');
-		const email2 = new EmailValueObject('append2@example.com');
-
-		collection.appendRaw(email1);
-		expect(collection.length).toBe(1);
-		expect(collection.has(email1)).toBe(true);
-
-		// appendRaw should always add/replace
-		collection.appendRaw(email1);
-		expect(collection.length).toBe(1);
-
-		const emails = [email2, new EmailValueObject('append3@example.com')];
-		collection.appendManyRaw(emails);
-		expect(collection.length).toBe(3);
-	});
-
-	it('should handle hash-based operations', () => {
-		const collection = new CollectionOfValueObjects<EmailValueObject>();
-		const email = new EmailValueObject('hash@example.com');
-		const hash = email.hash();
-
-		collection.add(email);
-
-		expect(collection.hasHash(hash)).toBe(true);
-		expect(collection.hasHash('nonexistent')).toBe(false);
-
-		expect(collection.get(hash)).toBe(email);
-		expect(collection.get('nonexistent')).toBeUndefined();
-
-		collection.removeHash(hash);
-		expect(collection.length).toBe(0);
-		expect(collection.hasHash(hash)).toBe(false);
 	});
 
 	it('should provide vos getter as alias for arrayOf', () => {
@@ -271,19 +189,17 @@ describe('CollectionOfValueObjects', () => {
 		expect(collection.has(name as any)).toBe(true);
 	});
 
-	it('should handle edge cases for find and get', () => {
+	it('should handle edge cases for find', () => {
 		const collection = new CollectionOfValueObjects<EmailValueObject>();
 		const email = new EmailValueObject('edge@example.com');
 
 		// Empty collection
 		expect(collection.find(email)).toBeUndefined();
-		expect(collection.get('anything')).toBeUndefined();
 
 		collection.add(email);
 
 		// Valid finds
 		expect(collection.find(email)).toBe(email);
-		expect(collection.get(email.hash())).toBe(email);
 
 		// Create email with same content but different instance
 		const sameContentEmail = new EmailValueObject('edge@example.com');

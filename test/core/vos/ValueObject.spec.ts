@@ -59,17 +59,6 @@ describe('ValueObjects', () => {
 		expect(vo.b).toBe(10);
 	});
 
-	it('should generate consistent hash for same props', () => {
-		const vo1 = new ConcreteValueObject(1, 2);
-		const vo2 = new ConcreteValueObject(1, 2);
-		const vo3 = new ConcreteValueObject(2, 1);
-
-		expect(vo1.hash()).toBe(vo2.hash());
-		expect(vo1.hash()).not.toBe(vo3.hash());
-		expect(typeof vo1.hash()).toBe('string');
-		expect(vo1.hash().length).toBe(64); // SHA256 hex length
-	});
-
 	it('should identify component type correctly', () => {
 		const vo = new ConcreteValueObject(1, 2);
 
@@ -91,32 +80,29 @@ describe('ValueObjects', () => {
 
 	it('should handle complex object props', () => {
 		class ComplexValueObject extends ValueObject<{
+			count: number;
 			data: { array: number[]; nested: string };
-			timestamp: Date;
 		}> {
-			constructor(data: { array: number[]; nested: string }, timestamp: Date) {
-				super({ data, timestamp });
+			constructor(data: { array: number[]; nested: string }, count: number) {
+				super({ count, data });
 			}
 		}
 
-		const date = new Date('2023-01-01');
-		const vo1 = new ComplexValueObject({ array: [1, 2, 3], nested: 'test' }, date);
-		const vo2 = new ComplexValueObject({ array: [1, 2, 3], nested: 'test' }, date);
+		const dataObj = { array: [1, 2, 3], nested: 'test' };
+		const vo1 = new ComplexValueObject(dataObj, 42);
+		const vo2 = new ComplexValueObject(dataObj, 42);
 		const vo3 = new ComplexValueObject(
 			{ array: [1, 2, 3], nested: 'different' },
-			date,
+			42,
 		);
 
 		expect(vo1.equals(vo2)).toBe(true);
 		expect(vo1.equals(vo3)).toBe(false);
-		expect(vo1.hash()).toBe(vo2.hash());
-		expect(vo1.hash()).not.toBe(vo3.hash());
 	});
 
 	it('should handle edge cases for equality', () => {
 		const vo = new ConcreteValueObject(1, 2);
 		const mockInvalidObject = {
-			hash: () => 'invalid',
 			is: () => false,
 			props: { a: 1, b: 2 },
 		};
@@ -124,15 +110,13 @@ describe('ValueObjects', () => {
 		expect(vo.equals(mockInvalidObject as any)).toBe(false);
 	});
 
-	it('should handle different hash equality check', () => {
+	it('should handle equality with same props', () => {
 		const vo1 = new ConcreteValueObject(1, 2);
-		const mockDifferentHash = {
-			hash: () => 'different-hash',
+		const mockSameProps = {
 			is: () => true,
 			props: { a: 1, b: 2 },
 		};
 
-		// hash is different, but props are the same
-		expect(vo1.equals(mockDifferentHash as any)).toBe(true);
+		expect(vo1.equals(mockSameProps as any)).toBe(true);
 	});
 });

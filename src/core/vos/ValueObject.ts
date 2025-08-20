@@ -1,5 +1,3 @@
-import crypto from 'node:crypto';
-
 import { shallowEqual } from 'shallow-equal-object';
 
 import type { IValueObject } from '@/core/types/index.js';
@@ -71,27 +69,7 @@ export class ValueObject<Props extends Record<string, any> = Record<string, any>
 			return false;
 		}
 
-		if (vo.hash() === this.hash()) {
-			return true;
-		}
-
 		return shallowEqual(this._props, vo.props);
-	}
-
-	/**
-	 * Hash the value object.
-	 *
-	 * @returns {string}
-	 * @public
-	 * @memberof ValueObject
-	 * @since 5.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public hash(): string {
-		return crypto
-			.createHash('sha256')
-			.update(JSON.stringify(this._props))
-			.digest('hex');
 	}
 
 	/**

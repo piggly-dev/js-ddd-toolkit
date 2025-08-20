@@ -8,28 +8,28 @@ export abstract class AbstractCollectionOfValueObjects<
 	ValueObject extends IValueObject<any>,
 > {
 	/**
-	 * A map of attrs.
+	 * A set of value objects.
 	 *
-	 * @type {Map<string, ValueObject>}
+	 * @type {Set<ValueObject>}
 	 * @protected
 	 * @memberof AbstractCollectionOfValueObjects
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _items: Map<string, ValueObject>;
+	protected _items: Set<ValueObject>;
 
 	/**
 	 * Creates an instance of AbstractCollectionOfValueObjects.
 	 *
-	 * @param {Map<string, ValueObject>} [initial]
+	 * @param {Set<ValueObject>} [initial]
 	 * @public
 	 * @constructor
 	 * @memberof AbstractCollectionOfValueObjects
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(initial?: Map<string, ValueObject>) {
-		this._items = initial || new Map();
+	constructor(initial?: Set<ValueObject>) {
+		this._items = initial || new Set();
 	}
 
 	/**
@@ -42,24 +42,24 @@ export abstract class AbstractCollectionOfValueObjects<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get arrayOf(): Array<ValueObject> {
-		return Array.from(this._items.values());
+		return Array.from(this._items);
 	}
 
 	/**
-	 * Return the entries (key, value) as an iterable array.
+	 * Return the entries as an iterable array (for Set, entries returns [value, value]).
 	 *
-	 * @returns {Iterator<[string, ValueObject]>}
+	 * @returns {Iterator<[ValueObject, ValueObject]>}
 	 * @public
 	 * @memberof AbstractCollectionOfValueObjects
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get entries(): Iterator<[string, ValueObject]> {
+	public get entries(): Iterator<[ValueObject, ValueObject]> {
 		return this._items.entries();
 	}
 
 	/**
-	 * Return the number of attrs.
+	 * Return the number of value objects.
 	 *
 	 * @returns {number}
 	 * @public
@@ -95,13 +95,10 @@ export abstract class AbstractCollectionOfValueObjects<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public add(item: ValueObject): this {
-		const key = item.hash();
-
-		if (this._items.has(key)) {
-			return this;
+		if (this.find(item) === undefined) {
+			this._items.add(item);
 		}
 
-		this._items.set(key, item);
 		return this;
 	}
 
@@ -121,39 +118,7 @@ export abstract class AbstractCollectionOfValueObjects<
 	}
 
 	/**
-	 * Append an array of raw items to the collection.
-	 * Will replace no matter what.
-	 *
-	 * @param {Array<ValueObject>} items
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public appendManyRaw(items: Array<ValueObject>): this {
-		items.forEach(item => this.appendRaw(item));
-		return this;
-	}
-
-	/**
-	 * Append a raw item to the collection.
-	 * Will replace no matter what.
-	 *
-	 * @param {ValueObject} item
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public appendRaw(item: ValueObject): this {
-		this._items.set(item.hash(), item);
-		return this;
-	}
-
-	/**
-	 * Find an item by its hash from the collection.
+	 * Find an item that equals the given value object.
 	 *
 	 * @param {ValueObject} item
 	 * @returns {ValueObject | undefined}
@@ -163,37 +128,17 @@ export abstract class AbstractCollectionOfValueObjects<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public find(item: ValueObject): ValueObject | undefined {
-		const found = this._items.get(item.hash());
-
-		if (!found) {
-			return undefined;
+		for (const existingItem of this._items) {
+			if (existingItem.equals(item)) {
+				return existingItem;
+			}
 		}
 
-		return found;
+		return undefined;
 	}
 
 	/**
-	 * Get an item by its hash from the collection.
-	 *
-	 * @param {string} hash
-	 * @returns {ValueObject | undefined}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.7.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get(hash: string): ValueObject | undefined {
-		const found = this._items.get(hash);
-
-		if (!found) {
-			return undefined;
-		}
-
-		return found;
-	}
-
-	/**
-	 * Check if the collection has a id.
+	 * Check if the collection has a value object.
 	 *
 	 * @param {ValueObject} item
 	 * @returns {boolean}
@@ -203,11 +148,11 @@ export abstract class AbstractCollectionOfValueObjects<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public has(item: ValueObject): boolean {
-		return this._items.has(item.hash());
+		return this.find(item) !== undefined;
 	}
 
 	/**
-	 * Check if the collection has all ids.
+	 * Check if the collection has all value objects.
 	 *
 	 * @param {Array<ValueObject>} items
 	 * @returns {boolean}
@@ -221,7 +166,7 @@ export abstract class AbstractCollectionOfValueObjects<
 	}
 
 	/**
-	 * Check if the collection has any of ids.
+	 * Check if the collection has any of the value objects.
 	 *
 	 * @param {Array<ValueObject>} items
 	 * @returns {boolean}
@@ -235,53 +180,7 @@ export abstract class AbstractCollectionOfValueObjects<
 	}
 
 	/**
-	 * Check if the collection has a hash.
-	 *
-	 * @param {string} hash
-	 * @returns {boolean}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.7.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public hasHash(hash: string): boolean {
-		return this._items.has(hash);
-	}
-
-	/**
-	 * Remove id from the collection.
-	 * Compatible with old method.
-	 *
-	 * @param {ID} id
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public remove(item: ValueObject): this {
-		this._items.delete(item.hash());
-		return this;
-	}
-
-	/**
-	 * Remove an item by its hash from the collection.
-	 *
-	 * @param {string} hash
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.7.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public removeHash(hash: string): this {
-		this._items.delete(hash);
-		return this;
-	}
-
-	/**
-	 * Sync an item to the collection.
-	 * Always add the item to the collection, even if it is already in the collection.
+	 * Remove a value object from the collection.
 	 *
 	 * @param {ValueObject} item
 	 * @returns {this}
@@ -290,24 +189,11 @@ export abstract class AbstractCollectionOfValueObjects<
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public sync(item: ValueObject): this {
-		this._items.set(item.hash(), item);
-		return this;
-	}
-
-	/**
-	 * Sync an array of items to the collection.
-	 * Always add the items to the collection, even if they are already in the collection.
-	 *
-	 * @param {Array<ValueObject>} items
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfValueObjects
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public syncMany(items: Array<ValueObject>): this {
-		items.forEach(item => this.sync(item));
+	public remove(item: ValueObject): this {
+		const found = this.find(item);
+		if (found) {
+			this._items.delete(found);
+		}
 		return this;
 	}
 }

@@ -10,12 +10,12 @@ export class CollectionOfValueObjects<
 	ValueObject extends IValueObject<any>,
 > extends AbstractCollectionOfValueObjects<ValueObject> {
 	/**
-	 * Return the attributes as an array.
+	 * Return the value objects as an array.
 	 * Alias for `this.arrayOf`.
 	 *
-	 * @returns {Array<Attribute>}
+	 * @returns {Array<ValueObject>}
 	 * @public
-	 * @memberof AbstractCollectionOfAttributes
+	 * @memberof CollectionOfValueObjects
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
