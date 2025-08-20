@@ -1,6 +1,7 @@
-import { CustomValueObject, NumberID } from '@test/__stubs__';
+import { CustomValueObject } from '@test/__stubs__/index.js';
 
-import { EntityID } from '@/index';
+import { NumberEntityId } from '@/core/entities/ids/NumberEntityId.js';
+import { EntityID } from '@/core/entities/EntityID.js';
 
 describe('EntityID', () => {
 	it('should have a default random id as uuidv4', () => {
@@ -49,7 +50,7 @@ describe('EntityID', () => {
 
 	describe('Custom EntityID', () => {
 		it('should have a default random id', () => {
-			const id = new NumberID();
+			const id = new NumberEntityId();
 
 			expect(id.value).toBeDefined();
 			expect(id.value <= 0).toBeTruthy();
@@ -59,7 +60,7 @@ describe('EntityID', () => {
 		});
 
 		it('should have a non random id', () => {
-			const id = new NumberID(2);
+			const id = new NumberEntityId(2);
 
 			expect(id.value).toBeDefined();
 			expect(id.value).toBe(2);

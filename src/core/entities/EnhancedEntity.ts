@@ -2,8 +2,8 @@ import moment from 'moment-timezone';
 
 import type { IEntity } from '@/core/types/index.js';
 
-import { EntityID } from '@/core/EntityID.js';
-import { Entity } from '@/core/Entity.js';
+import { EntityID } from '@/core/entities/EntityID.js';
+import { Entity } from '@/core/entities/Entity.js';
 
 /**
  * @file Base entity class.

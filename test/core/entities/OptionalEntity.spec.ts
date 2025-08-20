@@ -1,20 +1,21 @@
-import { NumberID } from '@test/__stubs__';
+import { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError.js';
+import { NumberEntityId } from '@/core/entities/ids/NumberEntityId.js';
+import { OptionalEntity } from '@/core/entities/OptionalEntity.js';
+import { Entity } from '@/core/entities/Entity.js';
 
-import { EntityIdMismatchError, OptionalEntity, Entity } from '@/index';
-
-class ConcreteEntity extends Entity<{ a: number }, NumberID> {
+class ConcreteEntity extends Entity<{ a: number }, NumberEntityId> {
 	public get a(): number {
 		return this._props.a;
 	}
 
 	protected generateId() {
-		return new NumberID();
+		return new NumberEntityId();
 	}
 }
 
 describe('OptionalEntity', () => {
 	it('should create an optional entity', () => {
-		const id = new NumberID(10);
+		const id = new NumberEntityId(10);
 		const entity = new ConcreteEntity({ a: 10 }, id);
 
 		const optional = new OptionalEntity(id, entity);
@@ -28,7 +29,7 @@ describe('OptionalEntity', () => {
 	});
 
 	it('should load an entity', () => {
-		const id = new NumberID(10);
+		const id = new NumberEntityId(10);
 		const entity = new ConcreteEntity({ a: 10 }, id);
 		const another = new ConcreteEntity({ a: 12 }, id);
 
@@ -40,16 +41,16 @@ describe('OptionalEntity', () => {
 	});
 
 	it('should fail to load an entity with a different id', () => {
-		const id = new NumberID(10);
+		const id = new NumberEntityId(10);
 		const entity = new ConcreteEntity({ a: 10 }, id);
-		const another = new ConcreteEntity({ a: 12 }, new NumberID(11));
+		const another = new ConcreteEntity({ a: 12 }, new NumberEntityId(11));
 
 		const optional = new OptionalEntity(id, entity);
 		expect(() => optional.load(another)).toThrow('Entity ID does not match.');
 	});
 
 	it('should safe load an entity', () => {
-		const id = new NumberID(10);
+		const id = new NumberEntityId(10);
 		const entity = new ConcreteEntity({ a: 10 }, id);
 		const another = new ConcreteEntity({ a: 12 }, id);
 
@@ -63,9 +64,9 @@ describe('OptionalEntity', () => {
 	});
 
 	it('should fail when safe load an entity with a different id', () => {
-		const id = new NumberID(10);
+		const id = new NumberEntityId(10);
 		const entity = new ConcreteEntity({ a: 10 }, id);
-		const another = new ConcreteEntity({ a: 12 }, new NumberID(11));
+		const another = new ConcreteEntity({ a: 12 }, new NumberEntityId(11));
 
 		const optional = new OptionalEntity(id, entity);
 		expect(optional.safeLoad(another).isFailure).toBe(true);

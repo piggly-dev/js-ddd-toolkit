@@ -1,6 +1,6 @@
-import { CollectionOfEntity } from './CollectionOfEntity';
-import { EntityID } from './EntityID';
-import { IEntity } from './types';
+import { CollectionOfEntity } from '@/core/entities/CollectionOfEntity.js';
+import { EntityID } from '@/core/entities/EntityID.js';
+import { IEntity } from '@/core/types/index.js';
 
 /**
  * @file A collection of entities.

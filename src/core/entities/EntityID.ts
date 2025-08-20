@@ -60,7 +60,7 @@ export class EntityID<Value = string> implements IComponent {
 			return false;
 		}
 
-		if (!(id instanceof this.constructor)) {
+		if (!(id instanceof this.constructor) || id.is('entityid') === false) {
 			return false;
 		}
 

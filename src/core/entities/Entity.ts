@@ -1,14 +1,14 @@
-import type { EventListener, IComponent, IEntity } from '@/core/types/index.js';
+import type { EventListener, IEntity } from '@/core/types/index.js';
 
+import { EntityID } from '@/core/entities/EntityID.js';
 import { EventEmitter } from '@/core/EventEmitter.js';
-import { EntityID } from '@/core/EntityID.js';
 
 /**
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
 export abstract class Entity<Props, Id extends EntityID<any>>
-	implements IEntity<Id>, IComponent
+	implements IEntity<Id>
 {
 	/**
 	 * The event emmiter.
@@ -77,6 +77,22 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	}
 
 	/**
+	 * Clone the entity.
+	 * This method must be implemented by the entity.
+	 *
+	 * @param {Id | undefined} _
+	 * @returns {Entity<Props, Id>}
+	 * @throws {Error} If the method is not implemented.
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public clone(_?: Id): Entity<Props, Id> {
+		throw new Error('Not implemented');
+	}
+
+	/**
 	 * Dispose the entity.
 	 *
 	 * @returns {void}
@@ -114,7 +130,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public equals(e: Entity<Props, any> | undefined | null): boolean {
-		if (e === null || e === undefined || Entity.isEntity(e) === false) {
+		if (e === null || e === undefined || e.is('entity') === false) {
 			return false;
 		}
 
@@ -170,16 +186,33 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	}
 
 	/**
+	 * Register a new event listener that will be removed after the first event is emitted.
+	 *
+	 * @param {string} event
+	 * @param {EventListener} listener
+	 * @returns {void}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public once(event: string, listener: EventListener): void {
+		this._emmiter.once(event, listener);
+	}
+
+	/**
 	 * Generate a new entity id object.
+	 * This method must be implemented by the entity.
 	 *
 	 * @returns {Id}
+	 * @throws {Error} If the method is not implemented.
 	 * @protected
 	 * @memberof Entity
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected generateId(): Id {
-		return new EntityID() as Id;
+		throw new Error('Not implemented');
 	}
 
 	/**

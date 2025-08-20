@@ -1,10 +1,9 @@
-import type { TOrAnother } from '@/types';
-
-import type { EnhancedEntity as BaseEnhancedEntity } from '../EnhancedEntity';
-import type { DomainError } from '../errors/DomainError';
-import type { Entity as BaseEntity } from '../Entity';
-import type { EntityID } from '../EntityID';
-import type { Result } from '../Result';
+import type { EnhancedEntity as BaseEnhancedEntity } from '@/core/entities/EnhancedEntity.js';
+import type { Entity as BaseEntity } from '@/core/entities/Entity.js';
+import type { DomainError } from '@/core/errors/DomainError.js';
+import type { EntityID } from '@/core/entities/EntityID.js';
+import type { TOrAnother } from '@/types/index.js';
+import type { Result } from '@/core/Result.js';
 
 export type CollectionOfEntitiesIndex<ID, Value> = { id: ID; value?: Value };
 
@@ -30,8 +29,14 @@ export interface IDomainEvent<
 	readonly id: string;
 }
 
-export interface IEntity<ID extends EntityID<any>> {
+export interface IEntity<ID extends EntityID<any>> extends IComponent {
 	equals(e: IEntity<ID> | undefined | null): boolean;
+	off(event: string, listener?: EventListener): void;
+	once(event: string, listener: EventListener): void;
+	on(event: string, listener: EventListener): void;
+	emit(event: string, ...args: any[]): void;
+	clone(id?: ID): IEntity<ID>;
+	dispose(): void;
 	id: ID;
 }
 

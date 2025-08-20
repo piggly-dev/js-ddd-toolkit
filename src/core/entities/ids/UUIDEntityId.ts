@@ -1,4 +1,4 @@
-import { EntityID } from '@/core/EntityID.js';
+import { EntityID } from '@/core/entities/EntityID.js';
 
 /**
  * @file UUIDEntityId class.

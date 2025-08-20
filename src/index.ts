@@ -1,19 +1,23 @@
+/** Entities */
+export { AbstractCollectionOfEntities } from '@/core/entities/AbstractCollectionOfEntities';
+export { CollectionOfEnhancedEntity } from '@/core/entities/CollectionOfEnhancedEntity';
+export { CollectionOfEntity } from '@/core/entities/CollectionOfEntity';
+export { CollectionOfRelatedEnhancedEntity } from '@/core/entities/CollectionOfRelatedEnhancedEntity';
+export { CollectionOfRelatedEntity } from '@/core/entities/CollectionOfRelatedEntity';
+export { EnhancedEntity } from '@/core/entities/EnhancedEntity';
+export { Entity } from '@/core/entities/Entity';
+export { EntityID } from '@/core/entities/EntityID';
+export { NumberEntityId } from '@/core/entities/ids/NumberEntityId';
+export { StringEntityId } from '@/core/entities/ids/StringEntityId';
+export { UUIDEntityId } from '@/core/entities/ids/UUIDEntityId';
+export { OptionalEntity } from '@/core/entities/OptionalEntity';
+
 export { AbstractCollectionOfAttributes } from '@/core/AbstractCollectionOfAttributes';
 export { AbstractCollectionOfEnhancedAttributes } from '@/core/AbstractCollectionOfEnhancedAttributes';
-export { AbstractCollectionOfEntities } from '@/core/AbstractCollectionOfEntities';
-export { AggregateRoot } from '@/core/AggregateRoot';
 export { Attribute } from '@/core/Attribute';
 export { CollectionOfAttributes } from '@/core/CollectionOfAttributes';
 export { CollectionOfEnhancedAttributes } from '@/core/CollectionOfEnhancedAttributes';
-export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
-export { CollectionOfEntity } from '@/core/CollectionOfEntity';
-export { CollectionOfRelatedEnhancedEntity } from '@/core/CollectionOfRelatedEnhancedEntity';
-export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
 export { EnhancedAttribute } from '@/core/EnhancedAttribute';
-export { EnhancedEntity } from '@/core/EnhancedEntity';
-export { Entity } from '@/core/Entity';
-export { EntityID } from '@/core/EntityID';
-export { OptionalEntity } from '@/core/OptionalEntity';
 export { Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
 export { ValueObject } from '@/core/ValueObject';
@@ -21,11 +25,11 @@ export { ValueObject } from '@/core/ValueObject';
 export { CollectionOfValueObjects } from '@/core/CollectionOfValueObjects';
 export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects';
 
-export { Adapter } from '@/core/Adapter';
-
+/** Events */
 export { DomainEvent } from '@/core/DomainEvent';
 export { EventEmitter } from '@/core/EventEmitter';
 
+/** Services */
 export { ApplicationService } from '@/core/ApplicationService';
 export { DomainService } from '@/core/DomainService';
 export { InfraService } from '@/core/InfraService';
@@ -34,6 +38,7 @@ export { ServiceProvider } from '@/core/ServiceProvider';
 
 export { UseCase } from '@/core/UseCase';
 
+/** Errors */
 export { ApplicationError } from '@/core/errors/ApplicationError';
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 export { DomainError } from '@/core/errors/DomainError';

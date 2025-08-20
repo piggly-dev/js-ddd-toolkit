@@ -1,8 +1,9 @@
-import { EntityIdMismatchError } from './errors/EntityIdMismatchError';
-import { DomainError } from './errors/DomainError';
-import { EntityID } from './EntityID';
-import { Result } from './Result';
-import { IEntity } from './types';
+import type { EntityID } from '@/core/entities/EntityID.js';
+import type { IEntity } from '@/core/types/index.js';
+
+import { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError.js';
+import { DomainError } from '@/core/errors/DomainError.js';
+import { Result } from '@/core/Result.js';
 
 /**
  * @file Optional entity.
@@ -35,7 +36,7 @@ export class OptionalEntity<
 	 * @since 3.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(id: ID, entity?: Entity) {
+	public constructor(id: ID, entity?: Entity) {
 		this._pack = { id, entity };
 	}
 
@@ -176,6 +177,6 @@ export class OptionalEntity<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected isEqual(entity: Entity): boolean {
-		return this._pack.id.equals(entity.id);
+		return this._pack.id.equals(entity.id) ?? false;
 	}
 }
