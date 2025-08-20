@@ -36,9 +36,19 @@ export interface IEntity<ID extends EntityID<any>> extends IComponent {
 	on(event: string, listener: EventListener): void;
 	emit(event: string, ...args: any[]): void;
 	clone(id?: ID): IEntity<ID>;
+	markAsPersisted(): void;
 	isModified(): boolean;
 	dispose(): void;
 	id: ID;
+}
+
+export interface IValueObject<
+	Props extends Record<string, any> = Record<string, any>,
+> extends IComponent {
+	equals(a: IValueObject<Props> | undefined | null): boolean;
+	clone(): IValueObject<Props>;
+	hash(): string;
+	props: Props;
 }
 
 export type RelatedEnhancedEntity<

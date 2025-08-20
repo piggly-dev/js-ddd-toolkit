@@ -1,3 +1,5 @@
+import { EventEmitter } from 'stream';
+
 import { OptionalEntity } from '@/core/entities/OptionalEntity.js';
 import { EntityID } from '@/core/entities/EntityID.js';
 import { IEntity } from '@/core/types/index.js';
@@ -12,6 +14,17 @@ export abstract class AbstractCollectionOfEntities<
 	ID extends EntityID<any> = EntityID<any>,
 > {
 	/**
+	 * The event emmiter.
+	 *
+	 * @type {EventEmitter}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _emmiter: EventEmitter;
+
+	/**
 	 * A map of entities.
 	 *
 	 * @type {Map<Key, OptionalEntity<Entity, ID>>}
@@ -21,6 +34,17 @@ export abstract class AbstractCollectionOfEntities<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected _items: Map<Key, OptionalEntity<Entity, ID>>;
+
+	/**
+	 * Indicates if the entity was modified.
+	 *
+	 * @type {boolean}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _modified: boolean;
 
 	/**
 	 * Creates an instance of AbstractCollectionOfEntities.
@@ -34,6 +58,8 @@ export abstract class AbstractCollectionOfEntities<
 	 */
 	constructor(initial?: Map<Key, OptionalEntity<Entity, ID>>) {
 		this._items = initial || new Map();
+		this._modified = false;
+		this._emmiter = new EventEmitter();
 	}
 
 	/**
@@ -173,6 +199,7 @@ export abstract class AbstractCollectionOfEntities<
 		}
 
 		this._items.set(key, new OptionalEntity(this.getIdFor(item), item));
+		this.markAsModified();
 		return this;
 	}
 
@@ -220,6 +247,7 @@ export abstract class AbstractCollectionOfEntities<
 	 */
 	public appendRaw(item: OptionalEntity<Entity, ID>): this {
 		this._items.set(this.idToKey(item.id), item);
+		this.markAsModified();
 		return this;
 	}
 
@@ -431,6 +459,45 @@ export abstract class AbstractCollectionOfEntities<
 	}
 
 	/**
+	 * Evaluate if all entities are modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isAllEntitiesModified(): boolean {
+		return this.arrayOf.every(item => item.entity?.isModified());
+	}
+
+	/**
+	 * Evaluate if any entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isAnyEntityModified(): boolean {
+		return this.arrayOf.some(item => item.entity?.isModified());
+	}
+
+	/**
+	 * Evaluate if the entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isModified(): boolean {
+		return this._modified || this.isAnyEntityModified();
+	}
+
+	/**
 	 * Check if item is available for an id.
 	 *
 	 * @param {ID} id
@@ -448,6 +515,21 @@ export abstract class AbstractCollectionOfEntities<
 		}
 
 		return item.isPresent();
+	}
+
+	/**
+	 * Mark the entity as persisted.
+	 *
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public markAsPersisted(): void {
+		this._modified = false;
+		this._emmiter.emit('persisted', this);
+
+		this.arrayOf.forEach(item => item.entity?.markAsPersisted());
 	}
 
 	/**
@@ -469,6 +551,7 @@ export abstract class AbstractCollectionOfEntities<
 		}
 
 		i.load(item);
+		this.markAsModified();
 		return this;
 	}
 
@@ -502,6 +585,7 @@ export abstract class AbstractCollectionOfEntities<
 	 */
 	public remove(id: ID): this {
 		this._items.delete(this.idToKey(id));
+		this.markAsModified();
 		return this;
 	}
 
@@ -531,6 +615,7 @@ export abstract class AbstractCollectionOfEntities<
 	 */
 	public removeKey(key: Key): this {
 		this._items.delete(key);
+		this.markAsModified();
 		return this;
 	}
 
@@ -550,6 +635,7 @@ export abstract class AbstractCollectionOfEntities<
 			new OptionalEntity(this.getIdFor(item), item),
 		);
 
+		this.markAsModified();
 		return this;
 	}
 
@@ -566,6 +652,7 @@ export abstract class AbstractCollectionOfEntities<
 	 */
 	public syncMany(items: Array<Entity>): this {
 		items.forEach(item => this.sync(item));
+		this.markAsModified();
 		return this;
 	}
 
@@ -604,4 +691,17 @@ export abstract class AbstractCollectionOfEntities<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected abstract idToKey(id: ID): Key;
+
+	/**
+	 * Mark the entity as modified.
+	 *
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected markAsModified(): void {
+		this._modified = true;
+		this._emmiter.emit('modified', this);
+	}
 }

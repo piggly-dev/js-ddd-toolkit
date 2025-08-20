@@ -12,18 +12,22 @@ export { StringEntityId } from '@/core/entities/ids/StringEntityId';
 export { UUIDEntityId } from '@/core/entities/ids/UUIDEntityId';
 export { OptionalEntity } from '@/core/entities/OptionalEntity';
 
+/** Value Objects */
+export { AbstractCollectionOfValueObjects } from '@/core/vos/AbstractCollectionOfValueObjects';
+export { CollectionOfValueObjects } from '@/core/vos/CollectionOfValueObjects';
+export { ValueObject } from '@/core/vos/ValueObject';
+
+/** Attributes */
 export { AbstractCollectionOfAttributes } from '@/core/AbstractCollectionOfAttributes';
 export { AbstractCollectionOfEnhancedAttributes } from '@/core/AbstractCollectionOfEnhancedAttributes';
 export { Attribute } from '@/core/Attribute';
 export { CollectionOfAttributes } from '@/core/CollectionOfAttributes';
 export { CollectionOfEnhancedAttributes } from '@/core/CollectionOfEnhancedAttributes';
 export { EnhancedAttribute } from '@/core/EnhancedAttribute';
+
+/** Result/monad pattern */
 export { Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
-export { ValueObject } from '@/core/ValueObject';
-
-export { CollectionOfValueObjects } from '@/core/CollectionOfValueObjects';
-export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects';
 
 /** Events */
 export { DomainEvent } from '@/core/DomainEvent';

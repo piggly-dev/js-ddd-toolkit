@@ -8,6 +8,7 @@ import { Entity } from '@/core/entities/Entity.js';
 /**
  * It is just a alias for the Entity class.
  *
+ * @deprecated Use Entity instead.
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
