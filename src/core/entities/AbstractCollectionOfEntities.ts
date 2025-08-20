@@ -50,6 +50,20 @@ export abstract class AbstractCollectionOfEntities<
 	}
 
 	/**
+	 * Return the entities as an array.
+	 * Alias for `this.existingValues`.
+	 *
+	 * @returns {Array<Entity>}
+	 * @public
+	 * @memberof AbstractCollectionOfSome
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get entities(): Array<Entity> {
+		return this.knowableEntities;
+	}
+
+	/**
 	 * Return the entries (key, value) as an iterable array.
 	 *
 	 * @returns {Iterator<[Key, OptionalEntity<Entity, ID>]>}
@@ -238,6 +252,28 @@ export abstract class AbstractCollectionOfEntities<
 		}
 
 		return found.entity;
+	}
+
+	/**
+	 * Find an item by its id from the collection.
+	 * Throws an error if the item is not found.
+	 *
+	 * @param {ID} id
+	 * @returns {Entity | undefined}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @throws {Error} If the item is not found in the collection.
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public forceFind(id: ID): Entity {
+		const found = this.getKey(this.idToKey(id));
+
+		if (!found) {
+			throw new Error(`Item with id ${id} not found in the collection.`);
+		}
+
+		return found.knowableEntity;
 	}
 
 	/**

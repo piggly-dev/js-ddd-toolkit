@@ -36,6 +36,7 @@ export interface IEntity<ID extends EntityID<any>> extends IComponent {
 	on(event: string, listener: EventListener): void;
 	emit(event: string, ...args: any[]): void;
 	clone(id?: ID): IEntity<ID>;
+	isModified(): boolean;
 	dispose(): void;
 	id: ID;
 }

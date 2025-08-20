@@ -97,7 +97,10 @@ export class OptionalEntity<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public clone(): OptionalEntity<Entity, ID> {
-		return new OptionalEntity<Entity, ID>(this._pack.id, this._pack.entity);
+		return new OptionalEntity<Entity, ID>(
+			this._pack.id,
+			this._pack.entity?.clone() as Entity,
+		);
 	}
 
 	/**

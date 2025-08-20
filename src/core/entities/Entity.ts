@@ -34,6 +34,17 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	protected readonly _id: Id;
 
 	/**
+	 * Indicates if the entity was modified.
+	 *
+	 * @type {boolean}
+	 * @protected
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _modified: boolean;
+
+	/**
 	 * The entity props.
 	 *
 	 * @type {Props}
@@ -54,11 +65,13 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @constructor
 	 * @memberof Entity
 	 * @since 1.0.0
+	 * @since 5.0.0 Added modified flag.
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	constructor(props: Props, id?: Id) {
 		this._id = id ?? this.generateId();
 		this._props = props;
+		this._modified = false;
 
 		this._emmiter = new EventEmitter();
 	}
@@ -156,6 +169,32 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	}
 
 	/**
+	 * Evaluate if the entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isModified(): boolean {
+		return this._modified;
+	}
+
+	/**
+	 * Mark the entity as persisted.
+	 *
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public markAsPersisted(): void {
+		this._modified = false;
+		this.emit('persisted', this);
+	}
+
+	/**
 	 * Remove an event listener.
 	 *
 	 * @param {string} event
@@ -213,6 +252,19 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 */
 	protected generateId(): Id {
 		throw new Error('Not implemented');
+	}
+
+	/**
+	 * Mark the entity as modified.
+	 *
+	 * @public
+	 * @memberof EnhancedEntity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected markAsModified(): void {
+		this._modified = true;
+		this.emit('modified', this);
 	}
 
 	/**

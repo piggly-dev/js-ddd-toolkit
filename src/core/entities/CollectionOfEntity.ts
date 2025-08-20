@@ -11,20 +11,6 @@ export class CollectionOfEntity<
 	ID extends EntityID<any> = EntityID<any>,
 > extends AbstractCollectionOfEntities<string, Entity, ID> {
 	/**
-	 * Return the entities as an array.
-	 * Alias for `this.existingValues`.
-	 *
-	 * @returns {Array<Entity>}
-	 * @public
-	 * @memberof AbstractCollectionOfSome
-	 * @since 3.3.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get entities(): Array<Entity> {
-		return this.knowableEntities;
-	}
-
-	/**
 	 * Clone the collection.
 	 *
 	 * @returns {this}
