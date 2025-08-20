@@ -3,6 +3,10 @@ import { NumberID } from '@test/__stubs__';
 import { EntityIdMismatchError, OptionalEntity, Entity } from '@/index';
 
 class ConcreteEntity extends Entity<{ a: number }, NumberID> {
+	public get a(): number {
+		return this._props.a;
+	}
+
 	protected generateId() {
 		return new NumberID();
 	}
@@ -32,7 +36,7 @@ describe('OptionalEntity', () => {
 		optional.load(another);
 
 		expect(optional.id.equals(id)).toBe(true);
-		expect(optional.knowableEntity.props.a).toBe(12);
+		expect(optional.knowableEntity.a).toBe(12);
 	});
 
 	it('should fail to load an entity with a different id', () => {
@@ -53,9 +57,9 @@ describe('OptionalEntity', () => {
 		optional.load(another);
 
 		expect(optional.id.equals(id)).toBe(true);
-		expect(optional.knowableEntity.props.a).toBe(12);
+		expect(optional.knowableEntity.a).toBe(12);
 		expect(optional.safeLoad(another).isSuccess).toBe(true);
-		expect(optional.safeLoad(another).data.props.a).toBe(12);
+		expect(optional.safeLoad(another).data.a).toBe(12);
 	});
 
 	it('should fail when safe load an entity with a different id', () => {

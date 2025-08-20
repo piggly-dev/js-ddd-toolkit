@@ -16,6 +16,10 @@ export interface IAttribute<Props extends Record<any, any> = Record<any, any>> {
 	hash(): string;
 }
 
+export interface IComponent {
+	is(name: string): boolean;
+}
+
 export interface IDomainEvent<
 	EventData extends Record<string, any> = Record<string, any>,
 > {

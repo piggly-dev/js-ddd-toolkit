@@ -1,5 +1,5 @@
 import { EnhancedAttribute } from './EnhancedAttribute';
-import { EventEmmiter } from './EventEmmiter';
+import { EventEmitter } from './EventEmitter';
 
 /**
  * @file A collection of something.
@@ -33,13 +33,13 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	/**
 	 * The event emmiter.
 	 *
-	 * @type {EventEmmiter}
+	 * @type {EventEmitter}
 	 * @protected
 	 * @memberof EnhancedAttribute
 	 * @since 3.4.1
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public emmiter: EventEmmiter;
+	public emmiter: EventEmitter;
 
 	/**
 	 * Creates an instance of AbstractCollectionOfEnhancedAttributes.
@@ -54,7 +54,7 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	constructor(initial?: Map<string, Attribute>) {
 		this._items = initial || new Map();
 		this._modified = false;
-		this.emmiter = new EventEmmiter();
+		this.emmiter = new EventEmitter();
 	}
 
 	/**

@@ -1,30 +1,21 @@
 import moment from 'moment-timezone';
 
-import type { IEntity } from './types';
+import type { IEntity } from '@/core/types/index.js';
 
-import { EventEmmiter } from './EventEmmiter';
-import { EntityID } from './EntityID';
+import { EntityID } from '@/core/EntityID.js';
+import { Entity } from '@/core/Entity.js';
 
 /**
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
 export abstract class EnhancedEntity<
-	Props extends { updated_at: moment.Moment },
-	Id extends EntityID<any>,
-> implements IEntity<Id>
+		Props extends { updated_at: moment.Moment },
+		Id extends EntityID<any>,
+	>
+	extends Entity<Props, Id>
+	implements IEntity<Id>
 {
-	/**
-	 * The entity identifier.
-	 *
-	 * @type {Id}
-	 * @protected
-	 * @memberof EnhancedEntity
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _id: Id;
-
 	/**
 	 * Indicates if the entity was modified.
 	 *
@@ -35,28 +26,6 @@ export abstract class EnhancedEntity<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected _modified: boolean;
-
-	/**
-	 * The entity props.
-	 *
-	 * @type {Props}
-	 * @protected
-	 * @memberof EnhancedEntity
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _props: Props;
-
-	/**
-	 * The event emmiter.
-	 *
-	 * @type {EventEmmiter}
-	 * @protected
-	 * @memberof EnhancedEntity
-	 * @since 3.1.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public emmiter: EventEmmiter;
 
 	/**
 	 * Creates an instance of EnhancedEntity.
@@ -70,46 +39,8 @@ export abstract class EnhancedEntity<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	constructor(props: Props, id?: Id) {
-		this._id = id ?? this.generateId();
-		this._props = props;
+		super(props, id);
 		this._modified = false;
-
-		this.emmiter = new EventEmmiter();
-	}
-
-	/**
-	 * Gets the entity identifier.
-	 *
-	 * @returns {Id}
-	 * @public
-	 * @memberof EnhancedEntity
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get id(): Id {
-		return this._id;
-	}
-
-	/**
-	 * Checks if two entities are equal.
-	 *
-	 * @param {EnhancedEntity<Props, any> | undefined | null} e
-	 * @returns {boolean}
-	 * @public
-	 * @memberof EnhancedEntity
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public equals(e: EnhancedEntity<Props, any> | undefined | null): boolean {
-		if (e === null || e === undefined || EnhancedEntity.isEntity(e) === false) {
-			return false;
-		}
-
-		if (this === e) {
-			return true;
-		}
-
-		return e._id.equals(this._id);
 	}
 
 	/**
@@ -135,20 +66,7 @@ export abstract class EnhancedEntity<
 	 */
 	public markAsPersisted(): void {
 		this._modified = false;
-		this.emmiter.emit('persisted', this);
-	}
-
-	/**
-	 * Generate a new entity id object.
-	 *
-	 * @returns {Id}
-	 * @protected
-	 * @memberof Entity
-	 * @since 1.0.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected generateId(): Id {
-		return new EntityID() as Id;
+		this.emit('persisted', this);
 	}
 
 	/**
@@ -162,7 +80,7 @@ export abstract class EnhancedEntity<
 	protected markAsModified(): void {
 		this._props.updated_at = moment().utc();
 		this._modified = true;
-		this.emmiter.emit('modified', this);
+		this.emit('modified', this);
 	}
 
 	/**

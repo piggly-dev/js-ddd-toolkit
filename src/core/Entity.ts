@@ -1,14 +1,26 @@
-import type { IEntity } from './types';
+import type { EventListener, IComponent, IEntity } from '@/core/types/index.js';
 
-import { EntityID } from './EntityID';
+import { EventEmitter } from '@/core/EventEmitter.js';
+import { EntityID } from '@/core/EntityID.js';
 
 /**
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
 export abstract class Entity<Props, Id extends EntityID<any>>
-	implements IEntity<Id>
+	implements IEntity<Id>, IComponent
 {
+	/**
+	 * The event emmiter.
+	 *
+	 * @type {EventEmitter}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _emmiter: EventEmitter;
+
 	/**
 	 * The entity identifier.
 	 *
@@ -31,7 +43,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public readonly props: Props;
+	protected _props: Props;
 
 	/**
 	 * Creates an instance of Entity.
@@ -46,7 +58,9 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 */
 	constructor(props: Props, id?: Id) {
 		this._id = id ?? this.generateId();
-		this.props = props;
+		this._props = props;
+
+		this._emmiter = new EventEmitter();
 	}
 
 	/**
@@ -60,6 +74,33 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 */
 	public get id(): Id {
 		return this._id;
+	}
+
+	/**
+	 * Dispose the entity.
+	 *
+	 * @returns {void}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 */
+	public dispose(): void {
+		this._emmiter.unsubscribeAll();
+	}
+
+	/**
+	 * Emit an event.
+	 *
+	 * @param {string} event
+	 * @param {...any[]} args
+	 * @returns {void}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public emit(event: string, ...args: any[]): void {
+		this._emmiter.emit(event, ...args);
 	}
 
 	/**
@@ -82,6 +123,50 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 		}
 
 		return e._id.equals(this._id);
+	}
+
+	/**
+	 * Checks if the object is a specific component type.
+	 *
+	 * @param {string} name
+	 * @returns {boolean}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public is(name: string): boolean {
+		return name.toLowerCase() === 'entity';
+	}
+
+	/**
+	 * Remove an event listener.
+	 *
+	 * @param {string} event
+	 * @param {EventListener} listener
+	 * @returns {void}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public off(event: string, listener?: EventListener): void {
+		this._emmiter.off(event, listener);
+	}
+
+	/**
+	 * Register a new event listener.
+	 *
+	 * @param {string} event
+	 * @param {EventListener} listener
+	 * @returns {void}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public on(event: string, listener: EventListener): void {
+		this._emmiter.on(event, listener);
 	}
 
 	/**

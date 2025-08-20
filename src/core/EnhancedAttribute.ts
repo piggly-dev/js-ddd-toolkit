@@ -1,4 +1,4 @@
-import { EventEmmiter } from './EventEmmiter';
+import { EventEmitter } from './EventEmitter';
 import { Attribute } from './Attribute';
 import { IAttribute } from './types';
 
@@ -24,13 +24,13 @@ export abstract class EnhancedAttribute<Props extends Record<any, any>>
 	/**
 	 * The event emmiter.
 	 *
-	 * @type {EventEmmiter}
+	 * @type {EventEmitter}
 	 * @protected
 	 * @memberof EnhancedAttribute
 	 * @since 3.4.1
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public emmiter: EventEmmiter;
+	public emmiter: EventEmitter;
 
 	/**
 	 * Creates an instance of EnhancedAttribute.
@@ -46,7 +46,7 @@ export abstract class EnhancedAttribute<Props extends Record<any, any>>
 	protected constructor(props: Props) {
 		super(props);
 		this._modified = false;
-		this.emmiter = new EventEmmiter();
+		this.emmiter = new EventEmitter();
 	}
 
 	/**

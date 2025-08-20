@@ -89,7 +89,7 @@
 
 ## 3.0.5 at `2024-10-30`
 
-* [Add] Simple class for `EventEmmiter`;
+* [Add] Simple class for `EventEmitter`;
 * [Update] Vulnerabilities on dependecies.
 
 ## 3.1.0 at `2025-01-27`

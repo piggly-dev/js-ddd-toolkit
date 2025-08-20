@@ -24,7 +24,7 @@ export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects'
 export { Adapter } from '@/core/Adapter';
 
 export { DomainEvent } from '@/core/DomainEvent';
-export { EventEmmiter } from '@/core/EventEmmiter';
+export { EventEmitter } from '@/core/EventEmitter';
 
 export { ApplicationService } from '@/core/ApplicationService';
 export { DomainService } from '@/core/DomainService';
