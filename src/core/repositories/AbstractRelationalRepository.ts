@@ -2,11 +2,15 @@ import type {
 	IDatabaseDriver,
 	IRepository,
 	IUnitOfWork,
-} from '@/core/repositores/types/index.js';
+} from '@/core/repositories/types/index.js';
 
 import { TOrUndefined } from '@/index.js';
 
-export abstract class RelationalRepository<
+/**
+ * @file Abstract relational repository.
+ * @copyright Piggly Lab 2025
+ */
+export abstract class AbstractRelationalRepository<
 	Driver extends IDatabaseDriver<Engine, Context>,
 	Engine extends string,
 	Context = unknown,
@@ -17,7 +21,7 @@ export abstract class RelationalRepository<
 	 *
 	 * @type {Driver}
 	 * @protected
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -28,18 +32,20 @@ export abstract class RelationalRepository<
 	 *
 	 * @type {string}
 	 * @protected
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected readonly _name: string;
 
 	/**
-	 * The context associated with the repository.
+	 * The Unit of Work associated with the repository.
+	 * When undefined, the repository uses the driver's default UoW.
+	 * When defined, the repository operates within this specific UoW context.
 	 *
 	 * @type {IUnitOfWork<Engine, Context>}
 	 * @protected
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -48,11 +54,11 @@ export abstract class RelationalRepository<
 	/**
 	 * Create a new relational repository.
 	 *
-	 * @param {string} name
-	 * @param {Driver} driver
-	 * @param {Context} context
+	 * @param {string} name The unique name identifier for this repository
+	 * @param {Driver} driver The database driver for this repository
+	 * @param {IUnitOfWork<Engine, Context>} uow Optional UoW to bind this repository to
 	 * @constructor
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -67,7 +73,7 @@ export abstract class RelationalRepository<
 	 *
 	 * @returns {Engine}
 	 * @public
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -80,7 +86,7 @@ export abstract class RelationalRepository<
 	 *
 	 * @returns {string}
 	 * @public
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -93,7 +99,7 @@ export abstract class RelationalRepository<
 	 *
 	 * @returns {IUnitOfWork<Engine, Context>}
 	 * @public
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -102,12 +108,22 @@ export abstract class RelationalRepository<
 	}
 
 	/**
-	 * Clone the repository.
+	 * Clone the repository with an optional Unit of Work.
 	 *
-	 * @param {IUnitOfWork<Engine, Context>} uow
-	 * @returns {this}
+	 * Creates a new instance of the repository that:
+	 * - Shares the same driver and configuration as the original
+	 * - Operates within the provided UoW context (if supplied)
+	 * - Is independent from the original repository's UoW
+	 *
+	 * Use cases:
+	 * - Binding a repository to a specific transaction/UoW
+	 * - Creating isolated repository instances for parallel operations
+	 * - Ensuring repository operations happen within a specific context
+	 *
+	 * @param {IUnitOfWork<Engine, Context>} uow Optional UoW to bind the cloned repository to
+	 * @returns {this} A new repository instance
 	 * @abstract
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -119,7 +135,7 @@ export abstract class RelationalRepository<
 	 * @param {IRepository<Engine>} repository
 	 * @returns {boolean}
 	 * @public
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -128,11 +144,12 @@ export abstract class RelationalRepository<
 	}
 
 	/**
-	 * Get the current context.
+	 * Get the current database context from the Unit of Work.
+	 * Returns undefined if no UoW is bound or if the UoW is not active.
 	 *
-	 * @returns {TOrUndefined<Context>}
+	 * @returns {TOrUndefined<Context>} The current context or undefined
 	 * @protected
-	 * @memberof RelationalRepository
+	 * @memberof AbstractRelationalRepository
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */

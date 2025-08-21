@@ -42,6 +42,17 @@ export { ServiceProvider } from '@/core/ServiceProvider';
 
 export { UseCase } from '@/core/UseCase';
 
+/** Repositories */
+export {
+	IDatabaseDriver,
+	IRepository,
+	IUnitOfWork,
+} from '@/core/repositories/types';
+
+export { AbstractRelationalRepository } from '@/core/repositories/AbstractRelationalRepository';
+export { RelationalRepositoryBundle } from '@/core/repositories/RelationalRepositoryBundle';
+export { RepositoryProvider } from '@/core/repositories/RepositoryProvider';
+
 /** Application */
 export { ApplicationMediator } from '@/core/application/ApplicationMediator';
 

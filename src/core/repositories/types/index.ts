@@ -1,3 +1,6 @@
+import type { DomainError } from '@/core/errors/DomainError.js';
+import type { Result } from '@/core/Result.js';
+
 /**
  * @description Database driver interface.
  */
@@ -30,12 +33,20 @@ export interface IRepository<Engine extends string, Context = unknown> {
  * @description Unit of Work interface.
  */
 export interface IUnitOfWork<Engine extends string, Context = unknown> {
+	/** @description Release a savepoint. */
+	releaseSavepoint(name: string): Promise<Result<void, DomainError>>;
 	/** @description Wrapper for: begin → fn → end (commit/rollback). */
 	withTransaction<T>(fn: (uow: this) => Promise<T>): Promise<T>;
+	/** @description Rollback to a specific savepoint. */
+	rollbackTo(name: string): Promise<Result<void, DomainError>>;
+	/** @description Create a savepoint for nested transactions. */
+	savepoint(name: string): Promise<Result<void, DomainError>>;
+	/** @description Mark the UoW for rollback. Returns a Result indicating success or failure. */
+	fail(reason?: unknown): Result<void, DomainError>;
+	/** @description Dispose the UoW and clean up resources. */
+	[Symbol.asyncDispose](): Promise<void>;
 	/** @description Get the current connection context. */
 	getContext(): undefined | Context;
-	/** @description Mark the UoW for rollback. It will not throw an error. */
-	fail(reason?: unknown): void;
 	/** @description Rollback the UoW. Optional, you should use `fail` or `end` instead. */
 	rollback(): Promise<void>;
 	/** @description Check if the UoW is marked for rollback. */
