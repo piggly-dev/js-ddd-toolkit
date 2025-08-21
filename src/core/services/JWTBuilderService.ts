@@ -1,18 +1,20 @@
-import type { JWTPayload } from 'jose';
-
 import {
 	JWTBuilderServiceSettingsSchema,
 	JWTBuilderServiceSettings,
 	JWTBuilderServiceEntry,
-} from '@/core/services/schemas';
-
-import { ServiceProvider } from '../ServiceProvider';
+} from '@/core/services/schemas/index.js';
+import { IJWTBuilderService, JWTPayload } from '@/core/services/types/index.js';
+import { ApplicationService } from '@/core/ApplicationService.js';
+import { ServiceProvider } from '@/core/ServiceProvider.js';
 
 /**
  * @file JWT builder service.
  * @copyright Piggly Lab 2025
  */
-export class JWTBuilderService {
+export class JWTBuilderService
+	extends ApplicationService
+	implements IJWTBuilderService
+{
 	/**
 	 * Settings.
 	 *
@@ -35,6 +37,8 @@ export class JWTBuilderService {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public constructor(settings: JWTBuilderServiceEntry) {
+		super();
+
 		this._settings = JWTBuilderServiceSettingsSchema.parse(settings);
 	}
 

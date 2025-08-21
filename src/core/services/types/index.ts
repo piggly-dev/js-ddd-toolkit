@@ -1,4 +1,5 @@
-import type { TOrUndefined } from '@/types';
+import type { LogLevel } from '@/core/services/schemas/index.js';
+import type { TOrUndefined } from '@/types/index.js';
 
 /**
  * Store service.
@@ -24,4 +25,84 @@ export interface IStoreService {
 	resetIncrement(key: string): Promise<number>;
 	delete(key: string): Promise<boolean>;
 	has(key: string): Promise<boolean>;
+}
+
+/**
+ * Logger service.
+ *
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export interface ILoggerService {
+	debug(message?: string, ...args: any[]): void;
+	error(message?: string, ...args: any[]): void;
+	fatal(message?: string, ...args: any[]): void;
+	info(message?: string, ...args: any[]): void;
+	warn(message?: string, ...args: any[]): void;
+	wait(ms: number): Promise<void>;
+	cleanup(): Promise<void>;
+	flush(): void;
+}
+
+/**
+ * File Log Service.
+ *
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export interface IFileLogService {
+	log(level: LogLevel, message: string): void;
+	flush(level: LogLevel): void;
+	cleanup(): void;
+}
+
+/**
+ * PromisesHandlerService.
+ *
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export interface IPromisesHandlerService {
+	register(promise: Promise<any>): void;
+	cleanup(): Promise<void>;
+	size: number;
+}
+
+/**
+ * JWT Payload.
+ *
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export type JWTPayload = {
+	aud?: string[] | string;
+	exp?: number;
+	iat?: number;
+	iss?: string;
+	jti?: string;
+	nbf?: number;
+	sub?: string;
+	/** Any other JWT Claim Set member. */
+	[propName: string]: unknown;
+};
+
+/**
+ * JWT Builder Service.
+ *
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export interface IJWTBuilderService {
+	issue<Payload extends JWTPayload>(
+		jti: string,
+		sub: string,
+		ttl: number,
+		payload: Payload,
+		audience?: string,
+	): Promise<string>;
+	read<Payload extends JWTPayload>(
+		token: string,
+		required_claims: string[],
+		audience?: string,
+	): Promise<Payload>;
 }

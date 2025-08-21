@@ -1,11 +1,17 @@
 import debug from 'debug';
 
+import type { IPromisesHandlerService } from '@/core/services/types/index.js';
+
 import {
 	OnGoingPromisesServiceSettingsSchema,
 	OnGoingPromisesServiceEntry,
-} from '@/core/services/schemas';
+} from '@/core/services/schemas/index.js';
+import { ApplicationService } from '@/core/ApplicationService.js';
 
-export class OnGoingPromisesService {
+export class OnGoingPromisesService
+	extends ApplicationService
+	implements IPromisesHandlerService
+{
 	/**
 	 * Kill on limit.
 	 *
@@ -42,6 +48,10 @@ export class OnGoingPromisesService {
 	/**
 	 * Constructor.
 	 *
+	 * - settings: How to handle promises
+	 *   - killOnLimit: If true, will kill the process if the limit is reached.
+	 *   - limit: The limit of ongoing promises.
+	 *
 	 * @public
 	 * @constructor
 	 * @memberof OnGoingPromisesService
@@ -50,6 +60,8 @@ export class OnGoingPromisesService {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public constructor(settings: OnGoingPromisesServiceEntry = {}) {
+		super();
+
 		const options = OnGoingPromisesServiceSettingsSchema.parse(settings);
 
 		this._ongoing = new Set();

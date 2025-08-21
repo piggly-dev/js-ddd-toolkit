@@ -108,7 +108,6 @@ export const LoggerServiceSettingsSchema = z.object({
 			onInfo: undefined,
 			onWarn: undefined,
 		}),
-	file: FileLogStreamServiceSettingsSchema.optional(),
 	ignoreLevels: z.array(LogLevelSchema).optional().default([]),
 	ignoreUnset: z.boolean().optional().default(true),
 	onError: z
@@ -172,12 +171,7 @@ export type LoggerServiceSettings = z.infer<typeof LoggerServiceSettingsSchema>;
 // entry
 export type LoggerServiceEntry = Omit<
 	LoggerServiceSettings,
-	| 'alwaysOnConsole'
-	| 'ignoreLevels'
-	| 'ignoreUnset'
-	| 'callbacks'
-	| 'promises'
-	| 'file'
+	'alwaysOnConsole' | 'ignoreLevels' | 'ignoreUnset' | 'callbacks' | 'promises'
 > &
 	Partial<
 		Pick<
@@ -187,7 +181,6 @@ export type LoggerServiceEntry = Omit<
 			| 'ignoreUnset'
 			| 'callbacks'
 			| 'promises'
-			| 'file'
 		>
 	>;
 

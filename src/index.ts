@@ -64,7 +64,14 @@ export { JWTBuilderService } from '@/core/services/JWTBuilderService';
 export { LoggerService } from '@/core/services/LoggerService';
 export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 
-export { IStoreService } from '@/core/services/types';
+export {
+	IPromisesHandlerService,
+	IJWTBuilderService,
+	IFileLogService,
+	ILoggerService,
+	IStoreService,
+	JWTPayload,
+} from '@/core/services/types';
 
 export {
 	OnGoingPromisesServiceSettingsSchema,
@@ -122,33 +129,35 @@ export type {
 	JSONExportable,
 	TOrUndefined,
 	TOrNullable,
-	TOrAnother,
 	TDateInput,
-	TOrFalse,
+	TOrAnother,
 	TOrEmpty,
-	TOrNull,
+	TOrFalse,
 	TObject,
+	TOrNull,
 } from '@/types';
 
 export type {
 	DomainErrorHiddenProp,
 	ApplicationErrorJSON,
-	PreviousErrorJSON,
 	IApplicationError,
+	PreviousErrorJSON,
 	RuntimeErrorJSON,
 	DomainErrorJSON,
-	PreviousError,
 	IRuntimeError,
+	PreviousError,
 	IDomainError,
 } from '@/core/errors/types';
 
 export type {
 	RelatedEnhancedEntity,
 	ResultReturnType,
-	RelatedEntity,
 	EventListener,
+	RelatedEntity,
 	IDomainEvent,
+	IValueObject,
 	IAttribute,
+	IComponent,
 	ResultFn,
 	IEntity,
 } from '@/core/types';
