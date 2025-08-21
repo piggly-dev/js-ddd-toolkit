@@ -104,7 +104,7 @@ export abstract class AbstractRelationalRepository<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public buildUnitOfWork(): IUnitOfWork<Engine, Context> {
-		return this._driver.uow();
+		return this._driver.buildUnitOfWork();
 	}
 
 	/**

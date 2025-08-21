@@ -68,6 +68,12 @@ export class RelationalRepositoryBundle<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public add(repository: IRepository<Engine, Context>): this {
+		if (this._repositories.has(repository.name)) {
+			throw new Error(
+				`Repository "${repository.name}" already added to this bundle.`,
+			);
+		}
+
 		this._repositories.set(repository.name, repository.clone(this._uow));
 		return this;
 	}
@@ -83,7 +89,10 @@ export class RelationalRepositoryBundle<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public async dispose(): Promise<void> {
-		await this._uow.end();
+		if (this._uow.isActive()) {
+			await this._uow.end();
+		}
+
 		this._repositories.clear();
 	}
 
@@ -113,6 +122,20 @@ export class RelationalRepositoryBundle<
 		}
 
 		return repository as Repository;
+	}
+
+	/**
+	 * Scoped transaction.
+	 *
+	 * @param {Function} fn
+	 * @returns {Promise<T>}
+	 * @public
+	 * @memberof RelationalRepositoryBundle
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public async scoped<T>(fn: (b: this) => Promise<T>): Promise<T> {
+		return this._uow.withTransaction(async () => fn(this));
 	}
 
 	/**

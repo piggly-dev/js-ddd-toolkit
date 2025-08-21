@@ -1,4 +1,4 @@
-import type { IRepository } from '@/core/repositories/types/index.js';
+import type { IRepository, IUnitOfWork } from '@/core/repositories/types/index.js';
 
 import { RelationalRepositoryBundle } from '@/core/repositories/RelationalRepositoryBundle.js';
 
@@ -54,17 +54,27 @@ export class RepositoryProvider {
 			repositories.push(repository);
 		}
 
-		for (const repository of repositories) {
-			if (repositories[0].isCompatibleWith(repository) === false) {
+		for (let i = 0; i < repositories.length; i++) {
+			for (let j = i + 1; j < repositories.length; j++) {
+				if (!repositories[i].isCompatibleWith(repositories[j])) {
+					throw new Error(
+						`Incompatible repositories: "${repositories[i].name}" (engine ${repositories[i].engine}) × "${repositories[j].name}" (engine ${repositories[j].engine}).`,
+					);
+				}
+			}
+		}
+
+		const uow = repositories[0].buildUnitOfWork() as IUnitOfWork<Engine, Context>;
+
+		for (const r of repositories) {
+			if (uow.engine() !== r.engine) {
 				throw new Error(
-					`You must to provide compatible repositories. The repository "${repository.name}" is not compatible with "${repositories[0].name}".`,
+					`UnitOfWork engine mismatch: UoW=${uow.engine()} repo("${r.name}")=${r.engine}`,
 				);
 			}
 		}
 
-		const bundle = new RelationalRepositoryBundle<Engine, Context>(
-			repositories[0].buildUnitOfWork() as any,
-		);
+		const bundle = new RelationalRepositoryBundle<Engine, Context>(uow);
 
 		for (const repository of repositories) {
 			bundle.add(repository as IRepository<Engine, Context>);

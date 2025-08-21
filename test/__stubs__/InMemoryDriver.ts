@@ -158,6 +158,13 @@ export class InMemoryDriver implements IDatabaseDriver<'inmemory', InMemoryConte
 	}
 
 	/**
+	 * Create a new Unit of Work.
+	 */
+	public buildUnitOfWork(): IUnitOfWork<'inmemory', InMemoryContext> {
+		return new InMemoryUnitOfWork(this._db);
+	}
+
+	/**
 	 * Get the engine type.
 	 */
 	public engine(): 'inmemory' {
@@ -169,12 +176,5 @@ export class InMemoryDriver implements IDatabaseDriver<'inmemory', InMemoryConte
 	 */
 	public isCompatibleWith(repository: IRepository<'inmemory'>): boolean {
 		return repository.engine === this._engine;
-	}
-
-	/**
-	 * Create a new Unit of Work.
-	 */
-	public uow(): IUnitOfWork<'inmemory', InMemoryContext> {
-		return new InMemoryUnitOfWork(this._db);
 	}
 }

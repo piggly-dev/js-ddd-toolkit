@@ -7,8 +7,8 @@ import type { Result } from '@/core/Result.js';
 export interface IDatabaseDriver<Engine extends string, Context = unknown> {
 	/** @description Check if the repository is compatible with the engine. */
 	isCompatibleWith(repository: IRepository<Engine>): boolean;
-	/** @description Get the UoW associated with the driver. */
-	uow(): IUnitOfWork<Engine, Context>;
+	/** @description Get the UoW associated with the driver. It should return a new instance of the UoW for each call. */
+	buildUnitOfWork(): IUnitOfWork<Engine, Context>;
 	/** @description Get the engine associated with the driver. */
 	engine(): Engine;
 }
@@ -35,7 +35,7 @@ export interface IRepository<Engine extends string, Context = unknown> {
 export interface IUnitOfWork<Engine extends string, Context = unknown> {
 	/** @description Release a savepoint. */
 	releaseSavepoint(name: string): Promise<Result<void, DomainError>>;
-	/** @description Wrapper for: begin → fn → end (commit/rollback). */
+	/** @description Wrapper for: begin → fn → end (commit/rollback). It will auto commit/rollback. */
 	withTransaction<T>(fn: (uow: this) => Promise<T>): Promise<T>;
 	/** @description Rollback to a specific savepoint. */
 	rollbackTo(name: string): Promise<Result<void, DomainError>>;
