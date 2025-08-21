@@ -1,7 +1,9 @@
 import type { IAttribute } from '@/core/types/index.js';
 
+import { EventEmitter } from '@/core/EventEmitter.js';
+
 /**
- * @deprecated Attributes is deprecated. Use ValueObjects instead.
+ * @deprecated While you can still use it, it is not recommended. A Collection for attributes can produce unexpected results, since they are not immutable and can be modified.
  * @file A collection of something.
  * @copyright Piggly Lab 2025
  */
@@ -9,28 +11,52 @@ export abstract class AbstractCollectionOfAttributes<
 	Attribute extends IAttribute<any>,
 > {
 	/**
+	 * The event emmiter.
+	 *
+	 * @type {EventEmitter}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _emitter: EventEmitter;
+
+	/**
 	 * A map of attrs.
 	 *
-	 * @type {Map<string, Attribute>}
+	 * @type {Set<Attribute>}
 	 * @protected
 	 * @memberof AbstractCollectionOfAttributes
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _items: Map<string, Attribute>;
+	protected _items: Set<Attribute>;
+
+	/**
+	 * Indicates if the entity was modified.
+	 *
+	 * @type {boolean}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _modified: boolean;
 
 	/**
 	 * Creates an instance of AbstractCollectionOfAttributes.
 	 *
-	 * @param {Map<string, Attribute>} [initial]
+	 * @param {Set<Attribute>} [initial]
 	 * @public
 	 * @constructor
 	 * @memberof AbstractCollectionOfAttributes
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(initial?: Map<string, Attribute>) {
-		this._items = initial || new Map();
+	constructor(initial?: Set<Attribute>) {
+		this._items = initial || new Set();
+		this._modified = false;
+		this._emitter = new EventEmitter();
 	}
 
 	/**
@@ -47,15 +73,30 @@ export abstract class AbstractCollectionOfAttributes<
 	}
 
 	/**
+	 * Return the attributes as an array.
+	 * Alias for `this.arrayOf`.
+	 *
+	 * @returns {Array<Attribute>}
+	 * @public
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get attributes(): Array<Attribute> {
+		return this.arrayOf;
+	}
+
+	/**
 	 * Return the entries (key, value) as an iterable array.
 	 *
 	 * @returns {Iterator<[string, Attribute]>}
 	 * @public
 	 * @memberof AbstractCollectionOfAttributes
 	 * @since 3.4.0
+	 * @since 5.0.0 Change iterator to [Attribute, Attribute]
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get entries(): Iterator<[string, Attribute]> {
+	public get entries(): Iterator<[Attribute, Attribute]> {
 		return this._items.entries();
 	}
 
@@ -96,13 +137,11 @@ export abstract class AbstractCollectionOfAttributes<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public add(item: Attribute): this {
-		const key = item.hash();
-
-		if (this._items.has(key)) {
-			return this;
+		if (this.find(item) === undefined) {
+			this._items.add(item);
+			this.markAsModified();
 		}
 
-		this._items.set(key, item);
 		return this;
 	}
 
@@ -122,49 +161,6 @@ export abstract class AbstractCollectionOfAttributes<
 	}
 
 	/**
-	 * Append an array of raw items to the collection.
-	 * Will replace no matter what.
-	 *
-	 * @param {Array<Attribute>} items
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public appendManyRaw(items: Array<Attribute>): this {
-		items.forEach(item => this.appendRaw(item));
-		return this;
-	}
-
-	/**
-	 * Append a raw item to the collection.
-	 * Will replace no matter what.
-	 *
-	 * @param {Attribute} item
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public appendRaw(item: Attribute): this {
-		this._items.set(item.hash(), item);
-		return this;
-	}
-
-	/**
-	 * Clone the collection.
-	 *
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.3.2
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public abstract clone(): AbstractCollectionOfAttributes<Attribute>;
-
-	/**
 	 * Find an item by its hash from the collection.
 	 *
 	 * @param {Attribute} item
@@ -175,33 +171,13 @@ export abstract class AbstractCollectionOfAttributes<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public find(item: Attribute): Attribute | undefined {
-		const found = this._items.get(item.hash());
-
-		if (!found) {
-			return undefined;
+		for (const existingItem of this._items) {
+			if (existingItem.equals(item)) {
+				return existingItem;
+			}
 		}
 
-		return found;
-	}
-
-	/**
-	 * Get an item by its hash from the collection.
-	 *
-	 * @param {string} hash
-	 * @returns {Attribute | undefined}
-	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.7.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public get(hash: string): Attribute | undefined {
-		const found = this._items.get(hash);
-
-		if (!found) {
-			return undefined;
-		}
-
-		return found;
+		return undefined;
 	}
 
 	/**
@@ -215,7 +191,7 @@ export abstract class AbstractCollectionOfAttributes<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public has(item: Attribute): boolean {
-		return this._items.has(item.hash());
+		return this.find(item) !== undefined;
 	}
 
 	/**
@@ -247,17 +223,57 @@ export abstract class AbstractCollectionOfAttributes<
 	}
 
 	/**
-	 * Check if the collection has a hash.
+	 * Evaluate if all entities are modified.
 	 *
-	 * @param {string} hash
 	 * @returns {boolean}
 	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.7.0
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public hasHash(hash: string): boolean {
-		return this._items.has(hash);
+	public isAllAttributesModified(): boolean {
+		return this.arrayOf.every(item => item.isModified());
+	}
+
+	/**
+	 * Evaluate if any entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isAnyAttributeModified(): boolean {
+		return this.arrayOf.some(item => item.isModified());
+	}
+
+	/**
+	 * Evaluate if the entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isModified(): boolean {
+		return this._modified || this.isAnyAttributeModified();
+	}
+
+	/**
+	 * Mark the entity as persisted.
+	 *
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public markAsPersisted(): void {
+		this._modified = false;
+		this._emitter.emit('persisted', this);
+
+		this.arrayOf.forEach(item => item.markAsPersisted());
 	}
 
 	/**
@@ -272,54 +288,26 @@ export abstract class AbstractCollectionOfAttributes<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public remove(item: Attribute): this {
-		this._items.delete(item.hash());
+		const found = this.find(item);
+
+		if (found) {
+			this._items.delete(found);
+			this.markAsModified();
+		}
+
 		return this;
 	}
 
 	/**
-	 * Remove an item by its hash from the collection.
+	 * Mark the entity as modified.
 	 *
-	 * @param {string} hash
-	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.7.0
+	 * @memberof Entity
+	 * @since 3.4.1
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public removeHash(hash: string): this {
-		this._items.delete(hash);
-		return this;
-	}
-
-	/**
-	 * Sync an item to the collection.
-	 * Always add the item to the collection, even if it is already in the collection.
-	 *
-	 * @param {Attribute} item
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public sync(item: Attribute): this {
-		this._items.set(item.hash(), item);
-		return this;
-	}
-
-	/**
-	 * Sync an array of items to the collection.
-	 * Always add the items to the collection, even if they are already in the collection.
-	 *
-	 * @param {Array<Attribute>} items
-	 * @returns {this}
-	 * @public
-	 * @memberof AbstractCollectionOfAttributes
-	 * @since 3.4.0
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public syncMany(items: Array<Attribute>): this {
-		items.forEach(item => this.sync(item));
-		return this;
+	protected markAsModified(): void {
+		this._modified = true;
+		this._emitter.emit('modified', this);
 	}
 }

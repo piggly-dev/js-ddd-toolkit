@@ -9,12 +9,18 @@ export type CollectionOfEntitiesIndex<ID, Value> = { id: ID; value?: Value };
 
 export type EventListener = (...args: Array<any>) => void;
 
-/**
- * @deprecated Attributes is deprecated. Use ValueObjects instead.
- */
-export interface IAttribute<Props extends Record<any, any> = Record<any, any>> {
+export interface IAttribute<Props extends Record<any, any> = Record<any, any>>
+	extends IComponent {
 	equals(a: IAttribute<Props> | undefined | null): boolean;
+	off(event: string, listener?: EventListener): void;
+	once(event: string, listener: EventListener): void;
+	on(event: string, listener: EventListener): void;
+	emit(event: string, ...args: any[]): void;
 	clone(): IAttribute<Props>;
+	markAsPersisted(): void;
+	isModified(): boolean;
+	dispose(): void;
+	toJSON(): Props;
 	hash(): string;
 }
 
