@@ -15,7 +15,7 @@ import { DomainError } from './DomainError';
  * @file Abstract runtime error class.
  * @copyright Piggly Lab 2024
  */
-export abstract class RuntimeError extends Error implements IRuntimeError {
+export class RuntimeError extends Error implements IRuntimeError {
 	/**
 	 * The error context.
 	 * Better to add data to inspect response.

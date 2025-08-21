@@ -18,12 +18,12 @@ export { CollectionOfValueObjects } from '@/core/vos/CollectionOfValueObjects';
 export { ValueObject } from '@/core/vos/ValueObject';
 
 /** Attributes */
-export { AbstractCollectionOfAttributes } from '@/core/AbstractCollectionOfAttributes';
-export { AbstractCollectionOfEnhancedAttributes } from '@/core/AbstractCollectionOfEnhancedAttributes';
-export { Attribute } from '@/core/Attribute';
-export { CollectionOfAttributes } from '@/core/CollectionOfAttributes';
-export { CollectionOfEnhancedAttributes } from '@/core/CollectionOfEnhancedAttributes';
-export { EnhancedAttribute } from '@/core/EnhancedAttribute';
+export { AbstractCollectionOfAttributes } from '@/core/deprecated/AbstractCollectionOfAttributes';
+export { AbstractCollectionOfEnhancedAttributes } from '@/core/deprecated/AbstractCollectionOfEnhancedAttributes';
+export { Attribute } from '@/core/deprecated/Attribute';
+export { CollectionOfAttributes } from '@/core/deprecated/CollectionOfAttributes';
+export { CollectionOfEnhancedAttributes } from '@/core/deprecated/CollectionOfEnhancedAttributes';
+export { EnhancedAttribute } from '@/core/deprecated/EnhancedAttribute';
 
 /** Result/monad pattern */
 export { Result } from '@/core/Result';
@@ -42,8 +42,12 @@ export { ServiceProvider } from '@/core/ServiceProvider';
 
 export { UseCase } from '@/core/UseCase';
 
+/** Application */
+export { ApplicationMediator } from '@/core/application/ApplicationMediator';
+
 /** Errors */
 export { ApplicationError } from '@/core/errors/ApplicationError';
+export { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError';
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 export { DomainError } from '@/core/errors/DomainError';
 export { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError';
@@ -148,3 +152,10 @@ export type {
 	ResultFn,
 	IEntity,
 } from '@/core/types';
+
+export type {
+	ApplicationMiddlewareFn,
+	ApplicationHandlerFn,
+	ApplicationContext,
+	IMessage,
+} from '@/core/application/types';

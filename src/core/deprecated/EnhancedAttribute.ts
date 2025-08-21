@@ -1,8 +1,9 @@
-import { EventEmitter } from './EventEmitter';
-import { Attribute } from './Attribute';
-import { IAttribute } from './types';
+import { Attribute } from '@/core/deprecated/Attribute.js';
+import { EventEmitter } from '@/core/EventEmitter.js';
+import { IAttribute } from '@/core/types/index.js';
 
 /**
+ * @deprecated Attributes is deprecated. Use ValueObjects instead.
  * @file Base attribute class.
  * @copyright Piggly Lab 2023
  */

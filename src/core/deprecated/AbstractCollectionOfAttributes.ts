@@ -1,60 +1,36 @@
-import { EnhancedAttribute } from './EnhancedAttribute';
-import { EventEmitter } from './EventEmitter';
+import type { IAttribute } from '@/core/types/index.js';
 
 /**
+ * @deprecated Attributes is deprecated. Use ValueObjects instead.
  * @file A collection of something.
  * @copyright Piggly Lab 2025
  */
-export abstract class AbstractCollectionOfEnhancedAttributes<
-	Attribute extends EnhancedAttribute<any>,
+export abstract class AbstractCollectionOfAttributes<
+	Attribute extends IAttribute<any>,
 > {
 	/**
 	 * A map of attrs.
 	 *
 	 * @type {Map<string, Attribute>}
 	 * @protected
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	protected _items: Map<string, Attribute>;
 
 	/**
-	 * Indicates if the attribute was modified.
-	 *
-	 * @type {boolean}
-	 * @protected
-	 * @memberof EnhancedAttribute
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected _modified: boolean;
-
-	/**
-	 * The event emmiter.
-	 *
-	 * @type {EventEmitter}
-	 * @protected
-	 * @memberof EnhancedAttribute
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public emmiter: EventEmitter;
-
-	/**
-	 * Creates an instance of AbstractCollectionOfEnhancedAttributes.
+	 * Creates an instance of AbstractCollectionOfAttributes.
 	 *
 	 * @param {Map<string, Attribute>} [initial]
 	 * @public
 	 * @constructor
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	constructor(initial?: Map<string, Attribute>) {
 		this._items = initial || new Map();
-		this._modified = false;
-		this.emmiter = new EventEmitter();
 	}
 
 	/**
@@ -62,8 +38,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 *
 	 * @returns {Array<Attribute>}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get arrayOf(): Array<Attribute> {
@@ -75,8 +51,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 *
 	 * @returns {Iterator<[string, Attribute]>}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get entries(): Iterator<[string, Attribute]> {
@@ -88,8 +64,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 *
 	 * @returns {number}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get length(): number {
@@ -101,8 +77,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 *
 	 * @returns {Iterator<Attribute>}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get values(): Iterator<Attribute> {
@@ -115,8 +91,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Attribute} item
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public add(item: Attribute): this {
@@ -127,7 +103,6 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 		}
 
 		this._items.set(key, item);
-		this.markAsModified();
 		return this;
 	}
 
@@ -137,8 +112,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Array<Attribute>} items
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public addMany(items: Array<Attribute>): this {
@@ -153,8 +128,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Array<Attribute>} items
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public appendManyRaw(items: Array<Attribute>): this {
@@ -169,13 +144,12 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Attribute} item
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public appendRaw(item: Attribute): this {
 		this._items.set(item.hash(), item);
-		this.markAsModified();
 		return this;
 	}
 
@@ -184,11 +158,11 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 *
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.3.2
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public abstract clone(): AbstractCollectionOfEnhancedAttributes<Attribute>;
+	public abstract clone(): AbstractCollectionOfAttributes<Attribute>;
 
 	/**
 	 * Find an item by its hash from the collection.
@@ -196,7 +170,7 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Attribute} item
 	 * @returns {Attribute | undefined}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
+	 * @memberof AbstractCollectionOfAttributes
 	 * @since 3.7.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -211,12 +185,12 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	}
 
 	/**
-	 * Get an item by attr from the collection.
+	 * Get an item by its hash from the collection.
 	 *
 	 * @param {string} hash
 	 * @returns {Attribute | undefined}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
+	 * @memberof AbstractCollectionOfAttributes
 	 * @since 3.7.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
@@ -236,8 +210,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Attribute} item
 	 * @returns {boolean}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public has(item: Attribute): boolean {
@@ -250,8 +224,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Array<Attribute>} items
 	 * @returns {boolean}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public hasAll(items: Array<Attribute>): boolean {
@@ -264,8 +238,8 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Array<Attribute>} items
 	 * @returns {boolean}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public hasAny(items: Array<Attribute>): boolean {
@@ -287,73 +261,18 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	}
 
 	/**
-	 * Evaluate if all attributes are modified.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isAllAttributesModified(): boolean {
-		return this.arrayOf.every(item => item.isModified());
-	}
-
-	/**
-	 * Evaluate if any attribute is modified.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isAnyAttributeModified(): boolean {
-		return this.arrayOf.some(item => item.isModified());
-	}
-
-	/**
-	 * Evaluate if the attribute is modified.
-	 *
-	 * @returns {boolean}
-	 * @public
-	 * @memberof EnhancedAttribute
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public isModified(): boolean {
-		return this._modified || this.isAnyAttributeModified();
-	}
-
-	/**
-	 * Mark the attribute as persisted.
-	 *
-	 * @public
-	 * @memberof EnhancedAttribute
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	public markAsPersisted(): void {
-		this._modified = false;
-		this.emmiter.emit('persisted', this);
-
-		this.arrayOf.forEach(item => item.markAsPersisted());
-	}
-
-	/**
 	 * Remove id from the collection.
 	 * Compatible with old method.
 	 *
 	 * @param {ID} id
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public remove(item: Attribute): this {
 		this._items.delete(item.hash());
-		this.markAsModified();
 		return this;
 	}
 
@@ -379,13 +298,12 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Attribute} item
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public sync(item: Attribute): this {
 		this._items.set(item.hash(), item);
-		this.markAsModified();
 		return this;
 	}
 
@@ -396,25 +314,12 @@ export abstract class AbstractCollectionOfEnhancedAttributes<
 	 * @param {Array<Attribute>} items
 	 * @returns {this}
 	 * @public
-	 * @memberof AbstractCollectionOfEnhancedAttributes
-	 * @since 3.4.1
+	 * @memberof AbstractCollectionOfAttributes
+	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public syncMany(items: Array<Attribute>): this {
 		items.forEach(item => this.sync(item));
 		return this;
-	}
-
-	/**
-	 * Mark the attribute as modified.
-	 *
-	 * @public
-	 * @memberof EnhancedAttribute
-	 * @since 3.4.1
-	 * @author Caique Araujo <caique@piggly.com.br>
-	 */
-	protected markAsModified(): void {
-		this._modified = true;
-		this.emmiter.emit('modified', this);
 	}
 }

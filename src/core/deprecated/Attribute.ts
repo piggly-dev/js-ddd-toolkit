@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 
-import type { IAttribute } from './types';
+import type { IAttribute } from '../types';
 
 /**
+ * @deprecated Attributes is deprecated. Use ValueObjects instead.
  * @file Base attribute class.
  * @copyright Piggly Lab 2025
  * @since 3.4.0

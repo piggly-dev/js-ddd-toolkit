@@ -9,6 +9,9 @@ export type CollectionOfEntitiesIndex<ID, Value> = { id: ID; value?: Value };
 
 export type EventListener = (...args: Array<any>) => void;
 
+/**
+ * @deprecated Attributes is deprecated. Use ValueObjects instead.
+ */
 export interface IAttribute<Props extends Record<any, any> = Record<any, any>> {
 	equals(a: IAttribute<Props> | undefined | null): boolean;
 	clone(): IAttribute<Props>;
@@ -49,11 +52,17 @@ export interface IValueObject<
 	props: Props;
 }
 
+/**
+ * @deprecated Use Entity instead.
+ */
 export type RelatedEnhancedEntity<
 	ID extends EntityID<any>,
 	Entity extends BaseEnhancedEntity<any, any>,
 > = CollectionOfEntitiesIndex<ID, Entity>;
 
+/**
+ * @deprecated Use Entity instead.
+ */
 export type RelatedEntity<
 	ID extends EntityID<any>,
 	Entity extends BaseEntity<any, any>,

@@ -1,7 +1,8 @@
-import { AbstractCollectionOfEnhancedAttributes } from './AbstractCollectionOfEnhancedAttributes';
-import { EnhancedAttribute } from './EnhancedAttribute';
+import { AbstractCollectionOfEnhancedAttributes } from '@/core/deprecated/AbstractCollectionOfEnhancedAttributes.js';
+import { EnhancedAttribute } from '@/core/deprecated/EnhancedAttribute.js';
 
 /**
+ * @deprecated Attributes is deprecated. Use ValueObjects instead.
  * @file A collection of attributes.
  * @copyright Piggly Lab 2025
  */

@@ -1,8 +1,9 @@
-import type { IAttribute } from './types';
+import type { IAttribute } from '@/core/types/index.js';
 
-import { AbstractCollectionOfAttributes } from './AbstractCollectionOfAttributes';
+import { AbstractCollectionOfAttributes } from '@/core/deprecated/AbstractCollectionOfAttributes.js';
 
 /**
+ * @deprecated Attributes is deprecated. Use ValueObjects instead.
  * @file A collection of attributes.
  * @copyright Piggly Lab 2025
  */
