@@ -22,7 +22,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 	describe('Basic Transaction Flow', () => {
 		it('should commit changes when transaction succeeds', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 			const uow = bundle.uow;
 
 			await uow.begin();
@@ -37,18 +37,18 @@ describe('Repository Pattern with UnitOfWork', () => {
 			const saveResult = await repo.save(user);
 			expect(saveResult.isSuccess).toBe(true);
 
-			await uow.end();
+			await uow.commit();
 
 			// Verify data persisted after commit
 			await uow.begin();
 			const findResult = await repo.findById('1');
 			expect(findResult.isSuccess).toBe(true);
 			expect(findResult.data).toMatchObject({ ...user, version: 1 });
-			await uow.end();
+			await uow.commit();
 		});
 
 		it('should rollback changes when transaction fails', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 			const uow = bundle.uow;
 
 			// First, add a user
@@ -60,7 +60,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 				name: 'John',
 				version: 0,
 			});
-			await uow.end();
+			await uow.commit();
 
 			// Now try to update and rollback
 			await uow.begin();
@@ -72,18 +72,17 @@ describe('Repository Pattern with UnitOfWork', () => {
 			});
 
 			// Mark for rollback
-			uow.fail('Something went wrong');
-			await uow.end();
+			await uow.rollback();
 
 			// Verify original data remains
 			await uow.begin();
 			const findResult = await repo.findById('1');
 			expect(findResult.data?.name).toBe('John');
-			await uow.end();
+			await uow.commit();
 		});
 
 		it('should prevent operations without active UoW', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 
 			// Should throw when trying to get repository without active UoW
 			expect(() => bundle.get('users')).toThrow('Unit of Work is not active');
@@ -92,7 +91,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 	describe('Savepoint Support', () => {
 		it('should rollback to savepoint', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 			const uow = bundle.uow;
 
 			await uow.begin();
@@ -108,7 +107,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 			// Create savepoint
 			const sp1Result = await uow.savepoint('sp1');
-			expect(sp1Result.isSuccess).toBe(true);
+			expect(sp1Result).toBe(true);
 
 			// Add second user
 			await repo.save({
@@ -120,7 +119,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 			// Create another savepoint
 			const sp2Result = await uow.savepoint('sp2');
-			expect(sp2Result.isSuccess).toBe(true);
+			expect(sp2Result).toBe(true);
 
 			// Add third user
 			await repo.save({
@@ -132,7 +131,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 			// Rollback to first savepoint
 			const rollbackResult = await uow.rollbackTo('sp1');
-			expect(rollbackResult.isSuccess).toBe(true);
+			expect(rollbackResult).toBe(true);
 
 			// Verify only first user exists
 			const countResult = await repo.count();
@@ -144,33 +143,31 @@ describe('Repository Pattern with UnitOfWork', () => {
 			const user2Result = await repo.exists('2');
 			expect(user2Result.data).toBe(false);
 
-			await uow.end();
+			await uow.commit();
 		});
 
 		it('should release savepoints', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 			const uow = bundle.uow;
 
 			await uow.begin();
 
 			const sp1Result = await uow.savepoint('sp1');
-			expect(sp1Result.isSuccess).toBe(true);
+			expect(sp1Result).toBe(true);
 
 			const releaseResult = await uow.releaseSavepoint('sp1');
-			expect(releaseResult.isSuccess).toBe(true);
+			expect(releaseResult).toBe(true);
 
 			// Should fail to rollback to released savepoint
-			const rollbackResult = await uow.rollbackTo('sp1');
-			expect(rollbackResult.isFailure).toBe(true);
-			expect(rollbackResult.error?.message).toContain('not found');
+			expect(uow.rollbackTo('sp1')).rejects.toThrow('Savepoint not found');
 
-			await uow.end();
+			await uow.commit();
 		});
 	});
 
 	describe('Optimistic Locking', () => {
 		it('should detect concurrent modifications', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 
 			// Create initial user
 			await bundle.uow.begin();
@@ -181,11 +178,11 @@ describe('Repository Pattern with UnitOfWork', () => {
 				name: 'John',
 				version: 0,
 			});
-			await bundle.uow.end();
+			await bundle.uow.commit();
 
 			// Simulate two concurrent transactions
-			const bundle1 = RepositoryProvider.bundleTransaction('users');
-			const bundle2 = RepositoryProvider.bundleTransaction('users');
+			const bundle1 = RepositoryProvider.bundleFor('users');
+			const bundle2 = RepositoryProvider.bundleFor('users');
 
 			// Both read the same version
 			await bundle1.uow.begin();
@@ -202,7 +199,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			user1.name = 'John Updated';
 			const save1Result = await repo1.save(user1);
 			expect(save1Result.isSuccess).toBe(true);
-			await bundle1.uow.end();
+			await bundle1.uow.commit();
 
 			// Second transaction should fail with optimistic lock error
 			user2.name = 'John Conflicted';
@@ -210,7 +207,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			expect(save2Result.isFailure).toBe(true);
 			expect(save2Result.error?.name).toBe('OPTIMISTIC_LOCK_ERROR');
 
-			await bundle2.uow.end();
+			await bundle2.uow.rollback();
 		});
 	});
 
@@ -220,7 +217,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			// In real usage with TypeScript 5.2+:
 			// await using bundle = RepositoryProvider.resolve('users');
 
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 			const uow = bundle.uow;
 
 			await uow.begin();
@@ -246,7 +243,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			const user2Repo = new InMemoryUserRepository('users2', driver);
 			RepositoryProvider.register(user2Repo);
 
-			const bundle = RepositoryProvider.bundleTransaction('users', 'users2');
+			const bundle = RepositoryProvider.bundleFor('users', 'users2');
 			await bundle.uow.begin();
 
 			const userRepo1 = bundle.get<InMemoryUserRepository>('users');
@@ -277,8 +274,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			expect(midCount2).toBeGreaterThan(initialCount2);
 
 			// The key test: Rollback affects both repositories
-			bundle.uow.fail('Rollback all');
-			await bundle.uow.end();
+			await bundle.uow.rollback();
 
 			// Verify rollback - counts should be back to initial state
 			await bundle.uow.begin();
@@ -286,13 +282,13 @@ describe('Repository Pattern with UnitOfWork', () => {
 			const finalCount2 = (await userRepo2.count()).data || 0;
 			expect(finalCount1).toBe(initialCount1);
 			expect(finalCount2).toBe(initialCount2);
-			await bundle.uow.end();
+			await bundle.uow.commit();
 		});
 	});
 
 	describe('Error Handling', () => {
 		it('should handle Result pattern for all operations', async () => {
-			const bundle = RepositoryProvider.bundleTransaction('users');
+			const bundle = RepositoryProvider.bundleFor('users');
 			await bundle.uow.begin();
 			const repo = bundle.get<InMemoryUserRepository>('users');
 
@@ -313,7 +309,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			const deleteResult = await repo.delete('1');
 			expect(deleteResult.isSuccess).toBe(true);
 
-			await bundle.uow.end();
+			await bundle.uow.commit();
 		});
 
 		it('should handle repository operations without context', async () => {
@@ -329,8 +325,8 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 	describe('Transaction Isolation', () => {
 		it('should isolate concurrent transactions', async () => {
-			const bundle1 = RepositoryProvider.bundleTransaction('users');
-			const bundle2 = RepositoryProvider.bundleTransaction('users');
+			const bundle1 = RepositoryProvider.bundleFor('users');
+			const bundle2 = RepositoryProvider.bundleFor('users');
 
 			// Start both transactions
 			await bundle1.uow.begin();
@@ -361,8 +357,8 @@ describe('Repository Pattern with UnitOfWork', () => {
 			// In a real database, these would be isolated
 			// This test documents the current behavior
 
-			await bundle1.uow.end();
-			await bundle2.uow.end();
+			await bundle1.uow.commit();
+			await bundle2.uow.commit();
 		});
 	});
 });

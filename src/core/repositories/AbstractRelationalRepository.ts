@@ -69,6 +69,19 @@ export abstract class AbstractRelationalRepository<
 	}
 
 	/**
+	 * Get the signature of the connection associated with the driver.
+	 *
+	 * @returns {string}
+	 * @public
+	 * @memberof AbstractRelationalRepository
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get connectionSignature(): string {
+		return this._driver.connectionSignature;
+	}
+
+	/**
 	 * Get the engine of the repository.
 	 *
 	 * @returns {Engine}
@@ -78,7 +91,7 @@ export abstract class AbstractRelationalRepository<
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public get engine(): Engine {
-		return this._driver.engine();
+		return this._driver.engine;
 	}
 
 	/**
@@ -146,6 +159,7 @@ export abstract class AbstractRelationalRepository<
 	/**
 	 * Get the current database context from the Unit of Work.
 	 * Returns undefined if no UoW is bound or if the UoW is not active.
+	 * Is expected to driver create a new context if the UoW is not active.
 	 *
 	 * @returns {TOrUndefined<Context>} The current context or undefined
 	 * @protected

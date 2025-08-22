@@ -44,6 +44,8 @@ export { UseCase } from '@/core/UseCase';
 
 /** Repositories */
 export {
+	TransactionIsolationLevelType,
+	BeginTransactionOptions,
 	IDatabaseDriver,
 	IRepository,
 	IUnitOfWork,

@@ -150,11 +150,22 @@ export class InMemoryDriver implements IDatabaseDriver<'inmemory', InMemoryConte
 		this._db = db || new InMemoryDatabase();
 	}
 
+	public get connectionSignature(): string {
+		return `signature`;
+	}
+
 	/**
 	 * Get the database instance.
 	 */
 	public get db(): InMemoryDatabase {
 		return this._db;
+	}
+
+	/**
+	 * Get the engine type.
+	 */
+	public get engine(): 'inmemory' {
+		return this._engine;
 	}
 
 	/**
@@ -164,11 +175,12 @@ export class InMemoryDriver implements IDatabaseDriver<'inmemory', InMemoryConte
 		return new InMemoryUnitOfWork(this._db);
 	}
 
-	/**
-	 * Get the engine type.
-	 */
-	public engine(): 'inmemory' {
-		return this._engine;
+	public async context(database?: string): Promise<InMemoryContext> {
+		return {
+			db: this._db,
+			isolationLevel: 'READ_UNCOMMITTED',
+			transactionId: this._db.beginTransaction(),
+		};
 	}
 
 	/**

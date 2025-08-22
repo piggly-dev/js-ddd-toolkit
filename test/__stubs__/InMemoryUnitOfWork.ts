@@ -22,6 +22,13 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 	}
 
 	/**
+	 * Get the engine type.
+	 */
+	public get engine(): 'inmemory' {
+		return this._engine;
+	}
+
+	/**
 	 * Begin a new transaction.
 	 */
 	public async begin(): Promise<void> {
@@ -61,6 +68,16 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 	}
 
 	/**
+	 * Dispose the UoW and clean up resources.
+	 */
+	public async dispose(): Promise<void> {
+		if (this._isActive) {
+			await this.end();
+		}
+		this._savepoints.clear();
+	}
+
+	/**
 	 * End the transaction (commit or rollback).
 	 */
 	public async end(): Promise<void> {
@@ -73,13 +90,6 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 		} else {
 			await this.commit();
 		}
-	}
-
-	/**
-	 * Get the engine type.
-	 */
-	public engine(): 'inmemory' {
-		return this._engine;
 	}
 
 	/**
@@ -122,25 +132,16 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 	/**
 	 * Release a savepoint.
 	 */
-	public async releaseSavepoint(name: string): Promise<Result<void, DomainError>> {
+	public async releaseSavepoint(name: string): Promise<void> {
 		if (!this._isActive) {
-			return Result.fail(
-				new DomainError('NO_TRANSACTION', 500, 'No active transaction'),
-			);
+			throw new Error('No active transaction to release savepoint');
 		}
 
 		if (!this._savepoints.has(name)) {
-			return Result.fail(
-				new DomainError(
-					'SAVEPOINT_NOT_FOUND',
-					404,
-					`Savepoint ${name} not found`,
-				),
-			);
+			throw new Error(`Savepoint ${name} not found`);
 		}
 
 		this._savepoints.delete(name);
-		return Result.ok(undefined);
 	}
 
 	/**
@@ -160,22 +161,14 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 	/**
 	 * Rollback to a savepoint.
 	 */
-	public async rollbackTo(name: string): Promise<Result<void, DomainError>> {
+	public async rollbackTo(name: string): Promise<void> {
 		if (!this._isActive) {
-			return Result.fail(
-				new DomainError('NO_TRANSACTION', 500, 'No active transaction'),
-			);
+			throw new Error('No active transaction to rollback');
 		}
 
 		const sp = this._savepoints.get(name);
 		if (!sp) {
-			return Result.fail(
-				new DomainError(
-					'SAVEPOINT_NOT_FOUND',
-					404,
-					`Savepoint ${name} not found`,
-				),
-			);
+			throw new Error(`Savepoint ${name} not found`);
 		}
 
 		this._db.restoreSavepoint(sp);
@@ -186,50 +179,28 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 		for (let i = index + 1; i < names.length; i++) {
 			this._savepoints.delete(names[i]);
 		}
-
-		return Result.ok(undefined);
 	}
 
 	/**
 	 * Create a savepoint.
 	 */
-	public async savepoint(name: string): Promise<Result<void, DomainError>> {
+	public async savepoint(name: string): Promise<void> {
 		if (!this._isActive || !this._context?.transactionId) {
-			return Result.fail(
-				new DomainError('NO_TRANSACTION', 500, 'No active transaction'),
-			);
+			throw new Error('No active transaction to create savepoint');
 		}
 
 		if (this._savepoints.has(name)) {
-			return Result.fail(
-				new DomainError(
-					'SAVEPOINT_EXISTS',
-					400,
-					`Savepoint ${name} already exists`,
-				),
-			);
+			throw new Error(`Savepoint ${name} already exists`);
 		}
 
 		const sp = this._db.createSavepoint(this._context.transactionId, name);
 		this._savepoints.set(name, sp);
-
-		return Result.ok(undefined);
-	}
-
-	/**
-	 * Dispose the UoW and clean up resources.
-	 */
-	public async [Symbol.asyncDispose](): Promise<void> {
-		if (this._isActive) {
-			await this.end();
-		}
-		this._savepoints.clear();
 	}
 
 	/**
 	 * Wrapper for transaction execution.
 	 */
-	public async withTransaction<T>(fn: (uow: this) => Promise<T>): Promise<T> {
+	public async scopedTransaction<T>(fn: (uow: this) => Promise<T>): Promise<T> {
 		await this.begin();
 		try {
 			const result = await fn(this);
@@ -240,5 +211,13 @@ export class InMemoryUnitOfWork implements IUnitOfWork<'inmemory', InMemoryConte
 			await this.end();
 			throw error;
 		}
+	}
+
+	/**
+	 * Dispose the UoW and clean up resources.
+	 */
+	public async [Symbol.asyncDispose](): Promise<void> {
+		await this.dispose();
+		this._savepoints.clear();
 	}
 }

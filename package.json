@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0",
+	"version": "5.0.0-alpha.1",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -20,6 +20,10 @@
 		"postversion": "git push --follow-tags",
 		"prepublishOnly": "npm run build",
 		"prepare": "husky"
+	},
+	"publishConfig": {
+		"access": "public",
+		"tag": "alpha"
 	},
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/esm/index.js",

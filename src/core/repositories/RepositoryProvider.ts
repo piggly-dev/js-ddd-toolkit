@@ -24,6 +24,7 @@ export class RepositoryProvider {
 	/**
 	 * Resolve a bundle of repositories.
 	 * All repositories must be compatible (same engine and context).
+	 * They will share the same UoW (context).
 	 *
 	 * @param {string[]} names
 	 * @returns {RelationalRepositoryBundle<Engine, Context>}
@@ -34,10 +35,9 @@ export class RepositoryProvider {
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static bundleTransaction<
-		Engine extends string = string,
-		Context = unknown,
-	>(...names: string[]): RelationalRepositoryBundle<Engine, Context> {
+	public static bundleFor<Engine extends string = string, Context = unknown>(
+		...names: string[]
+	): RelationalRepositoryBundle<Engine, Context> {
 		if (names.length === 0) {
 			throw new Error('You must to provide at least one repository name.');
 		}
@@ -67,9 +67,9 @@ export class RepositoryProvider {
 		const uow = repositories[0].buildUnitOfWork() as IUnitOfWork<Engine, Context>;
 
 		for (const r of repositories) {
-			if (uow.engine() !== r.engine) {
+			if (uow.engine !== r.engine) {
 				throw new Error(
-					`UnitOfWork engine mismatch: UoW=${uow.engine()} repo("${r.name}")=${r.engine}`,
+					`UnitOfWork engine mismatch: UoW=${uow.engine} repo("${r.name}")=${r.engine}`,
 				);
 			}
 		}
