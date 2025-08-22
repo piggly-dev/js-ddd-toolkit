@@ -27,6 +27,7 @@ module.exports = {
 	preset: 'ts-jest',
 	moduleFileExtensions: ['ts', 'js'],
 	moduleNameMapper: {
+		'@/(.*)\\.js$': '<rootDir>/src/$1.ts',
 		'@/(.*)?': '<rootDir>/src/$1',
 		'@test/(.*)': '<rootDir>/test/$1',
 	},

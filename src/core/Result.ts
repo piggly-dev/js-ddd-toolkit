@@ -1,3 +1,5 @@
+import type { TOrAnother } from '@/types';
+
 import { DomainError } from './errors/DomainError';
 
 /**
@@ -111,6 +113,102 @@ export class Result<Data, Error extends DomainError> {
 	}
 
 	/**
+	 * Chains a function that returns a Result, supporting both sync and async functions.
+	 * If the current Result is successful, applies the function to the data.
+	 * If the current Result is a failure, propagates the error without executing the function.
+	 *
+	 * @template NextData The type of data in the resulting Result
+	 * @template NextError The type of error in the resulting Result
+	 * @param {(data: Data) => TOrAnother<Result<NextData, NextError>, Promise<Result<NextData, NextError>>>} fn Function to apply to the data
+	 * @returns {Promise<Result<NextData, NextError>>} A Promise that resolves to the Result of the chained operation
+	 * @public
+	 * @memberof Result
+	 * @since 4.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public async chain<NextData, NextError extends DomainError>(
+		fn: (
+			data: Data,
+		) => TOrAnother<
+			Result<NextData, NextError>,
+			Promise<Result<NextData, NextError>>
+		>,
+	): Promise<Result<NextData, NextError | Error>> {
+		if (this.isFailure) {
+			return Result.fail(this.error) as Result<NextData, NextError | Error>;
+		}
+
+		const result = fn(this.data);
+		return Promise.resolve(result);
+	}
+
+	/**
+	 * Transforms the data of a successful Result using the provided function.
+	 * If the Result is a failure, returns the failure unchanged.
+	 * The transformation function should not return a Result - the returned value will be wrapped in Result.ok().
+	 *
+	 * @template NextData The type of the transformed data
+	 * @param {(data: Data) => NextData} fn Function to transform the data
+	 * @returns {Result<NextData, Error>} A new Result with the transformed data or the original error
+	 * @public
+	 * @memberof Result
+	 * @since 4.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public map<NextData>(fn: (data: Data) => NextData): Result<NextData, Error> {
+		if (this.isFailure) {
+			return Result.fail(this.error) as Result<NextData, Error>;
+		}
+
+		const transformedData = fn(this.data);
+		return Result.ok(transformedData);
+	}
+
+	/**
+	 * Transforms the error of a failed Result using the provided function.
+	 * If the Result is successful, returns the success unchanged.
+	 * This is useful for converting between different error types or adding context to errors.
+	 *
+	 * @template NextError The type of the transformed error
+	 * @param {(error: Error) => NextError} fn Function to transform the error
+	 * @returns {Result<Data, NextError>} A new Result with the original data or the transformed error
+	 * @public
+	 * @memberof Result
+	 * @since 4.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public mapError<NextError extends DomainError>(
+		fn: (error: Error) => NextError,
+	): Result<Data, NextError> {
+		if (this.isSuccess) {
+			return Result.ok(this.data);
+		}
+
+		const transformedError = fn(this.error);
+		return Result.fail(transformedError) as Result<Data, NextError>;
+	}
+
+	/**
+	 * Executes a side effect function with the data if the Result is successful.
+	 * The Result is returned unchanged, making this useful for logging, metrics, or other side effects.
+	 * If the Result is a failure, the function is not executed.
+	 *
+	 * @param {(data: Data) => void} fn Side effect function to execute with the data
+	 * @returns {Result<Data, Error>} The original Result unchanged
+	 * @public
+	 * @memberof Result
+	 * @since 4.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public tap(fn: (data: Data) => void): Result<Data, Error> {
+		if (this.isSuccess) {
+			fn(this.data);
+		}
+
+		return this;
+	}
+
+	/**
 	 * Creates a new failed result.
 	 *
 	 * @static
@@ -123,8 +221,8 @@ export class Result<Data, Error extends DomainError> {
 	 */
 	public static fail<Error extends DomainError>(
 		error: Error,
-	): Result<never, DomainError> {
-		return new Result<never, DomainError>(false, undefined, error);
+	): Result<never, Error> {
+		return new Result<never, Error>(false, undefined, error);
 	}
 
 	/**

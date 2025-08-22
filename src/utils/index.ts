@@ -384,6 +384,7 @@ export const loadDotEnv = async <Schema extends z.ZodType>(
  * @param {string} absolute_path
  * @param {string} file_name Without the yml extension.
  * @param {ZodObject<any>} schema
+ * @param {string} extension The extension of the file.
  * @returns {string}
  * @since 4.0.0
  * @author Caique Araujo <caique@piggly.com.br>
@@ -392,26 +393,31 @@ export const loadYaml = async <Schema extends z.ZodType>(
 	absolute_path: string,
 	file_name: string,
 	schema: Schema,
+	extension = 'yml',
 ): Promise<z.output<Schema>> => {
 	const yaml = await import('js-yaml');
 
 	return new Promise<z.output<Schema>>((res, rej) => {
-		fs.readFile(`${absolute_path}/${file_name}.yml`, 'utf-8', (err, data) => {
-			if (err) {
-				return rej(err);
-			}
+		fs.readFile(
+			`${absolute_path}/${file_name}.${extension}`,
+			'utf-8',
+			(err, data) => {
+				if (err) {
+					return rej(err);
+				}
 
-			schema
-				.safeParseAsync(yaml.load(data))
-				.then(parsed => {
-					if (parsed.error) {
-						return rej(new Error(parsed.error.message));
-					}
+				schema
+					.safeParseAsync(yaml.load(data))
+					.then(parsed => {
+						if (parsed.error) {
+							return rej(new Error(parsed.error.message));
+						}
 
-					return res(parsed.data);
-				})
-				.catch(err => rej(err));
-		});
+						return res(parsed.data);
+					})
+					.catch(err => rej(err));
+			},
+		);
 	});
 };
 

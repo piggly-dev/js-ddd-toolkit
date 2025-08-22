@@ -1,44 +1,49 @@
 /* eslint-disable no-console */
 import debug from 'debug';
 
+import type {
+	IPromisesHandlerService,
+	IFileLogService,
+	ILoggerService,
+} from '@/core/services/types/index.js';
+
 import {
 	LoggerServiceSettingsSchema,
 	LoggerServiceSettings,
 	LoggerServiceEntry,
 	LogLevel,
-} from '@/core/services/schemas';
-import { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
-import { FileLogStreamService } from '@/core/services/FileLogStreamService';
-import { displayLog } from '@/utils';
-
-import { ServiceProvider } from '../ServiceProvider';
+} from '@/core/services/schemas/index.js';
+import { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService.js';
+import { ApplicationService } from '@/core/ApplicationService.js';
+import { ServiceProvider } from '@/core/ServiceProvider.js';
+import { displayLog } from '@/utils/index.js';
 
 /**
  * @file Logger service.
  * @copyright Piggly Lab 2024
  */
-export class LoggerService {
+export class LoggerService extends ApplicationService implements ILoggerService {
 	/**
 	 * The file log stream service.
 	 *
-	 * @type {FileLogStreamService}
+	 * @type {IFileLogService}
 	 * @protected
 	 * @memberof LoggerService
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _file?: FileLogStreamService;
+	protected _file?: IFileLogService;
 
 	/**
 	 * Ongoing promises.
 	 *
-	 * @type {OnGoingPromisesService}
+	 * @type {IPromisesHandlerService}
 	 * @protected
 	 * @memberof LoggerService
 	 * @since 4.1.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _ongoing: OnGoingPromisesService;
+	protected _ongoing: IPromisesHandlerService;
 
 	/**
 	 * Settings.
@@ -65,11 +70,6 @@ export class LoggerService {
 	 * - ignoreLevels: The logger service will ignore any log level set here.
 	 * - onError: Custom error handler.
 	 * - onFlush: Custom flush handler. Should be used to flush logs.
-	 * - file: How to handle file logging
-	 *   - abspath: The path to the file to log to. If not set, the logger will not log to a file.
-	 *   - killOnLimit: If true, will kill the process if the limit is reached.
-	 *   - levels: The levels to log to.
-	 *   - streamLimit: The limit of pending messages for each stream.
 	 * - promises: How to handle promises
 	 *   - killOnLimit: If true, will kill the process if the limit is reached.
 	 *   - limit: The limit of ongoing promises.
@@ -83,12 +83,18 @@ export class LoggerService {
 	 * @since 4.1.0 Added ignoreLevels, trackOnGoing.
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public constructor(settings: LoggerServiceEntry = {}) {
-		this._settings = LoggerServiceSettingsSchema.parse(settings);
-		this._ongoing = new OnGoingPromisesService(this._settings.promises);
+	public constructor(
+		settings: LoggerServiceEntry = {},
+		deps?: Partial<{ file: IFileLogService; promises: IPromisesHandlerService }>,
+	) {
+		super();
 
-		if (this._settings.file) {
-			this._file = new FileLogStreamService(this._settings.file);
+		this._settings = LoggerServiceSettingsSchema.parse(settings);
+		this._ongoing =
+			deps?.promises || new OnGoingPromisesService(this._settings.promises);
+
+		if (deps?.file) {
+			this._file = deps.file;
 		}
 	}
 

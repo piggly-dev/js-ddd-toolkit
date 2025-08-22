@@ -3,12 +3,15 @@ import path from 'path';
 
 import debug from 'debug';
 
+import type { IFileLogService } from '@/core/services/types/index.js';
+
 import {
 	FileLogStreamServiceSettingsSchema,
 	FileLogStreamServiceSettings,
 	FileLogStreamServiceEntry,
 	LogLevel,
 } from '@/core/services/schemas';
+import { ApplicationService } from '@/core/ApplicationService.js';
 
 /**
  * @file FileLogStreamService.
@@ -16,7 +19,10 @@ import {
  * @since 4.1.0
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export class FileLogStreamService {
+export class FileLogStreamService
+	extends ApplicationService
+	implements IFileLogService
+{
 	/**
 	 * The number of errors detected.
 	 *
@@ -64,6 +70,12 @@ export class FileLogStreamService {
 	/**
 	 * Constructor.
 	 *
+	 * - settings: The settings for the file log stream service.
+	 *   - abspath: The path to the file to log to. If not set, the logger will not log to a file.
+	 *   - killOnLimit: If true, will kill the process if the limit is reached.
+	 *   - levels: The levels to log to.
+	 *   - streamLimit: The limit of pending messages for each stream.
+	 *
 	 * @param {FileLogStreamServiceSettings} settings
 	 * @public
 	 * @memberof FileLogStreamService
@@ -72,6 +84,8 @@ export class FileLogStreamService {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public constructor(settings: FileLogStreamServiceEntry) {
+		super();
+
 		this._settings = FileLogStreamServiceSettingsSchema.parse(settings);
 
 		this._pending = new Map();

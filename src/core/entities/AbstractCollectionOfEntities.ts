@@ -1,0 +1,707 @@
+import { EventEmitter } from 'stream';
+
+import { OptionalEntity } from '@/core/entities/OptionalEntity.js';
+import { EntityID } from '@/core/entities/EntityID.js';
+import { IEntity } from '@/core/types/index.js';
+
+/**
+ * @file A collection of something.
+ * @copyright Piggly Lab 2025
+ */
+export abstract class AbstractCollectionOfEntities<
+	Key,
+	Entity extends IEntity<ID>,
+	ID extends EntityID<any> = EntityID<any>,
+> {
+	/**
+	 * The event emmiter.
+	 *
+	 * @type {EventEmitter}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _emmiter: EventEmitter;
+
+	/**
+	 * A map of entities.
+	 *
+	 * @type {Map<Key, OptionalEntity<Entity, ID>>}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _items: Map<Key, OptionalEntity<Entity, ID>>;
+
+	/**
+	 * Indicates if the entity was modified.
+	 *
+	 * @type {boolean}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _modified: boolean;
+
+	/**
+	 * Creates an instance of AbstractCollectionOfEntities.
+	 *
+	 * @param {Map<Key, OptionalEntity<Entity, ID>>} [initial]
+	 * @public
+	 * @constructor
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	constructor(initial?: Map<Key, OptionalEntity<Entity, ID>>) {
+		this._items = initial || new Map();
+		this._modified = false;
+		this._emmiter = new EventEmitter();
+	}
+
+	/**
+	 * Return the items as an array.
+	 *
+	 * @returns {Array<Entity>}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get arrayOf(): Array<OptionalEntity<Entity, ID>> {
+		return Array.from(this._items.values());
+	}
+
+	/**
+	 * Return the entities as an array.
+	 * Alias for `this.existingValues`.
+	 *
+	 * @returns {Array<Entity>}
+	 * @public
+	 * @memberof AbstractCollectionOfSome
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get entities(): Array<Entity> {
+		return this.knowableEntities;
+	}
+
+	/**
+	 * Return the entries (key, value) as an iterable array.
+	 *
+	 * @returns {Iterator<[Key, OptionalEntity<Entity, ID>]>}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get entries(): Iterator<[Key, OptionalEntity<Entity, ID>]> {
+		return this._items.entries();
+	}
+
+	/**
+	 * Return the ids as an array.
+	 *
+	 * @returns {Array<Key>}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get ids(): Array<ID> {
+		const keys: Array<ID> = [];
+
+		this._items.forEach(item => {
+			keys.push(item.id);
+		});
+
+		return keys;
+	}
+
+	/**
+	 * Return the keys as an array.
+	 *
+	 * @returns {Array<Key>}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get keys(): Array<Key> {
+		return Array.from(this._items.keys());
+	}
+
+	/**
+	 * Return the existing items as an iterable array.
+	 *
+	 * @returns {Array<Entity>}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get knowableEntities(): Array<Entity> {
+		const values: Array<Entity> = [];
+
+		this._items.forEach(item => {
+			if (item.isPresent()) {
+				values.push(item.knowableEntity);
+			}
+		});
+
+		return values;
+	}
+
+	/**
+	 * Return the number of entities.
+	 *
+	 * @returns {number}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get length(): number {
+		return this._items.size;
+	}
+
+	/**
+	 * Return the items as an iterable array.
+	 *
+	 * @returns {Iterator<Entity>}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get values(): Iterator<OptionalEntity<Entity, ID>> {
+		return this._items.values();
+	}
+
+	/**
+	 * Add an item to the collection.
+	 *
+	 * @param {Entity} item
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public add(item: Entity): this {
+		const key = this.getKeyFor(item);
+
+		if (this._items.has(key)) {
+			return this;
+		}
+
+		this._items.set(key, new OptionalEntity(this.getIdFor(item), item));
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Add an array of items to the collection.
+	 *
+	 * @param {Array<Entity>} items
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public addMany(items: Array<Entity>): this {
+		items.forEach(item => this.add(item));
+		return this;
+	}
+
+	/**
+	 * Append an array of raw items to the collection.
+	 * Will replace no matter what.
+	 *
+	 * @param {Array<OptionalEntity<Entity, ID>>} items
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public appendManyRaw(items: Array<OptionalEntity<Entity, ID>>): this {
+		items.forEach(item => this.appendRaw(item));
+		return this;
+	}
+
+	/**
+	 * Append a raw item to the collection.
+	 * Will replace no matter what.
+	 *
+	 * @param {OptionalEntity<Entity, ID>} item
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public appendRaw(item: OptionalEntity<Entity, ID>): this {
+		this._items.set(this.idToKey(item.id), item);
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Clone the collection.
+	 *
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public abstract clone(): AbstractCollectionOfEntities<Key, Entity, ID>;
+
+	/**
+	 * Find an item by its id from the collection.
+	 *
+	 * @param {ID} id
+	 * @returns {Entity | undefined}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public find(id: ID): undefined | Entity {
+		const found = this.getKey(this.idToKey(id));
+
+		if (!found) {
+			return undefined;
+		}
+
+		return found.entity;
+	}
+
+	/**
+	 * Find an item by its id from the collection.
+	 * Throws an error if the item is not found.
+	 *
+	 * @param {ID} id
+	 * @returns {Entity | undefined}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @throws {Error} If the item is not found in the collection.
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public forceFind(id: ID): Entity {
+		const found = this.getKey(this.idToKey(id));
+
+		if (!found) {
+			throw new Error(`Item with id ${id} not found in the collection.`);
+		}
+
+		return found.knowableEntity;
+	}
+
+	/**
+	 * Get an item by its id from the collection.
+	 *
+	 * @param {ID} id
+	 * @returns {OptionalEntity<Entity, ID> | undefined}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get(id: ID): OptionalEntity<Entity, ID> | undefined {
+		return this._items.get(this.idToKey(id));
+	}
+
+	/**
+	 * Get an item by its key from the collection.
+	 *
+	 * @param {Key} key
+	 * @returns {OptionalEntity<Entity, ID> | undefined}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public getKey(key: Key): OptionalEntity<Entity, ID> | undefined {
+		return this._items.get(key);
+	}
+
+	/**
+	 * Check if the collection has a id.
+	 *
+	 * @param {ID} id
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public has(id: ID): boolean {
+		return this._items.has(this.idToKey(id));
+	}
+
+	/**
+	 * Check if the collection has all ids.
+	 *
+	 * @param {Array<ID>} ids
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAll(ids: Array<ID>): boolean {
+		return ids.every(key => this.has(key));
+	}
+
+	/**
+	 * Check if the collection has all keys.
+	 *
+	 * @param {Array<Entity>} items
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAllItems(items: Array<Entity>): boolean {
+		return items.every(item => this.hasItem(item));
+	}
+
+	/**
+	 * Check if the collection has all keys.
+	 *
+	 * @param {Array<Entity>} keys
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAllKeys(keys: Array<Key>): boolean {
+		return keys.every(key => this.hasKey(key));
+	}
+
+	/**
+	 * Check if the collection has any of ids.
+	 *
+	 * @param {Array<ID>} ids
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAny(ids: Array<ID>): boolean {
+		return ids.some(key => this.has(key));
+	}
+
+	/**
+	 * Check if the collection has any of keys.
+	 *
+	 * @param {Array<Entity>} items
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAnyItems(items: Array<Entity>): boolean {
+		return items.some(item => this.hasItem(item));
+	}
+
+	/**
+	 * Check if the collection has any of keys.
+	 *
+	 * @param {Array<Entity>} keys
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasAnyKeys(keys: Array<Key>): boolean {
+		return keys.some(key => this.hasKey(key));
+	}
+
+	/**
+	 * Check if the collection has an item.
+	 *
+	 * @param {Entity} item
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasItem(item: Entity): boolean {
+		return this.hasKey(this.getKeyFor(item));
+	}
+
+	/**
+	 * Check if the collection has a key.
+	 *
+	 * @param {Key} key
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasKey(key: Key): boolean {
+		return this._items.has(key);
+	}
+
+	/**
+	 * Evaluate if all entities are modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isAllEntitiesModified(): boolean {
+		return this.arrayOf.every(item => item.entity?.isModified());
+	}
+
+	/**
+	 * Evaluate if any entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isAnyEntityModified(): boolean {
+		return this.arrayOf.some(item => item.entity?.isModified());
+	}
+
+	/**
+	 * Evaluate if the entity is modified.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public isModified(): boolean {
+		return this._modified || this.isAnyEntityModified();
+	}
+
+	/**
+	 * Check if item is available for an id.
+	 *
+	 * @param {ID} id
+	 * @returns {boolean}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public itemAvailableFor(id: ID): boolean {
+		const item = this.get(id);
+
+		if (!item) {
+			return false;
+		}
+
+		return item.isPresent();
+	}
+
+	/**
+	 * Mark the entity as persisted.
+	 *
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public markAsPersisted(): void {
+		this._modified = false;
+		this._emmiter.emit('persisted', this);
+
+		this.arrayOf.forEach(item => item.entity?.markAsPersisted());
+	}
+
+	/**
+	 * Reload an item to the collection. Only if the item is already in the collection.
+	 *
+	 * @param {Entity} item
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @throws {Error} If the item is not found in the collection.
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public reload(item: Entity): this {
+		const i = this.get(this.getIdFor(item));
+
+		if (!i) {
+			throw new Error('Item not found, cannot be reloaded.');
+		}
+
+		i.load(item);
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Reload an array of items to the collection.
+	 * Only if the items are already in the collection.
+	 *
+	 * @param {Array<Entity>} items
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @throws {Error} If the item is not found in the collection.
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public reloadMany(items: Array<Entity>): this {
+		items.forEach(item => this.reload(item));
+		return this;
+	}
+
+	/**
+	 * Remove id from the collection.
+	 * Compatible with old method.
+	 *
+	 * @param {ID} id
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public remove(id: ID): this {
+		this._items.delete(this.idToKey(id));
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Remove item from the collection.
+	 *
+	 * @param {Entity} item
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public removeItem(item: Entity): this {
+		return this.removeKey(this.getKeyFor(item));
+	}
+
+	/**
+	 * Remove key from the collection.
+	 *
+	 * @param {Key} key
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public removeKey(key: Key): this {
+		this._items.delete(key);
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Sync an item to the collection. Always add the item to the collection, even if it is already in the collection.
+	 *
+	 * @param {Entity} item
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public sync(item: Entity): this {
+		this._items.set(
+			this.getKeyFor(item),
+			new OptionalEntity(this.getIdFor(item), item),
+		);
+
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Sync an array of items to the collection.
+	 * Always add the items to the collection, even if they are already in the collection.
+	 *
+	 * @param {Array<Entity>} items
+	 * @returns {this}
+	 * @public
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public syncMany(items: Array<Entity>): this {
+		items.forEach(item => this.sync(item));
+		this.markAsModified();
+		return this;
+	}
+
+	/**
+	 * Get the id for an item.
+	 *
+	 * @param {Entity} item
+	 * @returns {ID}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected abstract getIdFor(item: Entity): ID;
+
+	/**
+	 * Get the key for an item.
+	 *
+	 * @param {Entity} item
+	 * @returns {Key}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected abstract getKeyFor(item: Entity): Key;
+
+	/**
+	 * Get the key for a raw key.
+	 *
+	 * @param {ID} id
+	 * @returns {Key}
+	 * @protected
+	 * @memberof AbstractCollectionOfEntities
+	 * @since 3.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected abstract idToKey(id: ID): Key;
+
+	/**
+	 * Mark the entity as modified.
+	 *
+	 * @public
+	 * @memberof Entity
+	 * @since 3.4.1
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected markAsModified(): void {
+		this._modified = true;
+		this._emmiter.emit('modified', this);
+	}
+}

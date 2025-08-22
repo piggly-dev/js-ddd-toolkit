@@ -1,40 +1,66 @@
-export { AbstractCollectionOfAttributes } from '@/core/AbstractCollectionOfAttributes';
-export { AbstractCollectionOfEnhancedAttributes } from '@/core/AbstractCollectionOfEnhancedAttributes';
-export { AbstractCollectionOfEntities } from '@/core/AbstractCollectionOfEntities';
-export { AggregateRoot } from '@/core/AggregateRoot';
-export { Attribute } from '@/core/Attribute';
-export { CollectionOfAttributes } from '@/core/CollectionOfAttributes';
-export { CollectionOfEnhancedAttributes } from '@/core/CollectionOfEnhancedAttributes';
-export { CollectionOfEnhancedEntity } from '@/core/CollectionOfEnhancedEntity';
-export { CollectionOfEntity } from '@/core/CollectionOfEntity';
-export { CollectionOfRelatedEnhancedEntity } from '@/core/CollectionOfRelatedEnhancedEntity';
-export { CollectionOfRelatedEntity } from '@/core/CollectionOfRelatedEntity';
-export { EnhancedAttribute } from '@/core/EnhancedAttribute';
-export { EnhancedEntity } from '@/core/EnhancedEntity';
-export { Entity } from '@/core/Entity';
-export { EntityID } from '@/core/EntityID';
-export { OptionalEntity } from '@/core/OptionalEntity';
+/** Entities */
+export { CollectionOfEnhancedEntity } from '@/core/deprecated/CollectionOfEnhancedEntity';
+export { CollectionOfRelatedEnhancedEntity } from '@/core/deprecated/CollectionOfRelatedEnhancedEntity';
+export { CollectionOfRelatedEntity } from '@/core/deprecated/CollectionOfRelatedEntity';
+export { EnhancedEntity } from '@/core/deprecated/EnhancedEntity';
+export { AbstractCollectionOfEntities } from '@/core/entities/AbstractCollectionOfEntities';
+export { CollectionOfEntity } from '@/core/entities/CollectionOfEntity';
+export { Entity } from '@/core/entities/Entity';
+export { EntityID } from '@/core/entities/EntityID';
+export { NumberEntityId } from '@/core/entities/ids/NumberEntityId';
+export { StringEntityId } from '@/core/entities/ids/StringEntityId';
+export { UUIDEntityId } from '@/core/entities/ids/UUIDEntityId';
+export { OptionalEntity } from '@/core/entities/OptionalEntity';
+
+/** Value Objects */
+export { AbstractCollectionOfValueObjects } from '@/core/vos/AbstractCollectionOfValueObjects';
+export { CollectionOfValueObjects } from '@/core/vos/CollectionOfValueObjects';
+export { ValueObject } from '@/core/vos/ValueObject';
+
+/** Attributes */
+export { Attribute } from '@/core/attributes/Attribute';
+export { AbstractCollectionOfAttributes } from '@/core/deprecated/AbstractCollectionOfAttributes';
+export { AbstractCollectionOfEnhancedAttributes } from '@/core/deprecated/AbstractCollectionOfEnhancedAttributes';
+export { CollectionOfAttributes } from '@/core/deprecated/CollectionOfAttributes';
+export { CollectionOfEnhancedAttributes } from '@/core/deprecated/CollectionOfEnhancedAttributes';
+export { EnhancedAttribute } from '@/core/deprecated/EnhancedAttribute';
+
+/** Result/monad pattern */
 export { Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
-export { ValueObject } from '@/core/ValueObject';
 
-export { CollectionOfValueObjects } from '@/core/CollectionOfValueObjects';
-export { MapCollectionOfValueObjects } from '@/core/MapCollectionOfValueObjects';
-
-export { Adapter } from '@/core/Adapter';
-
+/** Events */
 export { DomainEvent } from '@/core/DomainEvent';
-export { EventEmmiter } from '@/core/EventEmmiter';
+export { EventEmitter } from '@/core/EventEmitter';
 
+/** Services */
 export { ApplicationService } from '@/core/ApplicationService';
 export { DomainService } from '@/core/DomainService';
 export { InfraService } from '@/core/InfraService';
 export { Service } from '@/core/Service';
 export { ServiceProvider } from '@/core/ServiceProvider';
 
-export { UseCase } from '@/core/UseCase';
+export { UseCase } from '@/core/deprecated/UseCase';
 
+/** Repositories */
+export {
+	TransactionIsolationLevelType,
+	BeginTransactionOptions,
+	IDatabaseDriver,
+	IRepository,
+	IUnitOfWork,
+} from '@/core/repositories/types';
+
+export { AbstractRelationalRepository } from '@/core/repositories/AbstractRelationalRepository';
+export { RelationalRepositoryBundle } from '@/core/repositories/RelationalRepositoryBundle';
+export { RepositoryProvider } from '@/core/repositories/RepositoryProvider';
+
+/** Application */
+export { ApplicationMediator } from '@/core/application/ApplicationMediator';
+
+/** Errors */
 export { ApplicationError } from '@/core/errors/ApplicationError';
+export { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError';
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 export { DomainError } from '@/core/errors/DomainError';
 export { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError';
@@ -51,7 +77,14 @@ export { JWTBuilderService } from '@/core/services/JWTBuilderService';
 export { LoggerService } from '@/core/services/LoggerService';
 export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 
-export { IStoreService } from '@/core/services/types';
+export {
+	IPromisesHandlerService,
+	IJWTBuilderService,
+	IFileLogService,
+	ILoggerService,
+	IStoreService,
+	JWTPayload,
+} from '@/core/services/types';
 
 export {
 	OnGoingPromisesServiceSettingsSchema,
@@ -109,33 +142,43 @@ export type {
 	JSONExportable,
 	TOrUndefined,
 	TOrNullable,
-	TOrAnother,
 	TDateInput,
-	TOrFalse,
+	TOrAnother,
 	TOrEmpty,
-	TOrNull,
+	TOrFalse,
 	TObject,
+	TOrNull,
 } from '@/types';
 
 export type {
 	DomainErrorHiddenProp,
 	ApplicationErrorJSON,
-	PreviousErrorJSON,
 	IApplicationError,
+	PreviousErrorJSON,
 	RuntimeErrorJSON,
 	DomainErrorJSON,
-	PreviousError,
 	IRuntimeError,
+	PreviousError,
 	IDomainError,
 } from '@/core/errors/types';
 
 export type {
 	RelatedEnhancedEntity,
 	ResultReturnType,
-	RelatedEntity,
 	EventListener,
+	RelatedEntity,
+	IEventEmitter,
 	IDomainEvent,
+	IValueObject,
 	IAttribute,
+	IComponent,
 	ResultFn,
 	IEntity,
 } from '@/core/types';
+
+export type {
+	ApplicationMiddlewareFn,
+	ApplicationHandlerFn,
+	ApplicationContext,
+	IMessage,
+} from '@/core/application/types';

@@ -89,7 +89,7 @@
 
 ## 3.0.5 at `2024-10-30`
 
-* [Add] Simple class for `EventEmmiter`;
+* [Add] Simple class for `EventEmitter`;
 * [Update] Vulnerabilities on dependecies.
 
 ## 3.1.0 at `2025-01-27`
@@ -220,3 +220,90 @@
 ## 4.2.2 at `2025-08-18`
 
 * [Add] `slugifyAsDash` and `slugifyAsUnderscore` utility functions to handle slugification.
+
+## 5.0.0 at `2025-08-22` (alpha version)
+
+This is a major breaking release that introduces significant architectural improvements and new patterns for Domain-Driven Design implementation.
+
+### Breaking Changes
+
+* **[Breaking]** `EnhancedEntity` and `EnhancedAttribute` are deprecated, use `Entity` and `Attribute` instead;
+* **[Breaking]** All entity enhanced collections are deprecated, always use `CollectionOfEntity` instead;
+* **[Breaking]** All attribuites collections are deprecated, since `Attribute` does not have an identity, it is not possible to use it in a collection anymore;
+* **[Breaking]** `EventEmmiter` renamed to `EventEmitter`. Now it is used by `Entity` and `Attribute` in a `protected` access. You should use `IEventEmitter` interface to handle events without directly access `_emitter`;
+* **[Breaking]** `CollectionOfValueObjects` was refactored to use `Set` instead of `Map` for better performance;
+* **[Breaking]** Repository pattern was completely redesigned with Unit of Work support;
+* **[Breaking]** Services were refactored to implement interfaces and extend base service classes.
+
+#### Services
+
+### Major Features
+
+#### Result Pattern Enhancements
+
+* Added `chain()` method for chaining operations that return Results (supports sync/async)
+* Added `map()` method for transforming data of successful Results
+* Added `tap()` method for executing side effects without modifying Results
+* Added `mapError()` method for transforming errors of failed Results
+
+#### Entity System Overhaul
+
+* Entities now use `EventEmitter` for domain events;
+* New ID system with `StringEntityId`, `NumberEntityId`, and `UUIDEntityId`;
+* Added `isModified` and `markAsPersisted` methods for tracking entity state;
+* Added `forceFind()` method to collections for retrieving entities with error handling;
+* Improved entity organization with dedicated `entities/` directory structure.
+
+#### Attribute System Overhaul
+
+* Attributes now use `EventEmitter` for domain events;
+* Added `isModified` and `markAsPersisted` methods for tracking attribute state;
+* Improved attribute organization with dedicated `attributes/` directory structure.
+
+#### Value Objects Implementation
+
+* New `ValueObject` base class for immutable objects with equality checks;
+* `CollectionOfValueObjects` using `Set` for efficient storage;
+* Removed unnecessary `clone()` methods for simpler implementation;
+* Hash-based equality using `equals()` method.
+
+#### Repository Pattern with Unit of Work
+
+* New repository interfaces: `IDatabaseDriver`, `IRepository`, `IUnitOfWork`;
+* `AbstractRelationalRepository` for relational database implementations;
+* `RelationalRepositoryBundle` for managing repository collections;
+* `RepositoryProvider` as IoC container for dependency injection;
+* Transaction support with `scoped()` method for isolation;
+* Connection signature tracking for repository compatibility.
+
+#### Application Layer
+
+* New `ApplicationMediator` for handling application-level orchestration;
+* Enhanced service layer with interface implementations;
+* Deprecated `UseCase` pattern.
+
+### Refactoring & Improvements
+
+* **Project Structure**: Better organization with dedicated directories for entities, value objects, repositories, and services;
+* **Collections**: Optimized for performance and simplicity;
+* **Error Handling**: `RuntimeError` changed from abstract to concrete class;
+* **Type System**: Comprehensive type improvements across all modules;
+* **Testing**: Extensive test coverage for all new features and patterns.
+
+### Deprecated Features
+
+* Enhanced objects and major of collections were moved to `deprecated/` directory;
+* Old `EventEmmiter` class (replaced by `EventEmitter`);
+* Previous repository implementation from earlier versions.
+
+### Documentation
+
+* Added comprehensive documentation for Result pattern (`docs/Result.md`);
+* Improved inline documentation and type definitions.
+
+### Technical Changes
+
+* All imports now use `.js` extension for ESM compatibility;
+* VS Code settings updated for proper module resolution;
+* Jest configuration enhanced for better test support;
+* Dependencies updated to latest versions.

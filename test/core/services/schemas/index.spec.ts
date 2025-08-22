@@ -252,8 +252,6 @@ describe('Schemas', () => {
 			expect(parsed.alwaysOnConsole).toBe(true);
 			expect(typeof parsed.callbacks.onDebug).toBe('function');
 			expect(typeof parsed.callbacks.onError).toBe('function');
-			expect(parsed.file?.abspath).toBe('/valid/path');
-			expect(parsed.file?.levels).toEqual(['debug', 'info']);
 			expect(parsed.ignoreLevels).toEqual(['warn']);
 			expect(parsed.ignoreUnset).toBe(false);
 			expect(typeof parsed.onError).toBe('function');
