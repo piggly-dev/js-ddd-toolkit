@@ -167,6 +167,7 @@ export type {
 	ResultReturnType,
 	EventListener,
 	RelatedEntity,
+	IEventEmitter,
 	IDomainEvent,
 	IValueObject,
 	IAttribute,
