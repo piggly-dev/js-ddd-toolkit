@@ -1,10 +1,10 @@
 /** Entities */
+export { CollectionOfEnhancedEntity } from '@/core/deprecated/CollectionOfEnhancedEntity';
+export { CollectionOfRelatedEnhancedEntity } from '@/core/deprecated/CollectionOfRelatedEnhancedEntity';
+export { CollectionOfRelatedEntity } from '@/core/deprecated/CollectionOfRelatedEntity';
+export { EnhancedEntity } from '@/core/deprecated/EnhancedEntity';
 export { AbstractCollectionOfEntities } from '@/core/entities/AbstractCollectionOfEntities';
-export { CollectionOfEnhancedEntity } from '@/core/entities/CollectionOfEnhancedEntity';
 export { CollectionOfEntity } from '@/core/entities/CollectionOfEntity';
-export { CollectionOfRelatedEnhancedEntity } from '@/core/entities/CollectionOfRelatedEnhancedEntity';
-export { CollectionOfRelatedEntity } from '@/core/entities/CollectionOfRelatedEntity';
-export { EnhancedEntity } from '@/core/entities/EnhancedEntity';
 export { Entity } from '@/core/entities/Entity';
 export { EntityID } from '@/core/entities/EntityID';
 export { NumberEntityId } from '@/core/entities/ids/NumberEntityId';
@@ -18,9 +18,9 @@ export { CollectionOfValueObjects } from '@/core/vos/CollectionOfValueObjects';
 export { ValueObject } from '@/core/vos/ValueObject';
 
 /** Attributes */
+export { Attribute } from '@/core/attributes/Attribute';
 export { AbstractCollectionOfAttributes } from '@/core/deprecated/AbstractCollectionOfAttributes';
 export { AbstractCollectionOfEnhancedAttributes } from '@/core/deprecated/AbstractCollectionOfEnhancedAttributes';
-export { Attribute } from '@/core/deprecated/Attribute';
 export { CollectionOfAttributes } from '@/core/deprecated/CollectionOfAttributes';
 export { CollectionOfEnhancedAttributes } from '@/core/deprecated/CollectionOfEnhancedAttributes';
 export { EnhancedAttribute } from '@/core/deprecated/EnhancedAttribute';
@@ -40,7 +40,7 @@ export { InfraService } from '@/core/InfraService';
 export { Service } from '@/core/Service';
 export { ServiceProvider } from '@/core/ServiceProvider';
 
-export { UseCase } from '@/core/UseCase';
+export { UseCase } from '@/core/deprecated/UseCase';
 
 /** Repositories */
 export {

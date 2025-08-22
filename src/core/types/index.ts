@@ -1,4 +1,4 @@
-import type { EnhancedEntity as BaseEnhancedEntity } from '@/core/entities/EnhancedEntity.js';
+import type { EnhancedEntity as BaseEnhancedEntity } from '@/core/deprecated/EnhancedEntity.js';
 import type { Entity as BaseEntity } from '@/core/entities/Entity.js';
 import type { DomainError } from '@/core/errors/DomainError.js';
 import type { EntityID } from '@/core/entities/EntityID.js';
@@ -10,12 +10,9 @@ export type CollectionOfEntitiesIndex<ID, Value> = { id: ID; value?: Value };
 export type EventListener = (...args: Array<any>) => void;
 
 export interface IAttribute<Props extends Record<any, any> = Record<any, any>>
-	extends IComponent {
+	extends IEventEmitter,
+		IComponent {
 	equals(a: IAttribute<Props> | undefined | null): boolean;
-	off(event: string, listener?: EventListener): void;
-	once(event: string, listener: EventListener): void;
-	on(event: string, listener: EventListener): void;
-	emit(event: string, ...args: any[]): void;
 	clone(): IAttribute<Props>;
 	markAsPersisted(): void;
 	isModified(): boolean;
@@ -38,18 +35,23 @@ export interface IDomainEvent<
 	readonly id: string;
 }
 
-export interface IEntity<ID extends EntityID<any>> extends IComponent {
+export interface IEntity<ID extends EntityID<any>>
+	extends IEventEmitter,
+		IComponent {
 	equals(e: IEntity<ID> | undefined | null): boolean;
-	off(event: string, listener?: EventListener): void;
-	once(event: string, listener: EventListener): void;
-	on(event: string, listener: EventListener): void;
-	emit(event: string, ...args: any[]): void;
 	clone(id?: ID): IEntity<ID>;
 	markAsPersisted(): void;
 	isModified(): boolean;
 	dispose(): void;
 	id: ID;
 }
+
+export type IEventEmitter = {
+	emit(event: string, ...args: any[]): void;
+	off(event: string, listener?: EventListener): void;
+	on(event: string, listener: EventListener): void;
+	once(event: string, listener: EventListener): void;
+};
 
 export interface IValueObject<
 	Props extends Record<string, any> = Record<string, any>,

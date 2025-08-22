@@ -1,4 +1,4 @@
-import { CollectionOfEnhancedEntity } from '@/core/entities/CollectionOfEnhancedEntity.js';
+import { CollectionOfEnhancedEntity } from '@/core/deprecated/CollectionOfEnhancedEntity.js';
 import { EntityID } from '@/core/entities/EntityID.js';
 import { IEntity } from '@/core/types/index.js';
 

@@ -1,6 +1,6 @@
 import type { IAttribute } from '@/core/types/index.js';
 
-import { Attribute } from '@/core/deprecated/Attribute.js';
+import { Attribute } from '@/core/attributes/Attribute.js';
 
 /**
  * @deprecated Use Attribute instead.
