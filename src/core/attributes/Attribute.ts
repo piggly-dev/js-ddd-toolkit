@@ -238,7 +238,7 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public toJSON(): Props {
+	public toJSON(): Readonly<any> {
 		return Object.freeze(this._props);
 	}
 

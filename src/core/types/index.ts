@@ -13,10 +13,10 @@ export interface IAttribute<Props extends Record<any, any> = Record<any, any>>
 	extends IEventEmitter,
 		IComponent {
 	equals(a: IAttribute<Props> | undefined | null): boolean;
+	toJSON(): Readonly<any>;
 	markAsPersisted(): void;
 	isModified(): boolean;
 	dispose(): void;
-	toJSON(): Props;
 	hash(): string;
 	clone(): this;
 }
@@ -56,8 +56,8 @@ export type IEventEmitter = {
 export interface IValueObject<
 	Props extends Record<string, any> = Record<string, any>,
 > extends IComponent {
-	equals(a: IValueObject<Props> | undefined | null): boolean;
-	props: Props;
+	equals(a: IValueObject<any> | undefined | null): boolean;
+	props: Readonly<Props>;
 }
 
 /**
