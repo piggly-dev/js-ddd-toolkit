@@ -225,6 +225,26 @@ export class Result<Data, Error extends DomainError> {
 	}
 
 	/**
+	 * Collect results.
+	 *
+	 * @param results - The results to collect.
+	 * @returns The collected results.
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static collect<Data, Error extends DomainError>(
+		results: Array<Result<Data, Error>>,
+	): Result<Array<Data>, Error> {
+		for (const result of results) {
+			if (result.isFailure) {
+				return result as Result<never, Error>;
+			}
+		}
+
+		return Result.ok(results.map(r => r.data));
+	}
+
+	/**
 	 * Creates a new failed result.
 	 *
 	 * @static
