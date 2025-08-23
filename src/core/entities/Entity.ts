@@ -142,7 +142,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public equals(e: Entity<Props, any> | undefined | null): boolean {
+	public equals(e: IEntity<any> | undefined | null): boolean {
 		if (e === null || e === undefined || e.is('entity') === false) {
 			return false;
 		}
@@ -151,7 +151,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 			return true;
 		}
 
-		return e._id.equals(this._id);
+		return e.id.equals(this.id);
 	}
 
 	/**

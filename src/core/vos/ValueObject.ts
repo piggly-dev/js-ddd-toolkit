@@ -21,7 +21,7 @@ export class ValueObject<Props extends Record<string, any> = Record<string, any>
 	 * @since 2.0.0 Protected props
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected readonly _props: Props;
+	protected readonly _props: Readonly<Props>;
 
 	/**
 	 * Creates an instance of ValueObject.
@@ -43,13 +43,13 @@ export class ValueObject<Props extends Record<string, any> = Record<string, any>
 	/**
 	 * Get the value object props.
 	 *
-	 * @returns {Props}
+	 * @returns {Readonly<Props>}
 	 * @public
 	 * @memberof ValueObject
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public get props(): Props {
+	public get props(): Readonly<Props> {
 		return this._props;
 	}
 
@@ -64,7 +64,7 @@ export class ValueObject<Props extends Record<string, any> = Record<string, any>
 	 * @since 3.0.0 Remove class constructor checking
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public equals(vo: IValueObject<Props> | undefined | null): boolean {
+	public equals(vo: IValueObject<any> | undefined | null): boolean {
 		if (vo === null || vo === undefined || vo.is('valueobject') === false) {
 			return false;
 		}

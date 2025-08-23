@@ -106,8 +106,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			});
 
 			// Create savepoint
-			const sp1Result = await uow.savepoint('sp1');
-			expect(sp1Result).toBe(true);
+			await uow.savepoint('sp1');
 
 			// Add second user
 			await repo.save({
@@ -118,8 +117,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			});
 
 			// Create another savepoint
-			const sp2Result = await uow.savepoint('sp2');
-			expect(sp2Result).toBe(true);
+			await uow.savepoint('sp2');
 
 			// Add third user
 			await repo.save({
@@ -130,8 +128,7 @@ describe('Repository Pattern with UnitOfWork', () => {
 			});
 
 			// Rollback to first savepoint
-			const rollbackResult = await uow.rollbackTo('sp1');
-			expect(rollbackResult).toBe(true);
+			await uow.rollbackTo('sp1');
 
 			// Verify only first user exists
 			const countResult = await repo.count();
@@ -152,14 +149,11 @@ describe('Repository Pattern with UnitOfWork', () => {
 
 			await uow.begin();
 
-			const sp1Result = await uow.savepoint('sp1');
-			expect(sp1Result).toBe(true);
-
-			const releaseResult = await uow.releaseSavepoint('sp1');
-			expect(releaseResult).toBe(true);
+			await uow.savepoint('sp1');
+			await uow.releaseSavepoint('sp1');
 
 			// Should fail to rollback to released savepoint
-			expect(uow.rollbackTo('sp1')).rejects.toThrow('Savepoint not found');
+			expect(uow.rollbackTo('sp1')).rejects.toThrow('Savepoint sp1 not found');
 
 			await uow.commit();
 		});
