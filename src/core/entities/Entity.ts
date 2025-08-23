@@ -94,14 +94,14 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * This method must be implemented by the entity.
 	 *
 	 * @param {Id | undefined} _
-	 * @returns {Entity<Props, Id>}
+	 * @returns {this}
 	 * @throws {Error} If the method is not implemented.
 	 * @public
 	 * @memberof Entity
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public clone(_?: Id): Entity<Props, Id> {
+	public clone(_?: Id): this {
 		throw new Error('Not implemented');
 	}
 

@@ -210,4 +210,21 @@ export class ResultChain {
 
 		return this._last as Result<ResponseData, ResponseError>;
 	}
+
+	/**
+	 * Create a new result chain.
+	 * It will automatically begin the chain.
+	 *
+	 * @returns {ResultChain}
+	 * @public
+	 * @memberof ResultChain
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static do(): ResultChain {
+		const chain = new ResultChain();
+		chain.begin();
+
+		return chain;
+	}
 }

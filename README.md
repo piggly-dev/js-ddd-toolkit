@@ -272,7 +272,7 @@ npm run format
 
 ### Project Structure
 
-```
+```text
 src/
 ├── core/
 │   ├── entities/          # Entity classes and collections
