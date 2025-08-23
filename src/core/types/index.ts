@@ -13,12 +13,12 @@ export interface IAttribute<Props extends Record<any, any> = Record<any, any>>
 	extends IEventEmitter,
 		IComponent {
 	equals(a: IAttribute<Props> | undefined | null): boolean;
-	clone(): IAttribute<Props>;
 	markAsPersisted(): void;
 	isModified(): boolean;
 	dispose(): void;
 	toJSON(): Props;
 	hash(): string;
+	clone(): this;
 }
 
 export interface IComponent {
@@ -39,9 +39,9 @@ export interface IEntity<ID extends EntityID<any>>
 	extends IEventEmitter,
 		IComponent {
 	equals(e: IEntity<ID> | undefined | null): boolean;
-	clone(id?: ID): IEntity<ID>;
 	markAsPersisted(): void;
 	isModified(): boolean;
+	clone(id?: ID): this;
 	dispose(): void;
 	id: ID;
 }

@@ -307,3 +307,8 @@ This is a major breaking release that introduces significant architectural impro
 * VS Code settings updated for proper module resolution;
 * Jest configuration enhanced for better test support;
 * Dependencies updated to latest versions.
+
+### Features
+
+* Added `ResultChain.do()` method to create a new result chain;
+* Fixed type signature for `clone()` method in `Entity` and `Attribute`.

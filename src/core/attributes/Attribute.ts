@@ -67,13 +67,13 @@ export class Attribute<Props extends Record<any, any>> implements IAttribute<Pro
 	/**
 	 * Clone the attribute.
 	 *
-	 * @returns {Attribute<Props>}
+	 * @returns {this}
 	 * @public
 	 * @memberof Attribute
 	 * @since 3.4.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public clone(): Attribute<Props> {
+	public clone(): this {
 		throw new Error('Not implemented');
 	}
 
