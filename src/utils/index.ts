@@ -7,6 +7,7 @@ import fs from 'fs';
 import moment from 'moment-timezone';
 import sanitize from 'sanitize-html';
 
+import type { DataIssues } from '@/core/errors/types/index.js';
 import type { TDateInput, TOrEmpty } from '@/types';
 
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
@@ -591,4 +592,21 @@ export const slugifyAsUnderscore = (v: string) => {
 		.replace(/_{2,}/g, '_')
 		.replace(/^_+/, '')
 		.replace(/_+$/, '');
+};
+
+/**
+ * Convert zod issues to data issues.
+ *
+ * @param issues - The zod issues.
+ * @returns The data issues.
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const zodIssuesToDataIssues = (
+	issues: Array<z.ZodError['issues'][number]>,
+): DataIssues => {
+	return issues.map(issue => ({
+		field: issue.path.join('.'),
+		message: issue.message,
+	}));
 };
