@@ -1,5 +1,3 @@
-import type { TOrAnother } from '@/types';
-
 import { DomainError } from './errors/DomainError';
 
 /**
@@ -113,33 +111,51 @@ export class Result<Data, Error extends DomainError> {
 	}
 
 	/**
-	 * Chains a function that returns a Result, supporting both sync and async functions.
+	 * Chains a function that returns a Result, supporting sync functions.
 	 * If the current Result is successful, applies the function to the data.
 	 * If the current Result is a failure, propagates the error without executing the function.
 	 *
 	 * @template NextData The type of data in the resulting Result
 	 * @template NextError The type of error in the resulting Result
-	 * @param {(data: Data) => TOrAnother<Result<NextData, NextError>, Promise<Result<NextData, NextError>>>} fn Function to apply to the data
+	 * @param {(data: Data) => Result<NextData, NextError>} fn Function to apply to the data
+	 * @returns {Result<NextData, NextError>} The Result of the chained operation
+	 * @public
+	 * @memberof Result
+	 * @since 4.3.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public chain<NextData, NextError extends DomainError>(
+		fn: (data: Data) => Result<NextData, NextError>,
+	): Result<NextData, NextError | Error> {
+		if (this.isFailure) {
+			return Result.fail(this.error) as Result<NextData, NextError | Error>;
+		}
+
+		return fn(this.data);
+	}
+
+	/**
+	 * Chains a function that returns a Result, supporting async functions.
+	 * If the current Result is successful, applies the function to the data.
+	 * If the current Result is a failure, propagates the error without executing the function.
+	 *
+	 * @template NextData The type of data in the resulting Result
+	 * @template NextError The type of error in the resulting Result
+	 * @param {(data: Data) => Promise<Result<NextData, NextError>>} fn Function to apply to the data
 	 * @returns {Promise<Result<NextData, NextError>>} A Promise that resolves to the Result of the chained operation
 	 * @public
 	 * @memberof Result
 	 * @since 4.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public async chain<NextData, NextError extends DomainError>(
-		fn: (
-			data: Data,
-		) => TOrAnother<
-			Result<NextData, NextError>,
-			Promise<Result<NextData, NextError>>
-		>,
+	public async chainAsync<NextData, NextError extends DomainError>(
+		fn: (data: Data) => Promise<Result<NextData, NextError>>,
 	): Promise<Result<NextData, NextError | Error>> {
 		if (this.isFailure) {
 			return Result.fail(this.error) as Result<NextData, NextError | Error>;
 		}
 
-		const result = fn(this.data);
-		return Promise.resolve(result);
+		return await fn(this.data);
 	}
 
 	/**

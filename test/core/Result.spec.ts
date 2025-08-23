@@ -43,28 +43,28 @@ describe('Result', () => {
 		expect(() => result.data).toThrow('Cannot retrieve data of failed result.');
 	});
 
-	describe('chain method', () => {
+	describe('chain/chainAsync method', () => {
 		it('should chain successfully with sync function', async () => {
 			const result = Result.ok(10);
 
-			const chained = await result.chain(value => {
+			const chainAsynced = result.chain(value => {
 				return Result.ok(value * 2);
 			});
 
-			expect(chained.isSuccess).toBe(true);
-			expect(chained.data).toBe(20);
+			expect(chainAsynced.isSuccess).toBe(true);
+			expect(chainAsynced.data).toBe(20);
 		});
 
-		it('should chain successfully with async function', async () => {
+		it('should chainAsync successfully with async function', async () => {
 			const result = Result.ok(5);
 
-			const chained = await result.chain(async value => {
+			const chainAsynced = await result.chainAsync(async value => {
 				await new Promise(resolve => setTimeout(resolve, 1));
 				return Result.ok(value * 3);
 			});
 
-			expect(chained.isSuccess).toBe(true);
-			expect(chained.data).toBe(15);
+			expect(chainAsynced.isSuccess).toBe(true);
+			expect(chainAsynced.data).toBe(15);
 		});
 
 		it('should propagate error without executing function', async () => {
@@ -72,26 +72,26 @@ describe('Result', () => {
 			const result = Result.fail(error);
 
 			const mockFn = jest.fn();
-			const chained = await result.chain(value => {
+			const chainAsynced = result.chain(value => {
 				mockFn();
 				return Result.ok(value);
 			});
 
 			expect(mockFn).not.toHaveBeenCalled();
-			expect(chained.isFailure).toBe(true);
-			expect(chained.error).toBe(error);
+			expect(chainAsynced.isFailure).toBe(true);
+			expect(chainAsynced.error).toBe(error);
 		});
 
-		it('should handle error from chained function', async () => {
+		it('should handle error from chainAsynced function', async () => {
 			const result = Result.ok(10);
-			const chainError = new ProcessingError('Chain failed');
+			const chainAsyncError = new ProcessingError('Chain failed');
 
-			const chained = await result.chain(_value => {
-				return Result.fail(chainError);
+			const chainAsynced = result.chain(_value => {
+				return Result.fail(chainAsyncError);
 			});
 
-			expect(chained.isFailure).toBe(true);
-			expect(chained.error).toBe(chainError);
+			expect(chainAsynced.isFailure).toBe(true);
+			expect(chainAsynced.error).toBe(chainAsyncError);
 		});
 	});
 
@@ -228,18 +228,18 @@ describe('Result', () => {
 	});
 
 	describe('mixed operations - success flow', () => {
-		it('should combine chain, tap, and map successfully', async () => {
+		it('should combine chainAsync, tap, and map successfully', async () => {
 			const sideEffects: string[] = [];
 
 			const result = await Result.ok(10)
 				.tap(value => sideEffects.push(`initial: ${value}`))
-				.chain(async value => {
-					sideEffects.push(`chaining: ${value}`);
+				.chainAsync(async value => {
+					sideEffects.push(`chainAsyncing: ${value}`);
 					await new Promise(resolve => setTimeout(resolve, 1));
 					return Result.ok(value * 2);
 				})
 				.then(result =>
-					result.tap(value => sideEffects.push(`after chain: ${value}`)),
+					result.tap(value => sideEffects.push(`after chainAsync: ${value}`)),
 				)
 				.then(result => result.map(value => value + 5))
 				.then(result =>
@@ -250,8 +250,8 @@ describe('Result', () => {
 			expect(result.data).toBe(25); // 10 * 2 + 5
 			expect(sideEffects).toEqual([
 				'initial: 10',
-				'chaining: 10',
-				'after chain: 20',
+				'chainAsyncing: 10',
+				'after chainAsync: 20',
 				'final: 25',
 			]);
 		});
@@ -262,7 +262,7 @@ describe('Result', () => {
 
 			const result = await Result.ok(user)
 				.tap(user => logs.push(`Processing user: ${user.name}`))
-				.chain(async user => {
+				.chainAsync(async user => {
 					logs.push('Validating user...');
 					return Result.ok({ ...user, validated: true });
 				})
@@ -295,15 +295,15 @@ describe('Result', () => {
 	});
 
 	describe('mixed operations - error flow', () => {
-		it('should short-circuit on chain failure and skip subsequent operations', async () => {
+		it('should short-circuit on chainAsync failure and skip subsequent operations', async () => {
 			const sideEffects: string[] = [];
-			const chainError = new ProcessingError('Chain failed');
+			const chainAsyncError = new ProcessingError('Chain failed');
 
 			const result = await Result.ok(10)
 				.tap(value => sideEffects.push(`initial: ${value}`))
-				.chain(async value => {
-					sideEffects.push(`chaining: ${value}`);
-					return Result.fail(chainError);
+				.chainAsync(async value => {
+					sideEffects.push(`chainAsyncing: ${value}`);
+					return Result.fail(chainAsyncError);
 				})
 				.then(result =>
 					result.tap(_value => sideEffects.push('should not execute')),
@@ -314,8 +314,8 @@ describe('Result', () => {
 				);
 
 			expect(result.isFailure).toBe(true);
-			expect(result.error).toBe(chainError);
-			expect(sideEffects).toEqual(['initial: 10', 'chaining: 10']);
+			expect(result.error).toBe(chainAsyncError);
+			expect(sideEffects).toEqual(['initial: 10', 'chainAsyncing: 10']);
 		});
 
 		it('should handle initial failure and propagate through operations', async () => {
@@ -324,7 +324,7 @@ describe('Result', () => {
 
 			const result = await Result.fail(initialError)
 				.tap(_value => sideEffects.push('should not execute'))
-				.chain(async _value => {
+				.chainAsync(async _value => {
 					sideEffects.push('should not execute');
 					return Result.ok(_value);
 				})
@@ -351,7 +351,7 @@ describe('Result', () => {
 
 			const result = await Result.ok({ email: 'invalid-email' })
 				.tap(data => logs.push(`Processing: ${data.email}`))
-				.chain(async _data => {
+				.chainAsync(async _data => {
 					logs.push('Validating email...');
 					return Result.fail(validationError);
 				})
