@@ -164,6 +164,7 @@ export type {
 	PreviousError,
 	IDomainError,
 	DataIssues,
+	DataIssue,
 } from '@/core/errors/types';
 
 export type {

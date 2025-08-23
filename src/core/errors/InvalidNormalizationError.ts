@@ -1,4 +1,4 @@
-import type { DataIssues } from '@/core/errors/types/index.js';
+import type { DataIssues, DataIssue } from '@/core/errors/types/index.js';
 
 import { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 
@@ -15,15 +15,15 @@ export class InvalidNormalizationError extends BusinessRuleViolationError {
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @param {string} subject The subject of the error.
-	 * @param {DataIssues} issues The issues found.
+	 * @param {DataIssues | DataIssue} issues The issues found.
 	 */
-	constructor(subject: string, issues: DataIssues) {
+	constructor(subject: string, issues: DataIssues | DataIssue) {
 		super(
 			`Invalid${subject}NormalizationError`,
 			'Data cannot be normalized. See context for more information.',
 			undefined,
 			422,
-			issues,
+			Array.isArray(issues) ? issues : [issues],
 		);
 	}
 }
