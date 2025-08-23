@@ -64,9 +64,11 @@ export { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError
 export { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
 export { DomainError } from '@/core/errors/DomainError';
 export { EntityIdMismatchError } from '@/core/errors/EntityIdMismatchError';
+export { InvalidNormalizationError } from '@/core/errors/InvalidNormalizationError';
 export { InvalidPayloadError } from '@/core/errors/InvalidPayloadError';
 export { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
 export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
+export { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError';
 export { RuntimeError } from '@/core/errors/RuntimeError';
 
 export { DateParser } from '@/utils/parsers/DateParser';
@@ -108,6 +110,7 @@ export {
 export { EnvironmentType } from '@/utils/types';
 
 export {
+	zodIssuesToDataIssues,
 	lastAvailableString,
 	sanitizeRecursively,
 	slugifyAsUnderscore,
@@ -160,6 +163,7 @@ export type {
 	IRuntimeError,
 	PreviousError,
 	IDomainError,
+	DataIssues,
 } from '@/core/errors/types';
 
 export type {
