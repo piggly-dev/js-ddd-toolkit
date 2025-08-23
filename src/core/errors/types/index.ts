@@ -9,10 +9,12 @@ export type ApplicationErrorJSON = {
 	previous?: TOrNullable<PreviousErrorJSON>;
 } & DomainErrorJSON;
 
-export type DataIssues = Array<{
+export type DataIssue = {
 	field: string;
 	message: string;
-}>;
+};
+
+export type DataIssues = Array<DataIssue>;
 
 export type DomainErrorHiddenProp = 'message' | 'extra' | 'code' | 'name' | 'hint';
 

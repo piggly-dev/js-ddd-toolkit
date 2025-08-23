@@ -16,7 +16,7 @@ export class InvalidSchemaNormalizationError extends InvalidNormalizationError {
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @param {string} subject The subject of the error.
-	 * @param {DataIssues} issues The issues found.
+	 * @param {Array<z.ZodError['issues'][number]>} issues The issues found.
 	 */
 	constructor(subject: string, issues: Array<z.ZodError['issues'][number]>) {
 		super(subject, zodIssuesToDataIssues(issues));
