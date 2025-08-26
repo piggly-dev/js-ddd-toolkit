@@ -8,15 +8,13 @@ import moment from 'moment-timezone';
 import sanitize from 'sanitize-html';
 
 import type { DataIssues } from '@/core/errors/types/index.js';
-import type { TDateInput, TOrEmpty } from '@/types';
+import type { TOrEmpty } from '@/types';
 
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
 import { CryptoService } from '@/core/services/CryptoService';
 import { DomainError } from '@/core/errors/DomainError';
 import { EnvironmentType } from '@/utils/types';
 import { Result } from '@/core/Result';
-
-import { DateParser } from './parsers/DateParser';
 
 export function commaStringAsArray(str?: string): Array<string> {
 	if (!str) return [];
@@ -187,18 +185,6 @@ export function toArray<T>(val?: Array<T> | T): Array<T> {
 	if (!val) return [];
 	if (Array.isArray(val)) return val;
 	return [val];
-}
-
-/**
- * Convert date to moment.
- *
- * @param {TDateInput} val
- * @returns {moment.Moment}
- * @since 3.0.0
- * @author Caique Araujo <caique@piggly.com.br>
- */
-export function toMoment(val: TDateInput): moment.Moment {
-	return DateParser.toMoment(val);
 }
 
 /**

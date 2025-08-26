@@ -71,8 +71,6 @@ export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError';
 export { RuntimeError } from '@/core/errors/RuntimeError';
 
-export { DateParser } from '@/utils/parsers/DateParser';
-
 export { CryptoService } from '@/core/services/CryptoService';
 export { FileLogStreamService } from '@/core/services/FileLogStreamService';
 export { JWTBuilderService } from '@/core/services/JWTBuilderService';
@@ -134,7 +132,6 @@ export {
 	toRFC3339,
 	loadYaml,
 	preserve,
-	toMoment,
 	mountURL,
 	toArray,
 	toJSON,
