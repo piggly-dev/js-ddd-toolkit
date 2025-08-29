@@ -1,5 +1,3 @@
-import type moment from 'moment-timezone';
-
 /** Globals */
 export interface JSONExportable<
 	Key extends string = string,
@@ -12,7 +10,7 @@ export interface ObjectExportable<
 > {
 	toObject(): Return;
 }
-export type TDateInput = moment.Moment | number | string | Date;
+export type TDateInput = number | string | Date;
 export type TObject = Record<any, any>;
 export type TOrAnother<T, Another> = Another | T;
 export type TOrEmpty<T> = undefined | null | T;

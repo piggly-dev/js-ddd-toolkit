@@ -4,7 +4,8 @@ import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
 
-import moment from 'moment-timezone';
+import { formatInTimeZone } from 'date-fns-tz';
+import { getUnixTime } from 'date-fns';
 import sanitize from 'sanitize-html';
 
 import type { DataIssues } from '@/core/errors/types/index.js';
@@ -16,11 +17,30 @@ import { DomainError } from '@/core/errors/DomainError';
 import { EnvironmentType } from '@/utils/types';
 import { Result } from '@/core/Result';
 
+/**
+ * Convert a comma separated string to an array.
+ *
+ * @param str - The string to convert.
+ * @returns The array of strings.
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
 export function commaStringAsArray(str?: string): Array<string> {
 	if (!str) return [];
 	return str.split(',').map(s => s.trim());
 }
 
+/**
+ * Get the last available string.
+ *
+ * @param entry - The entry to get the last available string from.
+ * @param defaultValue - The default value to return if the entry is not an array or string.
+ * @param separator - The separator to use to split the entry.
+ * @returns The last available string.
+ * @returns
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
 export const lastAvailableString = (
 	entry: string[] | string,
 	defaultValue: string,
@@ -50,6 +70,15 @@ export const lastAvailableString = (
 	return (entry as Array<string>).pop() ?? defaultValue;
 };
 
+/**
+ * Delete keys from an object.
+ *
+ * @param obj - The object to delete keys from.
+ * @param keys - The keys to delete.
+ * @returns The object with the keys deleted.
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
 export function deleteKeys<T extends Record<string, any>>(
 	obj: T,
 	keys: string[],
@@ -62,14 +91,30 @@ export function deleteKeys<T extends Record<string, any>>(
 	return copy;
 }
 
+/**
+ * Get the timestamp.
+ *
+ * @param native - Whether to use the native timestamp.
+ * @returns The timestamp.
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
 export function getTimestamp(native = false): number {
 	if (!native) {
-		return moment().unix();
+		return getUnixTime(new Date());
 	}
 
 	return Math.floor(new Date().getTime() / 1000);
 }
 
+/**
+ * Parse empty value.
+ *
+ * @param val - The value to parse.
+ * @returns The parsed value.
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
 export function parseEmpty<T>(val: T): TOrEmpty<T> {
 	if (val === null) return null;
 	if (val === undefined) return undefined;
@@ -190,14 +235,14 @@ export function toArray<T>(val?: Array<T> | T): Array<T> {
 /**
  * Convert date to RFC3339 format.
  *
- * @param {moment.Moment} date
- * @param {string} timezone
- * @returns {string}
+ * @param date
+ * @param timezone
+ * @returns
  * @since 3.0.0
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export function toRFC3339(date: moment.Moment, timezone = 'UTC'): string {
-	return date.tz(timezone).format('YYYY-MM-DDTHH:mm:ssZ');
+export function toRFC3339(date: Date, timezone = 'UTC'): string {
+	return formatInTimeZone(date, timezone, "yyyy-MM-dd'T'HH:mm:ssXXX");
 }
 
 /**
@@ -429,7 +474,7 @@ export const displayLog = (
 	...args: any[]
 ): { uuid: string; date: string; display: string; message: string } => {
 	const uuid = CryptoService.generateUUID();
-	const date = moment().utc().format();
+	const date = toRFC3339(new Date());
 
 	let display = `(${level}) "${message}"`;
 
@@ -460,7 +505,7 @@ export const displayLog = (
 		uuid,
 		date,
 		display,
-		message: `[${moment().utc().format()}] [${uuid}] ${display}\n`,
+		message: `[${date}] [${uuid}] ${display}\n`,
 	};
 };
 
