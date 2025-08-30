@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-import moment from 'moment-timezone';
+import { getUnixTime } from 'date-fns';
 
 import { IDomainEvent } from './types';
 
@@ -74,7 +74,7 @@ export class DomainEvent<Payload extends Record<string, any>>
 		this.id = this.generateId();
 		this.name = name;
 		this.data = data;
-		this.issued_at = moment().unix();
+		this.issued_at = getUnixTime(new Date());
 	}
 
 	/**

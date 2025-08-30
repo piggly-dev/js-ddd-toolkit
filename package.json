@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0-alpha.7",
+	"version": "5.0.0-alpha.8",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -34,6 +34,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js",
 			"default": "./dist/esm/index.js"
+		},
+		"./jwt": {
+			"types": "./dist/types/jwt.d.ts",
+			"import": "./dist/esm/jwt.js",
+			"require": "./dist/cjs/jwt.js",
+			"default": "./dist/esm/jwt.js"
 		}
 	},
 	"files": [
@@ -101,8 +107,9 @@
 	},
 	"dependencies": {
 		"crc": "^4.3.2",
+		"date-fns": "^4.1.0",
+		"date-fns-tz": "^3.2.0",
 		"debug": "^4.4.1",
-		"moment-timezone": "^0.6.0",
 		"sanitize-html": "^2.17.0",
 		"shallow-equal-object": "^1.1.1",
 		"zod": "^4.0.17"

@@ -71,34 +71,27 @@ export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError';
 export { RuntimeError } from '@/core/errors/RuntimeError';
 
-export { DateParser } from '@/utils/parsers/DateParser';
-
+export { JWTBuilderService } from '@/core/jwt/JWTBuilderService';
 export { CryptoService } from '@/core/services/CryptoService';
 export { FileLogStreamService } from '@/core/services/FileLogStreamService';
-export { JWTBuilderService } from '@/core/services/JWTBuilderService';
 export { LoggerService } from '@/core/services/LoggerService';
 export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 
 export {
 	IPromisesHandlerService,
-	IJWTBuilderService,
 	IFileLogService,
 	ILoggerService,
 	IStoreService,
-	JWTPayload,
 } from '@/core/services/types';
 
 export {
 	OnGoingPromisesServiceSettingsSchema,
 	FileLogStreamServiceSettingsSchema,
-	JWTBuilderServiceSettingsSchema,
 	OnGoingPromisesServiceSettings,
 	FileLogStreamServiceSettings,
 	OnGoingPromisesServiceEntry,
 	LoggerServiceSettingsSchema,
-	JWTBuilderServiceSettings,
 	FileLogStreamServiceEntry,
-	JWTBuilderServiceEntry,
 	LoggerServiceSettings,
 	LoggerServiceEntry,
 	LogLevelSchema,
@@ -134,7 +127,6 @@ export {
 	toRFC3339,
 	loadYaml,
 	preserve,
-	toMoment,
 	mountURL,
 	toArray,
 	toJSON,
