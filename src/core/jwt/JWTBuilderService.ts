@@ -1,9 +1,11 @@
+import { CryptoKey } from 'jose';
+
 import {
 	JWTBuilderServiceSettingsSchema,
 	JWTBuilderServiceSettings,
 	JWTBuilderServiceEntry,
-} from '@/core/services/schemas/index.js';
-import { IJWTBuilderService, JWTPayload } from '@/core/services/types/index.js';
+} from '@/core/jwt/schemas/index.js';
+import { IJWTBuilderService, JWTPayload } from '@/core/jwt/types/index.js';
 import { ApplicationService } from '@/core/ApplicationService.js';
 import { ServiceProvider } from '@/core/ServiceProvider.js';
 
@@ -43,7 +45,24 @@ export class JWTBuilderService
 	}
 
 	/**
+	 * Get the name of the service.
+	 *
+	 * @returns {string}
+	 * @public
+	 * @memberof JWTBuilderService
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 * @override
+	 */
+	public static get name(): string {
+		return 'JWTBuilderService';
+	}
+
+	/**
 	 * Issue a token from payload.
+	 *
+	 * - For EdDSA and RS256, the private key will be used to sign the token;
+	 * - For HS256, the private key will be a symmetric key.
 	 *
 	 * @requires jose
 	 * @param {string} jti
@@ -76,7 +95,7 @@ export class JWTBuilderService
 		}
 
 		return new jose.SignJWT(payload)
-			.setProtectedHeader({ alg: 'EdDSA' })
+			.setProtectedHeader({ alg: this._settings.algorithm })
 			.setJti(jti)
 			.setIssuer(this._settings.issuer)
 			.setSubject(sub)
@@ -84,11 +103,14 @@ export class JWTBuilderService
 			.setIssuedAt(timestamp)
 			.setNotBefore(timestamp)
 			.setExpirationTime(timestamp + ttl)
-			.sign(await jose.importPKCS8(this._settings.private_key, 'EdDSA'));
+			.sign(await this._getPrivateKey());
 	}
 
 	/**
 	 * Read a token and return the payload.
+	 *
+	 * - For EdDSA and RS256, the private key will be used to sign the token;
+	 * - For HS256, the private key will be a symmetric key.
 	 *
 	 * @param {string} token
 	 * @param {string[]} required_claims
@@ -114,17 +136,66 @@ export class JWTBuilderService
 			);
 		}
 
-		const { payload } = await jose.jwtVerify(
-			token,
-			await jose.importSPKI(this._settings.public_key, 'EdDSA'),
-			{
-				audience: audience ?? this._settings.audience ?? 'none',
-				issuer: this._settings.issuer,
-				requiredClaims: ['jti', 'iss', 'aud', 'nbf', 'exp', ...required_claims],
-			},
-		);
+		const { payload } = await jose.jwtVerify(token, await this._getPublicKey(), {
+			algorithms: [this._settings.algorithm],
+			audience: audience ?? this._settings.audience ?? 'none',
+			issuer: this._settings.issuer,
+			requiredClaims: ['jti', 'iss', 'aud', 'nbf', 'exp', ...required_claims],
+		});
 
 		return payload as Payload;
+	}
+
+	/**
+	 * Get the private key based on the algorithm.
+	 * For HS256, public key and private key will be the same.
+	 *
+	 * @returns {Uint8Array | CryptoKey}
+	 * @protected
+	 * @memberof JWTBuilderService
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 * @throws {Error} If the algorithm is invalid.
+	 */
+	protected async _getPrivateKey(): Promise<Uint8Array | CryptoKey> {
+		const jose = await import('jose');
+
+		switch (this._settings.algorithm) {
+			case 'EdDSA':
+				return await jose.importPKCS8(this._settings.private_key, 'EdDSA');
+			case 'HS256':
+				return new TextEncoder().encode(this._settings.private_key);
+			case 'RS256':
+				return await jose.importPKCS8(this._settings.private_key, 'RS256');
+		}
+
+		throw new Error(`Invalid algorithm: ${this._settings.algorithm}`);
+	}
+
+	/**
+	 * Get the public key based on the algorithm.
+	 * For HS256, public key and private key will be the same.
+	 *
+	 * @returns {string}
+	 * @protected
+	 * @memberof JWTBuilderService
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 * @throws {Error} If the algorithm is invalid.
+	 */
+	protected async _getPublicKey(): Promise<Uint8Array | CryptoKey> {
+		const jose = await import('jose');
+
+		switch (this._settings.algorithm) {
+			case 'EdDSA':
+				return await jose.importSPKI(this._settings.public_key, 'EdDSA');
+			case 'HS256':
+				return new TextEncoder().encode(this._settings.private_key);
+			case 'RS256':
+				return await jose.importSPKI(this._settings.public_key, 'RS256');
+		}
+
+		throw new Error(`Invalid algorithm: ${this._settings.algorithm}`);
 	}
 
 	/**
@@ -138,7 +209,7 @@ export class JWTBuilderService
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public static register(service: JWTBuilderService): void {
-		ServiceProvider.register('JWTBuilderService', service);
+		ServiceProvider.register(JWTBuilderService.name, service);
 	}
 
 	/**
@@ -153,6 +224,6 @@ export class JWTBuilderService
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public static resolve(): JWTBuilderService {
-		return ServiceProvider.resolve('JWTBuilderService');
+		return ServiceProvider.resolve(JWTBuilderService.name);
 	}
 }

@@ -54,6 +54,31 @@ export class CryptoService {
 			publicKeyEncoding: { format: 'pem', type: 'spki' },
 		});
 	}
+	/**
+	 * Generate an RS256 key pair.
+	 *
+	 * @param {2048 | 3072 | 4096} [modulusLength=2048]
+	 * @throws {Error} If modulus length is not 2048, 3072 or 4096.
+	 * @returns {crypto.KeyPairSyncResult<string, string>}
+	 * @public
+	 * @static
+	 * @memberof CryptoService
+	 * @since 4.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static generateRSAKeyPair(
+		modulusLength: 2048 | 3072 | 4096 = 2048,
+	): crypto.KeyPairSyncResult<string, string> {
+		if (![2048, 3072, 4096].includes(modulusLength)) {
+			throw new Error('Modulus length must be 2048, 3072 or 4096');
+		}
+
+		return crypto.generateKeyPairSync('rsa', {
+			modulusLength,
+			privateKeyEncoding: { format: 'pem', type: 'pkcs8' },
+			publicKeyEncoding: { format: 'pem', type: 'spki' },
+		});
+	}
 
 	/**
 	 * Generate a SHA256 safe hash from a seed.
@@ -67,10 +92,10 @@ export class CryptoService {
 	 * @since 4.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static generateSecret(seed?: Buffer): Buffer {
+	public static generateSecret(length?: number, seed?: Buffer): Buffer {
 		return crypto
 			.createHash('sha256')
-			.update(seed ?? crypto.randomBytes(32))
+			.update(seed ?? crypto.randomBytes(length ?? 36))
 			.digest();
 	}
 

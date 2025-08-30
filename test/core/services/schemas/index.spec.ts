@@ -1,11 +1,11 @@
 import {
 	OnGoingPromisesServiceSettingsSchema,
 	FileLogStreamServiceSettingsSchema,
-	JWTBuilderServiceSettingsSchema,
 	LoggerServiceSettingsSchema,
 	LogLevelSchema,
 	LoggerFnSchema,
 } from '@/index';
+import { JWTBuilderServiceSettingsSchema } from '@/jwt.js';
 import * as utils from '@/utils';
 
 // Mock the utils functions

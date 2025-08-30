@@ -34,6 +34,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js",
 			"default": "./dist/esm/index.js"
+		},
+		"./jwt": {
+			"types": "./dist/types/jwt.d.ts",
+			"import": "./dist/esm/jwt.js",
+			"require": "./dist/cjs/jwt.js",
+			"default": "./dist/esm/jwt.js"
 		}
 	},
 	"files": [
