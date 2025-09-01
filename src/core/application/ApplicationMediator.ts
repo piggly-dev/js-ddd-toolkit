@@ -10,7 +10,7 @@ import type {
 	ApplicationMiddlewareFn,
 	ApplicationHandlerFn,
 	ApplicationContext,
-	IMessage,
+	ICommand,
 } from './types/index.js';
 
 export class ApplicationMediator {
@@ -75,7 +75,7 @@ export class ApplicationMediator {
 	 * @since 5.0.0
 	 */
 	public middleware<
-		Message extends IMessage = IMessage,
+		Message extends ICommand = ICommand,
 		Context extends ApplicationContext = ApplicationContext,
 	>(middleware: ApplicationMiddlewareFn<Message, Context>): ApplicationMediator {
 		this._middlewares.push(middleware as ApplicationMiddlewareFn);
@@ -93,7 +93,7 @@ export class ApplicationMediator {
 	 * @since 5.0.0
 	 */
 	public register<
-		Message extends IMessage = IMessage,
+		Message extends ICommand = ICommand,
 		Context extends ApplicationContext = ApplicationContext,
 		ResultData = any,
 	>(
@@ -116,21 +116,21 @@ export class ApplicationMediator {
 	 * @since 5.0.0
 	 */
 	public async send<
-		Message extends IMessage = IMessage,
+		Message extends ICommand = ICommand,
 		Context extends ApplicationContext = ApplicationContext,
 		ResultData = any,
 	>(
 		message: Message,
-		context: Context,
+		context?: Context,
 	): Promise<Result<ResultData, ApplicationError>> {
 		try {
-			const handler = this._handlers.get(message.name);
+			const handler = this._handlers.get(message.commandName);
 
 			if (!handler) {
 				return Result.fail(
 					new ApplicationMediatorError(
-						`No handler registered for message: ${message.name}`,
-						message.name,
+						`No handler registered for message: ${message.commandName}`,
+						message.commandName,
 					),
 				);
 			}
@@ -145,7 +145,7 @@ export class ApplicationMediator {
 					return Result.fail(
 						new ApplicationMediatorError(
 							`Handler execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-							message.name,
+							message.commandName,
 							this._parseError(error),
 						),
 					);
@@ -165,7 +165,7 @@ export class ApplicationMediator {
 						return Result.fail(
 							new ApplicationMediatorError(
 								`Middleware execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-								message.name,
+								message.commandName,
 								this._parseError(error),
 							),
 						);
@@ -178,7 +178,7 @@ export class ApplicationMediator {
 			return Result.fail(
 				new ApplicationMediatorError(
 					`Mediator execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-					message.name,
+					message.commandName,
 					this._parseError(error),
 				),
 			);

@@ -177,5 +177,5 @@ export type {
 	ApplicationMiddlewareFn,
 	ApplicationHandlerFn,
 	ApplicationContext,
-	IMessage,
+	ICommand,
 } from '@/core/application/types';

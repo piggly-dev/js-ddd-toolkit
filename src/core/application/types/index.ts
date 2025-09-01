@@ -8,24 +8,24 @@ export interface ApplicationContext<T = Record<string, any>> {
 }
 
 export type ApplicationHandlerFn<
-	Message extends IMessage = IMessage,
+	Message extends ICommand = ICommand,
 	Context extends ApplicationContext = ApplicationContext,
 	ResultData = any,
 > = (
 	message: Message,
-	context: Context,
+	context?: Context,
 ) => TOrAnother<
 	Result<ResultData, ApplicationError>,
 	Promise<Result<ResultData, ApplicationError>>
 >;
 
 export type ApplicationMiddlewareFn<
-	Message extends IMessage = IMessage,
+	Message extends ICommand = ICommand,
 	Context extends ApplicationContext = ApplicationContext,
 > = (
 	message: Message,
-	context: Context,
-	next: () => TOrAnother<
+	context?: Context,
+	next?: () => TOrAnother<
 		Result<any, ApplicationError>,
 		Promise<Result<any, ApplicationError>>
 	>,
@@ -34,7 +34,6 @@ export type ApplicationMiddlewareFn<
 	Promise<Result<any, ApplicationError>>
 >;
 
-export interface IMessage<Props extends Record<string, any> = Record<string, any>> {
-	name: string;
-	props: Props;
+export interface ICommand {
+	commandName: string;
 }

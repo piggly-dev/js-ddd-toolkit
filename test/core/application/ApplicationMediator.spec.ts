@@ -1,15 +1,15 @@
 import type {
 	ApplicationContext,
-	IMessage,
+	ICommand,
 } from '@/core/application/types/index.js';
 
 import { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError.js';
 import { ApplicationMediator } from '@/core/application/ApplicationMediator.js';
 import { Result } from '@/core/Result.js';
 
-class TestMessage implements IMessage {
+class TestMessage implements ICommand {
 	constructor(
-		public name: string,
+		public commandName: string,
 		public props: Record<string, any> = {},
 	) {}
 }
