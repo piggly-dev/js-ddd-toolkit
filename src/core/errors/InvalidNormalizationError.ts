@@ -1,3 +1,5 @@
+import type { $RefinementCtx } from 'zod/v4/core/api.cjs';
+
 import type { DataIssues, DataIssue } from '@/core/errors/types/index.js';
 
 import { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError';
@@ -25,5 +27,28 @@ export class InvalidNormalizationError extends BusinessRuleViolationError {
 			422,
 			Array.isArray(issues) ? issues : [issues],
 		);
+	}
+
+	/**
+	 * Apply the context to the error.
+	 *
+	 * @param ctx The context to apply.
+	 * @returns void
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public applyContext(ctx: $RefinementCtx) {
+		const issues = this.typedExtra<DataIssues>();
+
+		if (issues) {
+			issues.forEach(issue => {
+				ctx.addIssue({
+					code: 'custom',
+					input: issue.field,
+					message: issue.message,
+					path: [issue.field],
+				});
+			});
+		}
 	}
 }

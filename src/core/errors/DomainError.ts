@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-import { TOrNull } from '@/types';
+import { TOrUndefined, TOrNull } from '@/types';
 
 import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './types';
 
@@ -50,14 +50,14 @@ export class DomainError implements IDomainError {
 	 * The extra error data.
 	 * Better to add data to client about a response.
 	 *
-	 * @type {Record<string, any>}
+	 * @type {any}
 	 * @protected
 	 * @readonly
 	 * @memberof DomainError
 	 * @since 3.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public readonly extra?: Record<string, any>;
+	public readonly extra?: any;
 
 	/**
 	 * The error hint.
@@ -139,7 +139,7 @@ export class DomainError implements IDomainError {
 		this.message = message ?? '';
 		this.status = status ?? 500;
 		this.hint = hint;
-		this.extra = extra !== undefined ? Object.freeze(extra) : undefined;
+		this.extra = extra;
 	}
 
 	/**
@@ -208,5 +208,18 @@ export class DomainError implements IDomainError {
 			message: this.message,
 			name: this.name,
 		};
+	}
+
+	/**
+	 * Get the extra data as a typed object.
+	 *
+	 * @returns {TOrUndefined<T>}
+	 * @public
+	 * @memberof DomainError
+	 * @since 3.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public typedExtra<T>(): TOrUndefined<T> {
+		return this.extra as TOrUndefined<T>;
 	}
 }
