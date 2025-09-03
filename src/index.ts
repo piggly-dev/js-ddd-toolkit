@@ -71,7 +71,6 @@ export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError';
 export { RuntimeError } from '@/core/errors/RuntimeError';
 
-export { JWTBuilderService } from '@/core/jwt/JWTBuilderService';
 export { CryptoService } from '@/core/services/CryptoService';
 export { FileLogStreamService } from '@/core/services/FileLogStreamService';
 export { LoggerService } from '@/core/services/LoggerService';
