@@ -1,3 +1,5 @@
+import { crc32 } from 'node:zlib';
+
 import type { TOrUndefined, TOrNullable, TOrNull } from '@/types';
 
 import type {
@@ -56,14 +58,13 @@ export abstract class ApplicationError
 	 */
 	constructor(
 		name: string,
-		code: number,
 		message: string,
 		status: number,
 		hint?: string,
 		extra?: Record<string, any>,
 		previous?: PreviousError,
 	) {
-		super(name, code, message, status, hint, extra);
+		super(name, crc32(name), message, status, hint, extra);
 		this.previous = previous;
 	}
 

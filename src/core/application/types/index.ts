@@ -1,4 +1,4 @@
-import type { ApplicationError } from '@/core/errors/ApplicationError.js';
+import type { DomainError } from '@/core/errors/DomainError.js';
 import type { TOrAnother } from '@/types/index.js';
 import type { Result } from '@/core/Result.js';
 
@@ -15,8 +15,8 @@ export type ApplicationHandlerFn<
 	message: Message,
 	context?: Context,
 ) => TOrAnother<
-	Result<ResultData, ApplicationError>,
-	Promise<Result<ResultData, ApplicationError>>
+	Result<ResultData, DomainError>,
+	Promise<Result<ResultData, DomainError>>
 >;
 
 export type ApplicationMiddlewareFn<
@@ -26,13 +26,10 @@ export type ApplicationMiddlewareFn<
 	message: Message,
 	context?: Context,
 	next?: () => TOrAnother<
-		Result<any, ApplicationError>,
-		Promise<Result<any, ApplicationError>>
+		Result<any, DomainError>,
+		Promise<Result<any, DomainError>>
 	>,
-) => TOrAnother<
-	Result<any, ApplicationError>,
-	Promise<Result<any, ApplicationError>>
->;
+) => TOrAnother<Result<any, DomainError>, Promise<Result<any, DomainError>>>;
 
 export interface ICommand {
 	commandName: string;

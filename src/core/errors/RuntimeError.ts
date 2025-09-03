@@ -1,3 +1,5 @@
+import debug from 'debug';
+
 import type { TOrUndefined, TOrNullable, TOrNull } from '@/types';
 
 import type {
@@ -234,6 +236,8 @@ export class RuntimeError extends Error implements IRuntimeError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
+		debug('app:inspect')(`PRODUCED ERROR ${this.name} (${this.code})`);
+
 		const object = {
 			code: this.code,
 			context: this._context ?? null,
@@ -266,6 +270,8 @@ export class RuntimeError extends Error implements IRuntimeError {
 	public toObject(): {
 		context: TOrNull<Record<string, any>>;
 	} & ApplicationErrorJSON {
+		debug('app:inspect')(`PRODUCED ERROR ${this.name} (${this.code})`);
+
 		return {
 			code: this.code,
 			context: this._context ?? null,

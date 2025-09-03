@@ -1,9 +1,9 @@
 import { crc32 } from 'zlib';
 
 import { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError.js';
-import { ApplicationError } from '@/core/errors/ApplicationError.js';
 import { PreviousError } from '@/core/errors/types/index.js';
 import { RuntimeError } from '@/core/errors/RuntimeError.js';
+import { DomainError } from '@/core/errors/DomainError.js';
 import { Result } from '@/core/Result.js';
 
 import type {
@@ -109,7 +109,7 @@ export class ApplicationMediator {
 	 *
 	 * @param {Message} message
 	 * @param {Context} context
-	 * @returns {Promise<Result<ResultData, ApplicationError>>}
+	 * @returns {Promise<Result<ResultData, DomainError>>}
 	 * @public
 	 * @memberof ApplicationMediator
 	 * @author Caique Araujo <caique@piggly.com.br>
@@ -119,10 +119,7 @@ export class ApplicationMediator {
 		Message extends ICommand = ICommand,
 		Context extends ApplicationContext = ApplicationContext,
 		ResultData = any,
-	>(
-		message: Message,
-		context?: Context,
-	): Promise<Result<ResultData, ApplicationError>> {
+	>(message: Message, context?: Context): Promise<Result<ResultData, DomainError>> {
 		try {
 			const handler = this._handlers.get(message.commandName);
 
@@ -136,11 +133,11 @@ export class ApplicationMediator {
 			}
 
 			const executeHandler = async (): Promise<
-				Result<ResultData, ApplicationError>
+				Result<ResultData, DomainError>
 			> => {
 				try {
 					const result = await Promise.resolve(handler(message, context));
-					return result as Result<ResultData, ApplicationError>;
+					return result as Result<ResultData, DomainError>;
 				} catch (error) {
 					return Result.fail(
 						new ApplicationMediatorError(
@@ -153,14 +150,14 @@ export class ApplicationMediator {
 			};
 
 			const executeWithMiddlewares = this._middlewares.reduceRight<
-				() => Promise<Result<ResultData, ApplicationError>>
+				() => Promise<Result<ResultData, DomainError>>
 			>((next, middleware) => {
-				return async (): Promise<Result<ResultData, ApplicationError>> => {
+				return async (): Promise<Result<ResultData, DomainError>> => {
 					try {
 						const result = await Promise.resolve(
 							middleware(message, context, next),
 						);
-						return result as Result<ResultData, ApplicationError>;
+						return result as Result<ResultData, DomainError>;
 					} catch (error) {
 						return Result.fail(
 							new ApplicationMediatorError(

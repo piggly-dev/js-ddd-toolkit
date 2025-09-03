@@ -1,3 +1,5 @@
+import debug from 'debug';
+
 import { TOrNull } from '@/types';
 
 import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './types';
@@ -165,6 +167,8 @@ export class DomainError implements IDomainError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public toJSON(hidden: Array<DomainErrorHiddenProp> = []): DomainErrorJSON {
+		debug('app:inspect')(`PRODUCED ERROR ${this.name} (${this.code})`);
+
 		const object = {
 			code: this.code,
 			extra: this.extra ?? null,
@@ -194,6 +198,8 @@ export class DomainError implements IDomainError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public toObject(): { context: TOrNull<Record<string, any>> } & DomainErrorJSON {
+		debug('app:inspect')(`PRODUCED ERROR ${this.name} (${this.code})`);
+
 		return {
 			code: this.code,
 			context: this._context ?? null,
