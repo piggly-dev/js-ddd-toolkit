@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0-alpha.10",
+	"version": "5.0.0-alpha.11",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -28,18 +28,38 @@
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/esm/index.js",
 	"types": "./dist/types/index.d.ts",
+	"typesVersions": {
+		"*": {
+			"*": [
+				"./dist/types/index.d.ts"
+			],
+			"jwt": [
+				"./dist/types/jwt.d.ts"
+			]
+		}
+	},
 	"exports": {
 		".": {
-			"types": "./dist/types/index.d.ts",
-			"import": "./dist/esm/index.js",
-			"require": "./dist/cjs/index.js",
-			"default": "./dist/esm/index.js"
+			"import": {
+				"types": "./dist/types/index.d.ts",
+				"default": "./dist/esm/index.js"
+			},
+			"require": {
+				"types": "./dist/types/index.d.ts",
+				"default": "./dist/cjs/index.js"
+			},
+			"types": "./dist/types/index.d.ts"
 		},
 		"./jwt": {
-			"types": "./dist/types/jwt.d.ts",
-			"import": "./dist/esm/jwt.js",
-			"require": "./dist/cjs/jwt.js",
-			"default": "./dist/esm/jwt.js"
+			"import": {
+				"types": "./dist/types/jwt.d.ts",
+				"default": "./dist/esm/jwt.js"
+			},
+			"require": {
+				"types": "./dist/types/jwt.d.ts",
+				"default": "./dist/cjs/jwt.js"
+			},
+			"types": "./dist/types/jwt.d.ts"
 		}
 	},
 	"files": [
@@ -106,7 +126,6 @@
 		"typescript-eslint": "^8.39.1"
 	},
 	"dependencies": {
-		"crc": "^4.3.2",
 		"date-fns": "^4.1.0",
 		"date-fns-tz": "^3.2.0",
 		"debug": "^4.4.1",

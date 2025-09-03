@@ -1,5 +1,3 @@
-import { crc32 } from 'zlib';
-
 import { ApplicationError } from '@/core/errors/ApplicationError.js';
 import { PreviousError } from '@/core/errors/types/index.js';
 
@@ -17,14 +15,6 @@ export class ApplicationMediatorError extends ApplicationError {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public constructor(message: string, hint?: string, previous?: PreviousError) {
-		super(
-			'ApplicationMediatorError',
-			crc32('ApplicationMediatorError'),
-			message,
-			500,
-			hint,
-			undefined,
-			previous,
-		);
+		super('ApplicationMediatorError', message, 500, hint, undefined, previous);
 	}
 }

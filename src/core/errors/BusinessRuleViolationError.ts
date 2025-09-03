@@ -1,4 +1,4 @@
-import crc from 'crc';
+import { crc32 } from 'node:zlib';
 
 import { DomainError } from './DomainError';
 
@@ -28,7 +28,7 @@ export class BusinessRuleViolationError extends DomainError {
 	) {
 		super(
 			name,
-			crc.crc32(name),
+			crc32(name),
 			typeof message === 'string' ? message : message.join(', '),
 			code,
 			typeof hint === 'string' ? hint : hint.join(', '),
