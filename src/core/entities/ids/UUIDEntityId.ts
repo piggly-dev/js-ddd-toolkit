@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 import { EntityID } from '@/core/entities/EntityID.js';
 
 /**
@@ -6,4 +8,17 @@ import { EntityID } from '@/core/entities/EntityID.js';
  * @copyright Piggly Lab 2025
  * @author Caique Araujo <caique@piggly.com.br>
  */
-export class UUIDEntityId extends EntityID<string> {}
+export class UUIDEntityId extends EntityID<string> {
+	/**
+	 * Generate a UUIDv4 without mark entity id as random.
+	 *
+	 * @returns {UUIDEntityId}
+	 * @public
+	 * @memberof UUIDEntityId
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static generate(): UUIDEntityId {
+		return new UUIDEntityId(crypto.randomUUID());
+	}
+}
