@@ -10,6 +10,7 @@ export { EntityID } from '@/core/entities/EntityID';
 export { NumberEntityId } from '@/core/entities/ids/NumberEntityId';
 export { StringEntityId } from '@/core/entities/ids/StringEntityId';
 export { UUIDEntityId } from '@/core/entities/ids/UUIDEntityId';
+export { UUIDv7EntityId } from '@/core/entities/ids/UUIDv7EntityId';
 export { OptionalEntity } from '@/core/entities/OptionalEntity';
 
 /** Value Objects */
