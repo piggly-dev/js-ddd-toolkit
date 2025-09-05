@@ -14,7 +14,6 @@ import type { TOrEmpty } from '@/types';
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
 import { CryptoService } from '@/core/services/CryptoService';
 import { DomainError } from '@/core/errors/DomainError';
-import { EnvironmentType } from '@/utils/types';
 import { Result } from '@/core/Result';
 
 /**
@@ -341,116 +340,6 @@ export const sanitizeRecursively = <T = any>(data: T): T => {
 	}
 
 	return data as T;
-};
-
-/**
- * Load configuration from a ini file.
- *
- * @param {string} absolute_path
- * @param {string} file_name Without the ini extension.
- * @param {ZodObject<any>} schema
- * @returns {string}
- * @since 4.0.0
- * @author Caique Araujo <caique@piggly.com.br>
- */
-export const loadConfigIni = async <Schema extends z.ZodType>(
-	absolute_path: string,
-	file_name: string,
-	schema: Schema,
-): Promise<z.output<Schema>> => {
-	const ini = await import('ini');
-
-	return new Promise<z.output<Schema>>((res, rej) => {
-		fs.readFile(`${absolute_path}/${file_name}.ini`, 'utf-8', (err, data) => {
-			if (err) {
-				return rej(err);
-			}
-
-			schema
-				.safeParseAsync(ini.parse(data))
-				.then(parsed => {
-					if (parsed.error) {
-						return rej(new Error(parsed.error.message));
-					}
-
-					return res(parsed.data);
-				})
-				.catch(err => rej(err));
-		});
-	});
-};
-
-/**
- * Load configuration from a dotenv file.
- *
- * @param {EnvironmentType} type Will be used to load the correct file: .env.develoment, .env.test, etc.
- * @param {string} absolute_path
- * @param {ZodObject<any>} schema
- * @returns {string}
- * @since 4.0.0
- * @author Caique Araujo <caique@piggly.com.br>
- */
-export const loadDotEnv = async <Schema extends z.ZodType>(
-	type: EnvironmentType,
-	absolute_path: string,
-	schema: Schema,
-): Promise<z.output<Schema>> => {
-	const dotenv = await import('dotenv');
-
-	dotenv.config({
-		path: `${absolute_path}/.env.${type}`,
-	});
-
-	const parsed = schema.safeParse(process.env);
-
-	if (parsed.error) {
-		throw new Error(parsed.error.message);
-	}
-
-	return parsed.data;
-};
-
-/**
- * Load configuration from a yaml file.
- *
- * @param {string} absolute_path
- * @param {string} file_name Without the yml extension.
- * @param {ZodObject<any>} schema
- * @param {string} extension The extension of the file.
- * @returns {string}
- * @since 4.0.0
- * @author Caique Araujo <caique@piggly.com.br>
- */
-export const loadYaml = async <Schema extends z.ZodType>(
-	absolute_path: string,
-	file_name: string,
-	schema: Schema,
-	extension = 'yml',
-): Promise<z.output<Schema>> => {
-	const yaml = await import('js-yaml');
-
-	return new Promise<z.output<Schema>>((res, rej) => {
-		fs.readFile(
-			`${absolute_path}/${file_name}.${extension}`,
-			'utf-8',
-			(err, data) => {
-				if (err) {
-					return rej(err);
-				}
-
-				schema
-					.safeParseAsync(yaml.load(data))
-					.then(parsed => {
-						if (parsed.error) {
-							return rej(new Error(parsed.error.message));
-						}
-
-						return res(parsed.data);
-					})
-					.catch(err => rej(err));
-			},
-		);
-	});
 };
 
 /**

@@ -5,7 +5,7 @@ import {
 	LogLevelSchema,
 	LoggerFnSchema,
 } from '@/index';
-import { JWTBuilderServiceSettingsSchema } from '@/jwt.js';
+import { JWTBuilderServiceSettingsSchema } from '@/core/jwt/schemas/index.js';
 import * as utils from '@/utils';
 
 // Mock the utils functions

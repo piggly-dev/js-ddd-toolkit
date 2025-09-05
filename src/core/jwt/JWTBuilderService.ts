@@ -1,4 +1,4 @@
-import { CryptoKey } from 'jose';
+import * as jose from 'jose';
 
 import {
 	JWTBuilderServiceSettingsSchema,
@@ -85,7 +85,6 @@ export class JWTBuilderService
 		payload: Payload,
 		audience?: string,
 	): Promise<string> {
-		const jose = await import('jose');
 		const timestamp = Math.floor(new Date().getTime() / 1000);
 
 		if (!audience && !this._settings.audience) {
@@ -128,8 +127,6 @@ export class JWTBuilderService
 		required_claims: string[],
 		audience?: string,
 	): Promise<Payload> {
-		const jose = await import('jose');
-
 		if (!audience && !this._settings.audience) {
 			throw new Error(
 				'Audience is required. You must set audience in settings or pass it to the read method.',
@@ -157,9 +154,7 @@ export class JWTBuilderService
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @throws {Error} If the algorithm is invalid.
 	 */
-	protected async _getPrivateKey(): Promise<Uint8Array | CryptoKey> {
-		const jose = await import('jose');
-
+	protected async _getPrivateKey(): Promise<jose.CryptoKey | Uint8Array> {
 		switch (this._settings.algorithm) {
 			case 'EdDSA':
 				return await jose.importPKCS8(this._settings.private_key, 'EdDSA');
@@ -183,9 +178,7 @@ export class JWTBuilderService
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @throws {Error} If the algorithm is invalid.
 	 */
-	protected async _getPublicKey(): Promise<Uint8Array | CryptoKey> {
-		const jose = await import('jose');
-
+	protected async _getPublicKey(): Promise<jose.CryptoKey | Uint8Array> {
 		switch (this._settings.algorithm) {
 			case 'EdDSA':
 				return await jose.importSPKI(this._settings.public_key, 'EdDSA');
