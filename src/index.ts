@@ -43,6 +43,17 @@ export { ServiceProvider } from '@/core/ServiceProvider';
 
 export { UseCase } from '@/core/deprecated/UseCase';
 
+/** Specification */
+export {
+	AlwaysFalseSpecification,
+	AlwaysTrueSpecification,
+	AndSpecification,
+	NotSpecification,
+	OrSpecification,
+	Specification,
+} from '@/core/specification/Specification';
+export type { ISpecification } from '@/core/specification/types/index.js';
+
 /** Repositories */
 export type {
 	TransactionIsolationLevelType,
@@ -173,8 +184,8 @@ export type {
 } from '@/core/types';
 
 export type {
-	ApplicationMiddlewareFn,
-	ApplicationHandlerFn,
+	IApplicationMiddleware,
+	IApplicationHandler,
 	ApplicationContext,
-	ICommand,
+	IMessage,
 } from '@/core/application/types';

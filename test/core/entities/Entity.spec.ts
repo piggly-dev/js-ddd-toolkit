@@ -14,6 +14,10 @@ class ConcreteEntity extends Entity<TestProps, NumberEntityId> {
 		return this._props.value;
 	}
 
+	public clone(): this {
+		return new ConcreteEntity({ ...this._props }, this.id) as this;
+	}
+
 	public updateName(name: string): void {
 		this._props.name = name;
 		this.markAsModified();

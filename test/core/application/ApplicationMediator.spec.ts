@@ -1,13 +1,13 @@
 import type {
 	ApplicationContext,
-	ICommand,
+	IMessage,
 } from '@/core/application/types/index.js';
 
 import { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError.js';
 import { ApplicationMediator } from '@/core/application/ApplicationMediator.js';
 import { Result } from '@/core/Result.js';
 
-class TestMessage implements ICommand {
+class TestMessage implements IMessage {
 	constructor(
 		public commandName: string,
 		public props: Record<string, any> = {},
@@ -22,9 +22,15 @@ describe('ApplicationMediator', () => {
 	});
 
 	describe('Handler Registration', () => {
-		it('should register a handler function', () => {
-			const handler = jest.fn();
-			mediator.register('test.message', handler);
+		it('should register a handler instance', () => {
+			const handler = {
+				handle: jest.fn().mockResolvedValue(Result.ok('success')),
+				get handlerFor() {
+					return 'test.message';
+				},
+			};
+
+			mediator.register(handler);
 
 			expect(mediator.has('test.message')).toBe(true);
 			/* @ts-expect-error - Handler is private */
@@ -32,11 +38,21 @@ describe('ApplicationMediator', () => {
 		});
 
 		it('should register multiple handlers', () => {
-			const handler1 = jest.fn();
-			const handler2 = jest.fn();
+			const handler1 = {
+				handle: jest.fn().mockResolvedValue(Result.ok('h1')),
+				get handlerFor() {
+					return 'test.message1';
+				},
+			};
+			const handler2 = {
+				handle: jest.fn().mockResolvedValue(Result.ok('h2')),
+				get handlerFor() {
+					return 'test.message2';
+				},
+			};
 
-			mediator.register('test.message1', handler1);
-			mediator.register('test.message2', handler2);
+			mediator.register(handler1);
+			mediator.register(handler2);
 
 			expect(mediator.has('test.message1')).toBe(true);
 			expect(mediator.has('test.message2')).toBe(true);
@@ -44,8 +60,8 @@ describe('ApplicationMediator', () => {
 	});
 
 	describe('Middleware Management', () => {
-		it('should add middleware function', () => {
-			const middleware = jest.fn();
+		it('should add middleware instance', () => {
+			const middleware = { apply: jest.fn() } as any;
 			mediator.middleware(middleware);
 
 			/* @ts-expect-error - Middleware is private */
@@ -53,8 +69,8 @@ describe('ApplicationMediator', () => {
 		});
 
 		it('should add multiple middlewares', () => {
-			const middleware1 = jest.fn();
-			const middleware2 = jest.fn();
+			const middleware1 = { apply: jest.fn() } as any;
+			const middleware2 = { apply: jest.fn() } as any;
 
 			mediator.middleware(middleware1);
 			mediator.middleware(middleware2);
@@ -67,9 +83,15 @@ describe('ApplicationMediator', () => {
 	describe('Message Sending', () => {
 		it('should successfully execute handler', async () => {
 			const expectedResult = Result.ok('success');
-			const handler = jest.fn().mockReturnValue(expectedResult);
+			const handle = jest.fn().mockResolvedValue(expectedResult);
+			const handler = {
+				handle,
+				get handlerFor() {
+					return 'test.message';
+				},
+			};
 
-			mediator.register('test.message', handler);
+			mediator.register(handler);
 
 			const context: ApplicationContext = { data: {} };
 			const message = new TestMessage('test.message', { value: 'data' });
@@ -78,7 +100,7 @@ describe('ApplicationMediator', () => {
 
 			expect(result.isSuccess).toBe(true);
 			expect(result.data).toBe('success');
-			expect(handler).toHaveBeenCalledWith(message, context);
+			expect(handle).toHaveBeenCalledWith(message, context);
 		});
 
 		it('should return error when handler not found', async () => {
@@ -97,32 +119,41 @@ describe('ApplicationMediator', () => {
 		it('should execute middlewares before handler', async () => {
 			const executionOrder: string[] = [];
 
-			const handler = jest.fn().mockImplementation(() => {
+			const handle = jest.fn().mockImplementation(async () => {
 				executionOrder.push('handler');
 				return Result.ok('success');
 			});
 
-			const middleware1 = jest
-				.fn()
-				.mockImplementation((message, context, next) => {
+			const middleware1 = {
+				apply: jest.fn().mockImplementation(async (message, context, next) => {
 					executionOrder.push('middleware1-before');
-					const result = next();
+					const result = await (next
+						? next()
+						: Promise.resolve(Result.ok('noop')));
 					executionOrder.push('middleware1-after');
 					return result;
-				});
+				}),
+			};
 
-			const middleware2 = jest
-				.fn()
-				.mockImplementation((message, context, next) => {
+			const middleware2 = {
+				apply: jest.fn().mockImplementation(async (message, context, next) => {
 					executionOrder.push('middleware2-before');
-					const result = next();
+					const result = await (next
+						? next()
+						: Promise.resolve(Result.ok('noop')));
 					executionOrder.push('middleware2-after');
 					return result;
-				});
+				}),
+			};
 
-			mediator.middleware(middleware1);
-			mediator.middleware(middleware2);
-			mediator.register('test.message', handler);
+			mediator.middleware(middleware1 as any);
+			mediator.middleware(middleware2 as any);
+			mediator.register({
+				handle,
+				get handlerFor() {
+					return 'test.message';
+				},
+			});
 
 			const context: ApplicationContext = { data: {} };
 			const message = new TestMessage('test.message', { value: 'data' });
@@ -139,32 +170,46 @@ describe('ApplicationMediator', () => {
 		});
 
 		it('should pass message to middlewares', async () => {
-			const handler = jest.fn().mockReturnValue(Result.ok('success'));
-			const middleware = jest
-				.fn()
-				.mockImplementation((message, context, next) => next());
+			const handle = jest.fn().mockResolvedValue(Result.ok('success'));
+			const middleware = {
+				apply: jest
+					.fn()
+					.mockImplementation(async (message, context, next) =>
+						next ? next() : Result.ok('noop'),
+					),
+			};
 
-			mediator.middleware(middleware);
-			mediator.register('test.message', handler);
+			mediator.middleware(middleware as any);
+			mediator.register({
+				handle,
+				get handlerFor() {
+					return 'test.message';
+				},
+			});
 
 			const context: ApplicationContext = { data: {} };
 			const message = new TestMessage('test.message', { value: 'data' });
 
 			await mediator.send(message, context);
 
-			expect(middleware).toHaveBeenCalledWith(
+			expect(middleware.apply as jest.Mock).toHaveBeenCalledWith(
 				message,
 				context,
 				expect.any(Function),
 			);
-			expect(handler).toHaveBeenCalledWith(message, context);
+			expect(handle).toHaveBeenCalledWith(message, context);
 		});
 	});
 
 	describe('Utility Methods', () => {
 		it('should clear all handlers and middlewares', () => {
-			mediator.register('test.message', jest.fn());
-			mediator.middleware(jest.fn());
+			mediator.register({
+				handle: jest.fn().mockResolvedValue(Result.ok('ok')),
+				get handlerFor() {
+					return 'test.message';
+				},
+			});
+			mediator.middleware({ apply: jest.fn() } as any);
 
 			expect(mediator.has('test.message')).toBe(true);
 

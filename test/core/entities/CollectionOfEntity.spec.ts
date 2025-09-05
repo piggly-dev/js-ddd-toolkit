@@ -9,6 +9,10 @@ class TestEntity extends Entity<{ name: string; value: number }, NumberEntityId>
 		return this._props.value;
 	}
 
+	public clone() {
+		return new TestEntity({ ...this._props }, this.id) as this;
+	}
+
 	protected generateId() {
 		return new NumberEntityId();
 	}
@@ -33,6 +37,7 @@ describe('CollectionOfEntity', () => {
 				{ name: 'test1', value: 10 },
 				new NumberEntityId(1),
 			);
+
 			const entity2 = new TestEntity(
 				{ name: 'test2', value: 20 },
 				new NumberEntityId(2),
@@ -107,11 +112,17 @@ describe('CollectionOfEntity', () => {
 
 		beforeEach(() => {
 			collection = new CollectionOfEntity<TestEntity>();
-			
+
 			// Add test entities
-			collection.add(new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)));
-			collection.add(new TestEntity({ name: 'test2', value: 20 }, new NumberEntityId(2)));
-			collection.add(new TestEntity({ name: 'test3', value: 30 }, new NumberEntityId(3)));
+			collection.add(
+				new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)),
+			);
+			collection.add(
+				new TestEntity({ name: 'test2', value: 20 }, new NumberEntityId(2)),
+			);
+			collection.add(
+				new TestEntity({ name: 'test3', value: 30 }, new NumberEntityId(3)),
+			);
 		});
 
 		it('should return correct length', () => {
@@ -171,8 +182,14 @@ describe('CollectionOfEntity', () => {
 		});
 
 		it('should sync entities (replace if exists)', () => {
-			const entity1 = new TestEntity({ name: 'original', value: 10 }, new NumberEntityId(1));
-			const entity1Updated = new TestEntity({ name: 'updated', value: 15 }, new NumberEntityId(1));
+			const entity1 = new TestEntity(
+				{ name: 'original', value: 10 },
+				new NumberEntityId(1),
+			);
+			const entity1Updated = new TestEntity(
+				{ name: 'updated', value: 15 },
+				new NumberEntityId(1),
+			);
 
 			collection.add(entity1);
 			expect(collection.find(new NumberEntityId(1))?.name).toBe('original');
@@ -198,9 +215,15 @@ describe('CollectionOfEntity', () => {
 
 		beforeEach(() => {
 			collection = new CollectionOfEntity<TestEntity>();
-			collection.add(new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)));
-			collection.add(new TestEntity({ name: 'test2', value: 20 }, new NumberEntityId(2)));
-			collection.add(new TestEntity({ name: 'test3', value: 30 }, new NumberEntityId(3)));
+			collection.add(
+				new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)),
+			);
+			collection.add(
+				new TestEntity({ name: 'test2', value: 20 }, new NumberEntityId(2)),
+			);
+			collection.add(
+				new TestEntity({ name: 'test3', value: 30 }, new NumberEntityId(3)),
+			);
 		});
 
 		it('should check if entity exists by id', () => {
@@ -209,10 +232,16 @@ describe('CollectionOfEntity', () => {
 		});
 
 		it('should check if entity exists by item', () => {
-			const entity = new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1));
+			const entity = new TestEntity(
+				{ name: 'test1', value: 10 },
+				new NumberEntityId(1),
+			);
 			expect(collection.hasItem(entity)).toBe(true);
 
-			const nonExistentEntity = new TestEntity({ name: 'test999', value: 999 }, new NumberEntityId(999));
+			const nonExistentEntity = new TestEntity(
+				{ name: 'test999', value: 999 },
+				new NumberEntityId(999),
+			);
 			expect(collection.hasItem(nonExistentEntity)).toBe(false);
 		});
 
@@ -246,8 +275,14 @@ describe('CollectionOfEntity', () => {
 		});
 
 		it('should reload existing entity', () => {
-			const originalEntity = new TestEntity({ name: 'original', value: 10 }, new NumberEntityId(1));
-			const updatedEntity = new TestEntity({ name: 'updated', value: 15 }, new NumberEntityId(1));
+			const originalEntity = new TestEntity(
+				{ name: 'original', value: 10 },
+				new NumberEntityId(1),
+			);
+			const updatedEntity = new TestEntity(
+				{ name: 'updated', value: 15 },
+				new NumberEntityId(1),
+			);
 
 			collection.add(originalEntity);
 			expect(collection.find(new NumberEntityId(1))?.name).toBe('original');
@@ -257,9 +292,14 @@ describe('CollectionOfEntity', () => {
 		});
 
 		it('should throw when trying to reload non-existent entity', () => {
-			const entity = new TestEntity({ name: 'test', value: 10 }, new NumberEntityId(999));
+			const entity = new TestEntity(
+				{ name: 'test', value: 10 },
+				new NumberEntityId(999),
+			);
 
-			expect(() => collection.reload(entity)).toThrow('Item not found, cannot be reloaded.');
+			expect(() => collection.reload(entity)).toThrow(
+				'Item not found, cannot be reloaded.',
+			);
 		});
 
 		it('should reload many entities', () => {
@@ -283,20 +323,33 @@ describe('CollectionOfEntity', () => {
 	describe('cloning', () => {
 		it('should clone collection structure (clone method exists but entities need implementation)', () => {
 			const collection = new CollectionOfEntity<TestEntity>();
-			collection.add(new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)));
-			collection.add(new TestEntity({ name: 'test2', value: 20 }, new NumberEntityId(2)));
+			collection.add(
+				new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)),
+			);
+			collection.add(
+				new TestEntity({ name: 'test2', value: 20 }, new NumberEntityId(2)),
+			);
 
 			// Test that the clone method exists but throws "Not implemented" for entity cloning
-			expect(() => collection.clone()).toThrow('Not implemented');
+			expect(() => collection.clone()).not.toThrow('Not implemented');
 		});
 	});
 
 	describe('integration tests', () => {
 		it('should handle complete CRUD operations', () => {
 			const collection = new CollectionOfEntity<TestEntity>();
-			const entity1 = new TestEntity({ name: 'entity1', value: 10 }, new NumberEntityId(1));
-			const entity2 = new TestEntity({ name: 'entity2', value: 20 }, new NumberEntityId(2));
-			const entity1Updated = new TestEntity({ name: 'entity1-updated', value: 15 }, new NumberEntityId(1));
+			const entity1 = new TestEntity(
+				{ name: 'entity1', value: 10 },
+				new NumberEntityId(1),
+			);
+			const entity2 = new TestEntity(
+				{ name: 'entity2', value: 20 },
+				new NumberEntityId(2),
+			);
+			const entity1Updated = new TestEntity(
+				{ name: 'entity1-updated', value: 15 },
+				new NumberEntityId(1),
+			);
 
 			// Create
 			collection.add(entity1);
@@ -309,7 +362,9 @@ describe('CollectionOfEntity', () => {
 
 			// Update (via reload)
 			collection.reload(entity1Updated);
-			expect(collection.find(new NumberEntityId(1))?.name).toBe('entity1-updated');
+			expect(collection.find(new NumberEntityId(1))?.name).toBe(
+				'entity1-updated',
+			);
 
 			// Delete
 			collection.remove(new NumberEntityId(1));
@@ -320,7 +375,7 @@ describe('CollectionOfEntity', () => {
 
 		it('should work with different entity id types', () => {
 			const collection = new CollectionOfEntity<TestEntity>();
-			
+
 			// Test with different NumberEntityId values
 			const entities = [
 				new TestEntity({ name: 'test1', value: 10 }, new NumberEntityId(1)),
@@ -329,7 +384,7 @@ describe('CollectionOfEntity', () => {
 			];
 
 			collection.addMany(entities);
-			
+
 			expect(collection.length).toBe(3);
 			expect(collection.find(new NumberEntityId(1))?.name).toBe('test1');
 			expect(collection.find(new NumberEntityId(100))?.name).toBe('test2');

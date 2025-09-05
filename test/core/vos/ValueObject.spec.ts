@@ -65,7 +65,7 @@ describe('ValueObjects', () => {
 		expect(vo.is('valueobject')).toBe(true);
 		expect(vo.is('entity')).toBe(false);
 		expect(vo.is('attribute')).toBe(false);
-		expect(vo.is('ValueObject')).toBe(false); // case sensitive
+		expect(vo.is('ValueObject')).toBe(true); // case insensitive
 	});
 
 	it('should work with different prop types', () => {

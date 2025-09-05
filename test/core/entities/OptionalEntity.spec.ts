@@ -19,6 +19,10 @@ class TestEntity extends Entity<TestProps, NumberEntityId> {
 		return this._props.value;
 	}
 
+	public clone(): this {
+		return new TestEntity({ ...this._props }, this.id) as this;
+	}
+
 	updateName(name: string) {
 		this._props.name = name;
 	}

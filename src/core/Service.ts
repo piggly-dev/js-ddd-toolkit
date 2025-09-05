@@ -29,6 +29,6 @@ export abstract class Service implements IComponent {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public is(name: string): boolean {
-		return name === this.constructor.name;
+		return name.toLowerCase() === this.constructor.name.toLowerCase();
 	}
 }
