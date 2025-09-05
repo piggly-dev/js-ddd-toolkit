@@ -58,10 +58,12 @@ describe('Result', () => {
 		it('should chainAsync successfully with async function', async () => {
 			const result = Result.ok(5);
 
-			const chainAsynced = await result.chainAsync(async value => {
-				await new Promise(resolve => setTimeout(resolve, 1));
-				return Result.ok(value * 3);
-			});
+			const chainAsynced = await result
+				.chainAsync(async value => {
+					await new Promise(resolve => setTimeout(resolve, 1));
+					return Result.ok(value * 3);
+				})
+				.toPromise();
 
 			expect(chainAsynced.isSuccess).toBe(true);
 			expect(chainAsynced.data).toBe(15);
@@ -238,13 +240,10 @@ describe('Result', () => {
 					await new Promise(resolve => setTimeout(resolve, 1));
 					return Result.ok(value * 2);
 				})
-				.then(result =>
-					result.tap(value => sideEffects.push(`after chainAsync: ${value}`)),
-				)
-				.then(result => result.map(value => value + 5))
-				.then(result =>
-					result.tap(value => sideEffects.push(`final: ${value}`)),
-				);
+				.tap(value => sideEffects.push(`after chainAsync: ${value}`))
+				.map(value => value + 5)
+				.tap(value => sideEffects.push(`final: ${value}`))
+				.toPromise();
 
 			expect(result.isSuccess).toBe(true);
 			expect(result.data).toBe(25); // 10 * 2 + 5
@@ -266,16 +265,13 @@ describe('Result', () => {
 					logs.push('Validating user...');
 					return Result.ok({ ...user, validated: true });
 				})
-				.then(result =>
-					result.map(user => ({
-						...user,
-						displayName: user.name.toUpperCase(),
-						processed: true,
-					})),
-				)
-				.then(result =>
-					result.tap(user => logs.push(`User processed: ${user.displayName}`)),
-				);
+				.map(user => ({
+					...user,
+					displayName: user.name.toUpperCase(),
+					processed: true,
+				}))
+				.tap(user => logs.push(`User processed: ${user.displayName}`))
+				.toPromise();
 
 			expect(result.isSuccess).toBe(true);
 			expect(result.data).toEqual({
@@ -305,13 +301,10 @@ describe('Result', () => {
 					sideEffects.push(`chainAsyncing: ${value}`);
 					return Result.fail(chainAsyncError);
 				})
-				.then(result =>
-					result.tap(_value => sideEffects.push('should not execute')),
-				)
-				.then(result => result.map(_value => _value + 5))
-				.then(result =>
-					result.tap(_value => sideEffects.push('should not execute either')),
-				);
+				.tap(_value => sideEffects.push('should not execute'))
+				.map(_value => _value + 5)
+				.tap(_value => sideEffects.push('should not execute either'))
+				.toPromise();
 
 			expect(result.isFailure).toBe(true);
 			expect(result.error).toBe(chainAsyncError);
@@ -328,16 +321,13 @@ describe('Result', () => {
 					sideEffects.push('should not execute');
 					return Result.ok(_value);
 				})
-				.then(result => result.map(_value => _value))
-				.then(result =>
-					result.tap(_value => sideEffects.push('should not execute')),
-				)
-				.then(result =>
-					result.mapError(error => {
-						sideEffects.push(`transforming error: ${error.message}`);
-						return new ProcessingError(`Transformed: ${error.message}`);
-					}),
-				);
+				.map(_value => _value)
+				.tap(_value => sideEffects.push('should not execute'))
+				.mapError(error => {
+					sideEffects.push(`transforming error: ${error.message}`);
+					return new ProcessingError(`Transformed: ${error.message}`);
+				})
+				.toPromise();
 
 			expect(result.isFailure).toBe(true);
 			expect(result.error).toBeInstanceOf(ProcessingError);
@@ -355,19 +345,16 @@ describe('Result', () => {
 					logs.push('Validating email...');
 					return Result.fail(validationError);
 				})
-				.then(result =>
-					result.map(_data => ({ validated: true, email: 'invalid-email' })),
-				)
-				.then(result => result.tap(_data => logs.push('Should not log')))
-				.then(result =>
-					result.mapError(error => {
-						logs.push(`Converting error: ${error.message}`);
-						return new TestApplicationError(
-							`Application error: ${error.message}`,
-							200,
-						);
-					}),
-				);
+				.map(_data => ({ validated: true, email: 'invalid-email' }))
+				.tap(_data => logs.push('Should not log'))
+				.mapError(error => {
+					logs.push(`Converting error: ${error.message}`);
+					return new TestApplicationError(
+						`Application error: ${error.message}`,
+						200,
+					);
+				})
+				.toPromise();
 
 			expect(result.isFailure).toBe(true);
 			expect(result.error).toBeInstanceOf(TestApplicationError);

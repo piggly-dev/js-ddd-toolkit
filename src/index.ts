@@ -27,7 +27,7 @@ export { CollectionOfEnhancedAttributes } from '@/core/deprecated/CollectionOfEn
 export { EnhancedAttribute } from '@/core/deprecated/EnhancedAttribute';
 
 /** Result/monad pattern */
-export { Result } from '@/core/Result';
+export { ResultAsync, Result } from '@/core/Result';
 export { ResultChain } from '@/core/ResultChain';
 
 /** Events */
