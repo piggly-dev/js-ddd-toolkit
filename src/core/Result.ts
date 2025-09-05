@@ -148,16 +148,18 @@ export class Result<Data, Error extends DomainError> {
 	 * @since 4.3.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public async chainAsync<NextData, NextError extends DomainError>(
+	public chainAsync<NextData, NextError extends DomainError>(
 		fn: (
 			data: Data,
 		) => Promise<Result<NextData, NextError>> | Result<NextData, NextError>,
-	): Promise<Result<NextData, NextError | Error>> {
+	): ResultAsync<NextData, NextError | Error> {
 		if (this.isFailure) {
-			return Result.fail(this.error) as Result<NextData, NextError | Error>;
+			return ResultAsync.fromResult(
+				Result.fail(this.error) as Result<NextData, NextError | Error>,
+			);
 		}
 
-		return await fn(this.data);
+		return ResultAsync.fromResult(Promise.resolve(fn(this.data)));
 	}
 
 	/**
@@ -302,5 +304,205 @@ export class Result<Data, Error extends DomainError> {
 	 */
 	public static okVoid(): Result<void, never> {
 		return new Result<void, never>(true, undefined);
+	}
+}
+
+/**
+ * @file Base result class.
+ * @copyright Piggly Lab 2023
+ */
+export class ResultAsync<Data, Error extends DomainError> {
+	/**
+	 * Available data when successful.
+	 *
+	 * @type {Data}
+	 * @protected
+	 * @readonly
+	 * @memberof Result
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	private readonly _promise: Promise<Result<Data, Error>>;
+
+	/**
+	 * Creates a new result.
+	 *
+	 * @param {Promise<Result<Data, Error>>} promise
+	 * @private
+	 * @constructor
+	 * @memberof Result
+	 * @since 2.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	private constructor(promise: Promise<Result<Data, Error>>) {
+		this._promise = promise;
+	}
+
+	/**
+	 * Chains a function that returns a Result, supporting sync functions.
+	 * If the current Result is successful, applies the function to the data.
+	 * If the current Result is a failure, propagates the error without executing the function.
+	 *
+	 * @template NextData The type of data in the resulting Result
+	 * @template NextError The type of error in the resulting Result
+	 * @param {(data: Data) => Result<NextData, NextError>} fn Function to apply to the data
+	 * @returns {ResultAsync<NextData, NextError>} The ResultAsync of the chained operation
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public chain<NextData, NextError extends DomainError>(
+		fn: (data: Data) => Result<NextData, NextError>,
+	): ResultAsync<NextData, NextError | Error> {
+		const next = this._promise.then(r => (r.isFailure ? (r as any) : fn(r.data)));
+		return new ResultAsync(next as Promise<Result<NextData, NextError | Error>>);
+	}
+
+	/**
+	 * Chains a function that returns a Result, supporting async functions.
+	 * If the current Result is successful, applies the function to the data.
+	 * If the current Result is a failure, propagates the error without executing the function.
+	 *
+	 * @template NextData The type of data in the resulting Result
+	 * @template NextError The type of error in the resulting Result
+	 * @param {(data: Data) => Promise<Result<NextData, NextError>>} fn Function to apply to the data
+	 * @returns {ResultAsync<NextData, NextError>} A ResultAsync that resolves to the Result of the chained operation
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public chainAsync<NextData, NextError extends DomainError>(
+		fn: (
+			data: Data,
+		) => Promise<Result<NextData, NextError>> | Result<NextData, NextError>,
+	): ResultAsync<NextData, NextError | Error> {
+		const next = this._promise.then(r =>
+			r.isFailure ? (r as any) : Promise.resolve(fn(r.data)),
+		);
+
+		return new ResultAsync(next as Promise<Result<NextData, NextError | Error>>);
+	}
+
+	/**
+	 * Transforms the data of a successful Result using the provided function.
+	 * If the Result is a failure, returns the failure unchanged.
+	 * The transformation function should not return a Result - the returned value will be wrapped in Result.ok().
+	 *
+	 * @template NextData The type of the transformed data
+	 * @param {(data: Data) => NextData} fn Function to transform the data
+	 * @returns {ResultAsync<NextData, Error>} A new Result with the transformed data or the original error
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public map<NextData>(fn: (data: Data) => NextData): ResultAsync<NextData, Error> {
+		const next = this._promise.then(r =>
+			r.isFailure ? (r as any) : Result.ok(fn(r.data)),
+		);
+
+		return new ResultAsync(next as Promise<Result<NextData, Error>>);
+	}
+
+	/**
+	 * Transforms the error of a failed Result using the provided function.
+	 * If the Result is successful, returns the success unchanged.
+	 * This is useful for converting between different error types or adding context to errors.
+	 *
+	 * @template NextError The type of the transformed error
+	 * @param {(error: Error) => NextError} fn Function to transform the error
+	 * @returns {ResultAsync<Data, NextError>} A new Result with the original data or the transformed error
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public mapError<NextError extends DomainError>(
+		fn: (error: Error) => NextError,
+	): ResultAsync<Data, NextError> {
+		const next = this._promise.then(r =>
+			r.isSuccess ? r : Result.fail(fn(r.error as Error)),
+		);
+
+		return new ResultAsync(next as Promise<Result<Data, NextError>>);
+	}
+
+	/**
+	 * Executes a side effect function with the data if the Result is successful.
+	 * The Result is returned unchanged, making this useful for logging, metrics, or other side effects.
+	 * If the Result is a failure, the function is not executed.
+	 *
+	 * @param {(data: Data) => void} fn Side effect function to execute with the data
+	 * @returns {ResultAsync<Data, Error>} The original ResultAsync unchanged
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public tap(fn: (data: Data) => void): ResultAsync<Data, Error> {
+		const next = this._promise.then(r => {
+			if (r.isSuccess) {
+				fn(r.data);
+			}
+
+			return r;
+		});
+
+		return new ResultAsync(next);
+	}
+
+	/**
+	 * Converts a ResultAsync to a Promise.
+	 *
+	 * @returns {Promise<Result<Data, Error>>} The Promise of the ResultAsync.
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public toPromise(): Promise<Result<Data, Error>> {
+		return this._promise;
+	}
+
+	/**
+	 * Converts a Promise to a ResultAsync.
+	 *
+	 * @template Data - The type of data in the result
+	 * @template Error - The type of error in the result
+	 * @param promise - The promise to convert to a ResultAsync.
+	 * @param mapError - The function to map the error to an error.
+	 * @returns {ResultAsync<Data, Error>} The ResultAsync of the promise.
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static fromPromise<Data, Error extends DomainError>(
+		promise: Promise<Data>,
+		mapError: (u: unknown) => Error,
+	): ResultAsync<Data, Error> {
+		return new ResultAsync(
+			promise.then(v => Result.ok<Data>(v)).catch(e => Result.fail(mapError(e))),
+		);
+	}
+
+	/**
+	 * Converts a Result to a ResultAsync.
+	 *
+	 * @template Data - The type of data in the result
+	 * @template Error - The type of error in the result
+	 * @param r - The result to convert to a ResultAsync.
+	 * @returns {ResultAsync<Data, Error>} The ResultAsync of the result.
+	 * @public
+	 * @memberof ResultAsync
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static fromResult<Data, Error extends DomainError>(
+		r: Promise<Result<Data, Error>> | Result<Data, Error>,
+	): ResultAsync<Data, Error> {
+		return new ResultAsync(Promise.resolve(r));
 	}
 }

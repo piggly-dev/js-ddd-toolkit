@@ -304,6 +304,7 @@ describe('Schemas', () => {
 	describe('JWTBuilderServiceSettingsSchema', () => {
 		it('should validate valid settings with required fields', () => {
 			const validSettings = {
+				algorithm: 'EdDSA',
 				issuer: 'test-issuer',
 				private_key: 'private-key-content',
 				public_key: 'public-key-content',
@@ -318,6 +319,7 @@ describe('Schemas', () => {
 
 		it('should validate fully specified settings', () => {
 			const validSettings = {
+				algorithm: 'EdDSA',
 				audience: 'test-audience',
 				issuer: 'test-issuer',
 				private_key: 'private-key-content',
@@ -353,6 +355,7 @@ describe('Schemas', () => {
 		it.each([
 			[
 				{
+					algorithm: 'EdDSA',
 					issuer: 'test-issuer',
 					private_key: 'private-key-content',
 					public_key: 'public-key-content',
@@ -361,6 +364,7 @@ describe('Schemas', () => {
 			],
 			[
 				{
+					algorithm: 'EdDSA',
 					audience: 'test-audience',
 					issuer: 'test-issuer',
 					private_key: 'private-key-content',
