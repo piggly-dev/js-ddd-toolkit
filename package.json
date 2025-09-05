@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0-alpha.18",
+	"version": "5.0.0-alpha.19",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -32,6 +32,18 @@
 		"*": {
 			"jwt": [
 				"./dist/types/jwt.d.ts"
+			],
+			"crypto": [
+				"./dist/types/crypto.d.ts"
+			],
+			"ini": [
+				"./dist/types/ini.d.ts"
+			],
+			"yaml": [
+				"./dist/types/yaml.d.ts"
+			],
+			"env": [
+				"./dist/types/env.d.ts"
 			]
 		}
 	},
