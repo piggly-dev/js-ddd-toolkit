@@ -28,8 +28,8 @@ export interface IComponent {
 export interface IDomainEvent<
 	EventData extends Record<string, any> = Record<string, any>,
 > {
+	readonly data: Readonly<EventData>;
 	readonly issued_at: number;
-	readonly data: EventData;
 	readonly name: string;
 	generateId(): string;
 	readonly id: string;

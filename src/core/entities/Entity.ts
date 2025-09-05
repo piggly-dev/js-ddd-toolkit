@@ -2,6 +2,7 @@ import type { EventListener, IEntity } from '@/core/types/index.js';
 
 import { EntityID } from '@/core/entities/EntityID.js';
 import { EventEmitter } from '@/core/EventEmitter.js';
+import { DomainEvent } from '@/core/DomainEvent.js';
 
 /**
  * @file Base entity class.
@@ -11,6 +12,18 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	implements IEntity<Id>
 {
 	/**
+	 * The maximum number of events.
+	 *
+	 * @type {number}
+	 * @private
+	 * @static
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	private static readonly MAX_EVENTS = 64;
+
+	/**
 	 * The event emmiter.
 	 *
 	 * @type {EventEmitter}
@@ -19,7 +32,18 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected _emmiter: EventEmitter;
+	protected _emitter?: EventEmitter;
+
+	/**
+	 * The entity events.
+	 *
+	 * @type {Array<DomainEvent<any>>}
+	 * @protected
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected _events: Array<DomainEvent<any>>;
 
 	/**
 	 * The entity identifier.
@@ -61,6 +85,8 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 *
 	 * @param {props} props
 	 * @param {Id | undefined} id
+	 * @param {EventEmitter | undefined} emitter
+	 * @param {Array<DomainEvent<any>> | undefined} events
 	 * @public
 	 * @constructor
 	 * @memberof Entity
@@ -68,12 +94,31 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 5.0.0 Added modified flag.
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	constructor(props: Props, id?: Id) {
+	constructor(
+		props: Props,
+		id?: Id,
+		emitter?: EventEmitter,
+		events?: Array<DomainEvent<any>>,
+	) {
 		this._id = id ?? this.generateId();
 		this._props = props;
 		this._modified = false;
 
-		this._emmiter = new EventEmitter();
+		this._emitter = emitter ?? undefined;
+		this._events = events ?? [];
+	}
+
+	/**
+	 * Get the event emitter.
+	 *
+	 * @returns {EventEmitter}
+	 * @private
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	private get emitter(): EventEmitter {
+		return (this._emitter ??= new EventEmitter());
 	}
 
 	/**
@@ -114,7 +159,12 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 5.0.0
 	 */
 	public dispose(): void {
-		this._emmiter.unsubscribeAll();
+		if (this._emitter) {
+			this._emitter.unsubscribeAll();
+			this._emitter = undefined;
+		}
+
+		this._events.length = 0;
 	}
 
 	/**
@@ -129,7 +179,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public emit(event: string, ...args: any[]): void {
-		this._emmiter.emit(event, ...args);
+		this._emitter?.emit(event, ...args);
 	}
 
 	/**
@@ -152,6 +202,19 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 		}
 
 		return e.id.equals(this.id);
+	}
+
+	/**
+	 * Checks if the entity has events.
+	 *
+	 * @returns {boolean}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public hasEvents(): boolean {
+		return this._events.length > 0;
 	}
 
 	/**
@@ -206,7 +269,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public off(event: string, listener?: EventListener): void {
-		this._emmiter.off(event, listener);
+		this._emitter?.off(event, listener);
 	}
 
 	/**
@@ -221,7 +284,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public on(event: string, listener: EventListener): void {
-		this._emmiter.on(event, listener);
+		this.emitter.on(event, listener);
 	}
 
 	/**
@@ -236,7 +299,52 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public once(event: string, listener: EventListener): void {
-		this._emmiter.once(event, listener);
+		this.emitter.once(event, listener);
+	}
+
+	/**
+	 * Get the entity events.
+	 *
+	 * @returns {Array<DomainEvent<any>>}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public pullEvents(): Array<DomainEvent<any>> {
+		const events = Array.from(this._events);
+		this._events.length = 0;
+		return events;
+	}
+
+	/**
+	 * Dispose the entity.
+	 *
+	 * @returns void
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 */
+	public [Symbol.dispose]() {
+		this.dispose();
+	}
+
+	/**
+	 * Add an event.
+	 *
+	 * @param {DomainEvent<any>} event
+	 * @returns {void}
+	 * @public
+	 * @memberof Entity
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	protected addEvent(event: DomainEvent<any>): void {
+		if (this._events.length >= Entity.MAX_EVENTS) {
+			throw new Error('Too many domain events recorded for entity.');
+		}
+
+		this._events.push(event);
 	}
 
 	/**

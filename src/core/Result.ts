@@ -275,4 +275,30 @@ export class Result<Data, Error extends DomainError> {
 	public static ok<Success>(data: Success): Result<Success, never> {
 		return new Result<Success, never>(true, data);
 	}
+
+	/**
+	 * Creates a new successful result.
+	 *
+	 * @static
+	 * @returns {Result<true, never>}
+	 * @public
+	 * @memberof Result
+	 * @since 5.0.0
+	 */
+	public static okTrue(): Result<true, never> {
+		return new Result<true, never>(true, true);
+	}
+
+	/**
+	 * Creates a new successful result.
+	 *
+	 * @static
+	 * @returns {Result<void, never>}
+	 * @public
+	 * @memberof Result
+	 * @since 5.0.0
+	 */
+	public static okVoid(): Result<void, never> {
+		return new Result<void, never>(true, undefined);
+	}
 }
