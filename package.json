@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0-alpha.17",
+	"version": "5.0.0-alpha.18",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -9,7 +9,7 @@
 		"build": "npm run clean && npm run build:types && npm run build:esm && npm run build:cjs",
 		"build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json --outDir dist/esm && node ./fixESM.cjs",
 		"build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json --outDir dist/cjs",
-		"build:types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json --outDir dist/types",
+		"build:types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json --outDir dist/types && node ./fixTypes.cjs",
 		"check": "tsc --noEmit -p tsconfig.json",
 		"format": "prettier --write \"./src/**/*.ts\"",
 		"lint": "eslint --fix ./src/**",
@@ -38,25 +38,23 @@
 	"exports": {
 		".": {
 			"import": {
-				"types": "./dist/types/index.d.ts",
+				"types": "./dist/types/index.d.mts",
 				"default": "./dist/esm/index.js"
 			},
 			"require": {
-				"types": "./dist/types/index.d.ts",
+				"types": "./dist/types/index.d.cts",
 				"default": "./dist/cjs/index.js"
-			},
-			"types": "./dist/types/index.d.ts"
+			}
 		},
 		"./jwt": {
 			"import": {
-				"types": "./dist/types/jwt.d.ts",
+				"types": "./dist/types/jwt.d.mts",
 				"default": "./dist/esm/jwt.js"
 			},
 			"require": {
-				"types": "./dist/types/jwt.d.ts",
+				"types": "./dist/types/jwt.d.cts",
 				"default": "./dist/cjs/jwt.js"
-			},
-			"types": "./dist/types/jwt.d.ts"
+			}
 		}
 	},
 	"files": [

@@ -26,6 +26,7 @@ export default [
 			'**/knexfile.js',
 			'database/**/*',
 			'**/fixESM.cjs',
+			'**/fixTypes.cjs',
 		],
 	},
 	{

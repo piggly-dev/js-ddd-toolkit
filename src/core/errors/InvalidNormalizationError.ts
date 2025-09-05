@@ -1,4 +1,4 @@
-import type { $RefinementCtx } from 'zod/v4/core/api.cjs';
+import type { $RefinementCtx } from 'zod/v4/core';
 
 import type { DataIssues, DataIssue } from '@/core/errors/types/index.js';
 
