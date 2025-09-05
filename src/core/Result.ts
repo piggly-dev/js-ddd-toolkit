@@ -149,7 +149,9 @@ export class Result<Data, Error extends DomainError> {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public async chainAsync<NextData, NextError extends DomainError>(
-		fn: (data: Data) => Promise<Result<NextData, NextError>>,
+		fn: (
+			data: Data,
+		) => Promise<Result<NextData, NextError>> | Result<NextData, NextError>,
 	): Promise<Result<NextData, NextError | Error>> {
 		if (this.isFailure) {
 			return Result.fail(this.error) as Result<NextData, NextError | Error>;
