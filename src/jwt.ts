@@ -1,9 +1,10 @@
 export { JWTBuilderService } from '@/core/jwt/JWTBuilderService';
 
-export { IJWTBuilderService, JWTPayload } from '@/core/jwt/types';
+export type { IJWTBuilderService, JWTPayload } from '@/core/jwt/types';
 
-export {
-	JWTBuilderServiceSettingsSchema,
+export { JWTBuilderServiceSettingsSchema } from '@/core/jwt/schemas';
+
+export type {
 	JWTBuilderServiceSettings,
 	JWTBuilderServiceEntry,
 } from '@/core/jwt/schemas';

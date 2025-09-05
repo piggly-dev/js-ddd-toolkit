@@ -44,7 +44,7 @@ export { ServiceProvider } from '@/core/ServiceProvider';
 export { UseCase } from '@/core/deprecated/UseCase';
 
 /** Repositories */
-export {
+export type {
 	TransactionIsolationLevelType,
 	BeginTransactionOptions,
 	IDatabaseDriver,
@@ -77,30 +77,33 @@ export { FileLogStreamService } from '@/core/services/FileLogStreamService';
 export { LoggerService } from '@/core/services/LoggerService';
 export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
 
-export {
+export type {
 	IPromisesHandlerService,
 	IFileLogService,
 	ILoggerService,
 	IStoreService,
 } from '@/core/services/types';
 
-export {
-	OnGoingPromisesServiceSettingsSchema,
-	FileLogStreamServiceSettingsSchema,
+export type {
 	OnGoingPromisesServiceSettings,
 	FileLogStreamServiceSettings,
 	OnGoingPromisesServiceEntry,
-	LoggerServiceSettingsSchema,
 	FileLogStreamServiceEntry,
 	LoggerServiceSettings,
 	LoggerServiceEntry,
-	LogLevelSchema,
-	LoggerFnSchema,
 	LoggerFn,
 	LogLevel,
 } from '@/core/services/schemas';
 
-export { EnvironmentType } from '@/utils/types';
+export {
+	OnGoingPromisesServiceSettingsSchema,
+	FileLogStreamServiceSettingsSchema,
+	LoggerServiceSettingsSchema,
+	LogLevelSchema,
+	LoggerFnSchema,
+} from '@/core/services/schemas';
+
+export type { EnvironmentType } from '@/utils/types';
 
 export {
 	zodIssuesToDataIssues,
