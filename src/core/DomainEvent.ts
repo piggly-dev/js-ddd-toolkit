@@ -1,6 +1,4 @@
-import crypto from 'node:crypto';
-
-import { getUnixTime } from 'date-fns';
+import { v7 as uuidv7 } from 'uuid';
 
 import { IDomainEvent } from './types';
 
@@ -21,7 +19,7 @@ export class DomainEvent<Payload extends Record<string, any>>
 	 * @memberof EventPayload
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	readonly data: Payload;
+	readonly data: Readonly<Payload>;
 
 	/**
 	 * Event id.
@@ -36,7 +34,7 @@ export class DomainEvent<Payload extends Record<string, any>>
 	readonly id: string;
 
 	/**
-	 * Event issued at timestamp.
+	 * Event occurred at timestamp.
 	 *
 	 * @type {number}
 	 * @public
@@ -73,8 +71,22 @@ export class DomainEvent<Payload extends Record<string, any>>
 	constructor(name: string, data: Payload) {
 		this.id = this.generateId();
 		this.name = name;
-		this.data = data;
-		this.issued_at = getUnixTime(new Date());
+		this.data = Object.freeze(data);
+		this.issued_at = Date.now();
+	}
+
+	/**
+	 * Event occurred at timestamp.
+	 *
+	 * @type {number}
+	 * @public
+	 * @readonly
+	 * @since 1.0.0
+	 * @memberof EventPayload
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public get occurred_at(): number {
+		return this.issued_at;
 	}
 
 	/**
@@ -87,6 +99,6 @@ export class DomainEvent<Payload extends Record<string, any>>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public generateId(): string {
-		return crypto.randomUUID();
+		return uuidv7();
 	}
 }

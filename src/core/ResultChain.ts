@@ -77,8 +77,9 @@ export class ResultChain {
 	public begin(): ResultChain {
 		this._results = new Map();
 		this._chain = new Map();
-		this._last = Result.ok(false);
+		this._last = Result.okVoid();
 		this._executed = false;
+		this._cancel = false;
 
 		return this;
 	}
@@ -208,6 +209,7 @@ export class ResultChain {
 			}
 		}
 
+		this._executed = true;
 		return this._last as Result<ResponseData, ResponseError>;
 	}
 
