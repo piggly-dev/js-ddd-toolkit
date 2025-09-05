@@ -72,7 +72,6 @@ export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError';
 export { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError';
 export { RuntimeError } from '@/core/errors/RuntimeError';
 
-export { CryptoService } from '@/core/services/CryptoService';
 export { FileLogStreamService } from '@/core/services/FileLogStreamService';
 export { LoggerService } from '@/core/services/LoggerService';
 export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService';
@@ -114,7 +113,6 @@ export {
 	evaluateAbspath,
 	evaluateSchema,
 	generateString,
-	loadConfigIni,
 	slugifyAsDash,
 	getTimestamp,
 	randomString,
@@ -122,13 +120,11 @@ export {
 	parseAbspath,
 	parseToJson,
 	removeIndex,
-	loadDotEnv,
 	deleteKeys,
 	parseEmpty,
 	removeItem,
 	displayLog,
 	toRFC3339,
-	loadYaml,
 	preserve,
 	mountURL,
 	toArray,

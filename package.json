@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0-alpha.18",
+	"version": "5.0.0-alpha.19",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -32,6 +32,18 @@
 		"*": {
 			"jwt": [
 				"./dist/types/jwt.d.ts"
+			],
+			"crypto": [
+				"./dist/types/crypto.d.ts"
+			],
+			"ini": [
+				"./dist/types/ini.d.ts"
+			],
+			"yaml": [
+				"./dist/types/yaml.d.ts"
+			],
+			"env": [
+				"./dist/types/env.d.ts"
 			]
 		}
 	},
@@ -54,6 +66,46 @@
 			"require": {
 				"types": "./dist/types/jwt.d.cts",
 				"default": "./dist/cjs/jwt.js"
+			}
+		},
+		"./crypto": {
+			"import": {
+				"types": "./dist/types/crypto.d.mts",
+				"default": "./dist/esm/crypto.js"
+			},
+			"require": {
+				"types": "./dist/types/crypto.d.cts",
+				"default": "./dist/cjs/crypto.js"
+			}
+		},
+		"./env": {
+			"import": {
+				"types": "./dist/types/env.d.mts",
+				"default": "./dist/esm/env.js"
+			},
+			"require": {
+				"types": "./dist/types/env.d.cts",
+				"default": "./dist/cjs/env.js"
+			}
+		},
+		"./ini": {
+			"import": {
+				"types": "./dist/types/ini.d.mts",
+				"default": "./dist/esm/ini.js"
+			},
+			"require": {
+				"types": "./dist/types/ini.d.cts",
+				"default": "./dist/cjs/ini.js"
+			}
+		},
+		"./yaml": {
+			"import": {
+				"types": "./dist/types/yaml.d.mts",
+				"default": "./dist/esm/yaml.js"
+			},
+			"require": {
+				"types": "./dist/types/yaml.d.cts",
+				"default": "./dist/cjs/yaml.js"
 			}
 		}
 	},

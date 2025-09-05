@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
 
+import bcrypt from 'bcrypt';
+
 /**
  * @file Crypto service.
  * @copyright Piggly Lab 2025
@@ -143,8 +145,6 @@ export class CryptoService {
 		password: string,
 		hash: string,
 	): Promise<boolean> {
-		const bcrypt = await import('bcrypt');
-
 		return new Promise<boolean>((resolve, reject) => {
 			bcrypt.compare(password, hash, (err, result) => {
 				if (err) {
@@ -169,8 +169,6 @@ export class CryptoService {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public static async passwordHash(password: string, salt = 12): Promise<string> {
-		const bcrypt = await import('bcrypt');
-
 		return new Promise<string>((resolve, reject) => {
 			bcrypt.hash(password, salt, (err, hash) => {
 				if (err) {
