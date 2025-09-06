@@ -1,4 +1,4 @@
-import { DomainError } from './errors/DomainError';
+import { DomainError } from '@/core/errors/DomainError.js';
 
 /**
  * @file Base result class.

@@ -1,4 +1,4 @@
-import { ValueObject, ResultChain, Result, DomainError } from '../src';
+import { ValueObject, ResultChain, DomainError, Result } from '@/index.js';
 
 class CustomValueObject extends ValueObject {
 	private constructor(number: number) {
@@ -12,7 +12,7 @@ class CustomValueObject extends ValueObject {
 	public static create(number: number): Result<CustomValueObject, DomainError> {
 		if (number < 0) {
 			return Result.fail(
-				new DomainError('Number', 10, 'Number must be greater than 0')
+				new DomainError('Number', 10, 'Number must be greater than 0'),
 			);
 		}
 

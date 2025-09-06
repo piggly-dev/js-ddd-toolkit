@@ -1,10 +1,10 @@
+import { InMemoryUnitOfWork } from '@test/__stubs__/InMemoryUnitOfWork.js';
+
 import type {
 	IDatabaseDriver,
 	IRepository,
 	IUnitOfWork,
 } from '@/core/repositories/types/index.js';
-
-import { InMemoryUnitOfWork } from './InMemoryUnitOfWork';
 
 /**
  * In-memory database context for testing.

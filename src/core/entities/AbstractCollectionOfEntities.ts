@@ -1,7 +1,8 @@
+import type { IEntity } from '@/core/types/index.js';
+
 import { OptionalEntity } from '@/core/entities/OptionalEntity.js';
 import { EntityID } from '@/core/entities/EntityID.js';
 import { EventEmitter } from '@/core/EventEmitter.js';
-import { IEntity } from '@/core/types/index.js';
 
 /**
  * @file A collection of something.

@@ -1,10 +1,10 @@
-import { RepositoryProvider } from '@/core/repositories/RepositoryProvider.js';
-
 import {
 	InMemoryUserRepository,
 	type User,
-} from '../../__stubs__/InMemoryUserRepository';
-import { InMemoryDatabase, InMemoryDriver } from '../../__stubs__/InMemoryDriver';
+} from '@test/__stubs__/InMemoryUserRepository.js';
+import { InMemoryDatabase, InMemoryDriver } from '@test/__stubs__/InMemoryDriver.js';
+
+import { RepositoryProvider } from '@/core/repositories/RepositoryProvider.js';
 
 describe('Repository Pattern with UnitOfWork', () => {
 	let db: InMemoryDatabase;

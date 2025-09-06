@@ -1,6 +1,6 @@
 import { v7 as uuidv7 } from 'uuid';
 
-import { IDomainEvent } from './types';
+import type { IDomainEvent } from '@/core/types/index.js';
 
 /**
  * @file Base domain event class to be used/extended by all domain events.

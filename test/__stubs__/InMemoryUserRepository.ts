@@ -4,7 +4,7 @@ import { AbstractRelationalRepository } from '@/core/repositories/AbstractRelati
 import { DomainError } from '@/core/errors/DomainError.js';
 import { Result } from '@/core/Result.js';
 
-import type { InMemoryContext, InMemoryDriver } from './InMemoryDriver';
+import type { InMemoryContext, InMemoryDriver } from './InMemoryDriver.js';
 
 /**
  * Simple User entity for testing.

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { evaluateAbspath, parseAbspath } from '@/utils';
+import { evaluateAbspath, parseAbspath } from '@/utils/index.js';
 
 export const LogLevelSchema = z.enum(['debug', 'info', 'warn', 'error', 'fatal']);
 

@@ -1,7 +1,5 @@
 import { crc32 } from 'node:zlib';
 
-import type { TOrUndefined, TOrNullable, TOrNull } from '@/types';
-
 import type {
 	DomainErrorHiddenProp,
 	ApplicationErrorJSON,
@@ -9,9 +7,10 @@ import type {
 	PreviousErrorJSON,
 	DomainErrorJSON,
 	PreviousError,
-} from './types';
+} from '@/core/errors/types/index.js';
+import type { TOrUndefined, TOrNullable, TOrNull } from '@/types/index.js';
 
-import { DomainError } from './DomainError';
+import { DomainError } from '@/core/errors/DomainError.js';
 
 /**
  * @file Abstract application error class.

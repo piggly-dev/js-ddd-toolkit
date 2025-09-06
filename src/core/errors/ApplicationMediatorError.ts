@@ -1,5 +1,6 @@
+import type { PreviousError } from '@/core/errors/types/index.js';
+
 import { ApplicationError } from '@/core/errors/ApplicationError.js';
-import { PreviousError } from '@/core/errors/types/index.js';
 
 /**
  * @file Application mediator error class.

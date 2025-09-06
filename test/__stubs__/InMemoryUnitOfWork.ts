@@ -3,7 +3,7 @@ import type { IUnitOfWork } from '@/core/repositories/types/index.js';
 import { DomainError } from '@/core/errors/DomainError.js';
 import { Result } from '@/core/Result.js';
 
-import type { InMemoryDatabase, InMemoryContext } from './InMemoryDriver';
+import type { InMemoryDatabase, InMemoryContext } from './InMemoryDriver.js';
 
 /**
  * In-memory Unit of Work implementation for testing.

@@ -6,7 +6,7 @@ import {
 	LoggerFnSchema,
 } from '@/index';
 import { JWTBuilderServiceSettingsSchema } from '@/core/jwt/schemas/index.js';
-import * as utils from '@/utils';
+import * as utils from '@/utils/index.js';
 
 // Mock the utils functions
 jest.mock('@/utils', () => ({

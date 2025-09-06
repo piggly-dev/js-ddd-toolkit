@@ -1,17 +1,17 @@
 import { crc32 } from 'zlib';
 
-import { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError.js';
-import { PreviousError } from '@/core/errors/types/index.js';
-import { RuntimeError } from '@/core/errors/RuntimeError.js';
-import { DomainError } from '@/core/errors/DomainError.js';
-import { Result } from '@/core/Result.js';
-
 import type {
 	IApplicationMiddleware,
 	IApplicationHandler,
 	ApplicationContext,
 	IMessage,
-} from './types/index.js';
+} from '@/core/application/types/index.js';
+
+import { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError.js';
+import { PreviousError } from '@/core/errors/types/index.js';
+import { RuntimeError } from '@/core/errors/RuntimeError.js';
+import { DomainError } from '@/core/errors/DomainError.js';
+import { Result } from '@/core/Result.js';
 
 export class ApplicationMediator {
 	/**

@@ -1,6 +1,7 @@
+import type { IEntity } from '@/core/types/index.js';
+
 import { AbstractCollectionOfEntities } from '@/core/entities/AbstractCollectionOfEntities.js';
 import { EntityID } from '@/core/entities/EntityID.js';
-import { IEntity } from '@/core/types/index.js';
 
 /**
  * @file A collection of entities.

@@ -1,4 +1,4 @@
-import { BusinessRuleViolationError } from './BusinessRuleViolationError';
+import { BusinessRuleViolationError } from '@/core/errors/BusinessRuleViolationError.js';
 
 /**
  * @file Invalid payload error class.

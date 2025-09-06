@@ -1,11 +1,12 @@
 import * as jose from 'jose';
 
+import type { IJWTBuilderService, JWTPayload } from '@/core/jwt/types/index.js';
+
 import {
 	JWTBuilderServiceSettingsSchema,
 	JWTBuilderServiceSettings,
 	JWTBuilderServiceEntry,
 } from '@/core/jwt/schemas/index.js';
-import { IJWTBuilderService, JWTPayload } from '@/core/jwt/types/index.js';
 import { ApplicationService } from '@/core/ApplicationService.js';
 import { ServiceProvider } from '@/core/ServiceProvider.js';
 

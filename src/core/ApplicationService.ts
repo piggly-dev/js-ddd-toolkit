@@ -1,4 +1,4 @@
-import { Service } from './Service';
+import { Service } from '@/core/Service.js';
 
 /**
  * @file Application Service abstraction.

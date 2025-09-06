@@ -1,8 +1,8 @@
 import type { z } from 'zod';
 
-import crypto from 'crypto';
-import path from 'path';
-import fs from 'fs';
+import crypto from 'node:crypto';
+import path from 'node:path';
+import fs from 'node:fs';
 
 import { formatInTimeZone } from 'date-fns-tz';
 import { getUnixTime } from 'date-fns';
@@ -11,6 +11,7 @@ import sanitize from 'sanitize-html';
 import type { DataIssues } from '@/core/errors/types/index.js';
 import type { TOrEmpty } from '@/types';
 
+import { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError.js';
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
 import { CryptoService } from '@/core/services/CryptoService';
 import { DomainError } from '@/core/errors/DomainError';
@@ -313,6 +314,26 @@ export const evaluateSchema = <Schema extends z.ZodType>(
 };
 
 /**
+ * Parse the current process environment variables.
+ *
+ * @param schema
+ * @returns Output schema type.
+ * @since 5.0.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const parseEnv = <Schema extends z.ZodType>(
+	schema: Schema,
+): z.output<Schema> => {
+	const parsed = schema.safeParse(process.env);
+
+	if (parsed.error) {
+		throw new Error(parsed.error.message);
+	}
+
+	return parsed.data;
+};
+
+/**
  * Sanitize a string recursively.
  *
  * @param {any} data
@@ -529,4 +550,31 @@ export const zodIssuesToDataIssues = (
 		field: issue.path.join('.'),
 		message: issue.message,
 	}));
+};
+
+/**
+ * Evaluate a schema.
+ *
+ * @param {string} name
+ * @param {any} input
+ * @param {ZodSchema<any>} schema
+ * @returns {Result<any, DomainError>}
+ * @since 5.0.0
+ * @returns {Result<Payload, InvalidSchemaNormalizationError>}
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const normalizeSchema = <Schema extends z.ZodType>(
+	name: string,
+	input: unknown,
+	schema: Schema,
+): Result<z.output<Schema>, InvalidSchemaNormalizationError> => {
+	const result = schema.safeParse(input);
+
+	if (!result.success) {
+		return Result.fail(
+			new InvalidSchemaNormalizationError(name, result.error.issues),
+		);
+	}
+
+	return Result.ok(result.data);
 };

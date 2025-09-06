@@ -1,4 +1,4 @@
-import { EventListener } from './types';
+import type { EventListener } from '@/core/types/index.js';
 
 /**
  * @file Base event emmiter class, simple and smart.

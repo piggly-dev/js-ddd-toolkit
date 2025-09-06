@@ -1,6 +1,7 @@
-import { DomainError } from './errors/DomainError';
-import { ResultFn } from './types';
-import { Result } from './Result';
+import type { ResultFn } from '@/core/types/index.js';
+
+import { DomainError } from '@/core/errors/DomainError.js';
+import { Result } from '@/core/Result.js';
 
 /**
  * @file Base result  chainclass.
