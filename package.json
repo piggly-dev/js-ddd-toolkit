@@ -22,8 +22,7 @@
 		"prepare": "husky"
 	},
 	"publishConfig": {
-		"access": "public",
-		"tag": "alpha"
+		"access": "public"
 	},
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/esm/index.js",
