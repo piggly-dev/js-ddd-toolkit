@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.0.0-alpha.19",
+	"version": "5.0.0",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -22,8 +22,7 @@
 		"prepare": "husky"
 	},
 	"publishConfig": {
-		"access": "public",
-		"tag": "alpha"
+		"access": "public"
 	},
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/esm/index.js",
@@ -36,14 +35,8 @@
 			"crypto": [
 				"./dist/types/crypto.d.ts"
 			],
-			"ini": [
-				"./dist/types/ini.d.ts"
-			],
-			"yaml": [
-				"./dist/types/yaml.d.ts"
-			],
-			"env": [
-				"./dist/types/env.d.ts"
+			"files": [
+				"./dist/types/files.d.ts"
 			]
 		}
 	},
@@ -56,7 +49,8 @@
 			"require": {
 				"types": "./dist/types/index.d.cts",
 				"default": "./dist/cjs/index.js"
-			}
+			},
+			"types": "./dist/types/index.d.ts"
 		},
 		"./jwt": {
 			"import": {
@@ -66,7 +60,8 @@
 			"require": {
 				"types": "./dist/types/jwt.d.cts",
 				"default": "./dist/cjs/jwt.js"
-			}
+			},
+			"types": "./dist/types/jwt.d.ts"
 		},
 		"./crypto": {
 			"import": {
@@ -76,37 +71,19 @@
 			"require": {
 				"types": "./dist/types/crypto.d.cts",
 				"default": "./dist/cjs/crypto.js"
-			}
+			},
+			"types": "./dist/types/crypto.d.ts"
 		},
-		"./env": {
+		"./files": {
 			"import": {
-				"types": "./dist/types/env.d.mts",
-				"default": "./dist/esm/env.js"
+				"types": "./dist/types/files.d.mts",
+				"default": "./dist/esm/files.js"
 			},
 			"require": {
-				"types": "./dist/types/env.d.cts",
-				"default": "./dist/cjs/env.js"
-			}
-		},
-		"./ini": {
-			"import": {
-				"types": "./dist/types/ini.d.mts",
-				"default": "./dist/esm/ini.js"
+				"types": "./dist/types/files.d.cts",
+				"default": "./dist/cjs/files.js"
 			},
-			"require": {
-				"types": "./dist/types/ini.d.cts",
-				"default": "./dist/cjs/ini.js"
-			}
-		},
-		"./yaml": {
-			"import": {
-				"types": "./dist/types/yaml.d.mts",
-				"default": "./dist/esm/yaml.js"
-			},
-			"require": {
-				"types": "./dist/types/yaml.d.cts",
-				"default": "./dist/cjs/yaml.js"
-			}
+			"types": "./dist/types/files.d.ts"
 		}
 	},
 	"files": [

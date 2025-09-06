@@ -1,4 +1,4 @@
-import { DomainError } from './errors/DomainError';
+import { DomainError } from '@/core/errors/DomainError.js';
 
 /**
  * @file Base result class.
@@ -266,6 +266,24 @@ export class Result<Data, Error extends DomainError> {
 	}
 
 	/**
+	 * Converts a Result to a ResultAsync.
+	 * @template Data - The type of data in the result
+	 * @template Error - The type of error in the result
+	 * @param r - The result to convert to a ResultAsync.
+	 * @returns {ResultAsync<Data, Error>} The ResultAsync of the result.
+	 * @public
+	 * @memberof Result
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static fromPromise<Data, Error extends DomainError>(
+		promise: Promise<Data>,
+		mapError: (u: unknown) => Error,
+	): ResultAsync<Data, Error> {
+		return ResultAsync.fromPromise(promise, mapError);
+	}
+
+	/**
 	 * Creates a new successful result.
 	 *
 	 * @static
@@ -304,6 +322,60 @@ export class Result<Data, Error extends DomainError> {
 	 */
 	public static okVoid(): Result<void, never> {
 		return new Result<void, never>(true, undefined);
+	}
+
+	/**
+	 * Executes a function and captures its result in a Result.
+	 *
+	 * If the function executes successfully, returns a successful
+	 * Result containing the function's return value.
+	 *
+	 * If the function throws an error, returns a failed Result
+	 * containing the error, optionally transformed by the provided
+	 * mapError function.
+	 *
+	 * @param fn
+	 * @param mapError
+	 * @returns {Result<Data, Error>}
+	 * @static
+	 * @public
+	 * @memberof Result
+	 * @since 5.0.0
+	 */
+	public static try<Data, Error extends DomainError>(
+		fn: () => Data,
+		mapError?: (error: unknown) => Error,
+	): Result<Data, Error> {
+		try {
+			return Result.ok<Data>(fn());
+		} catch (error) {
+			return Result.fail<Error>(mapError ? mapError(error) : (error as Error));
+		}
+	}
+
+	/**
+	 * Executes an async function and captures its result in a Result.
+	 *
+	 * If the function executes successfully, returns a successful
+	 * Result containing the function's return value.
+	 *
+	 * If the function throws an error, returns a failed Result
+	 * containing the error, optionally transformed by the provided
+	 * mapError function.
+	 *
+	 * @param fn
+	 * @param mapError
+	 * @returns {Result<Data, Error>}
+	 * @static
+	 * @public
+	 * @memberof Result
+	 * @since 5.0.0
+	 */
+	public static tryAsync<Data, Error extends DomainError>(
+		fn: () => Promise<Data>,
+		mapError?: (error: unknown) => Error,
+	): ResultAsync<Data, Error> {
+		return ResultAsync.try(fn, mapError);
 	}
 }
 
@@ -504,5 +576,34 @@ export class ResultAsync<Data, Error extends DomainError> {
 		r: Promise<Result<Data, Error>> | Result<Data, Error>,
 	): ResultAsync<Data, Error> {
 		return new ResultAsync(Promise.resolve(r));
+	}
+
+	/**
+	 * Executes a function and captures its result in a Result.
+	 *
+	 * If the function executes successfully, returns a successful
+	 * Result containing the function's return value.
+	 *
+	 * If the function throws an error, returns a failed Result
+	 * containing the error, optionally transformed by the provided
+	 * errorTransform function.
+	 *
+	 * @param fn
+	 * @param errorTransform
+	 * @returns {Result<Data, Error>}
+	 * @static
+	 * @public
+	 * @memberof Result
+	 * @since 5.0.0
+	 */
+	public static try<Data, Error extends DomainError>(
+		fn: () => Promise<Data>,
+		mapError?: (error: unknown) => Error,
+	): ResultAsync<Data, Error> {
+		return new ResultAsync(
+			fn()
+				.then(v => Result.ok<Data>(v))
+				.catch(e => Result.fail(mapError ? mapError(e) : (e as Error))),
+		);
 	}
 }

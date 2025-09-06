@@ -1,6 +1,6 @@
 import { crc32 } from 'node:zlib';
 
-import { DomainError } from './DomainError';
+import { DomainError } from '@/core/errors/DomainError.js';
 
 /**
  * @file Business rule violation error class.

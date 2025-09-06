@@ -1,1 +1,1 @@
-export { CryptoService } from '@/core/services/CryptoService';
+export { CryptoService } from '@/core/services/CryptoService.js';

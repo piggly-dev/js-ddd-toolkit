@@ -29,6 +29,7 @@ module.exports = {
 	moduleNameMapper: {
 		'@/(.*)\\.js$': '<rootDir>/src/$1.ts',
 		'@/(.*)?': '<rootDir>/src/$1',
+		'@test/(.*)\\.js$': '<rootDir>/test/$1.ts',
 		'@test/(.*)': '<rootDir>/test/$1',
 	},
 	moduleDirectories: ['node_modules', '<rootDir>/src'],

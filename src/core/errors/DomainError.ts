@@ -1,8 +1,11 @@
 import debug from 'debug';
 
-import { TOrUndefined, TOrNull } from '@/types';
-
-import type { DomainErrorHiddenProp, DomainErrorJSON, IDomainError } from './types';
+import type {
+	DomainErrorHiddenProp,
+	DomainErrorJSON,
+	IDomainError,
+} from '@/core/errors/types/index.js';
+import type { TOrUndefined, TOrNull } from '@/types/index.js';
 
 /**
  * @file Base domain error class.

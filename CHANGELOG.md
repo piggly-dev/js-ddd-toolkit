@@ -225,90 +225,185 @@
 
 This is a major breaking release that introduces significant architectural improvements and new patterns for Domain-Driven Design implementation.
 
-### Breaking Changes
+### 🚨 Breaking Changes
 
-* **[Breaking]** `EnhancedEntity` and `EnhancedAttribute` are deprecated, use `Entity` and `Attribute` instead;
-* **[Breaking]** All entity enhanced collections are deprecated, always use `CollectionOfEntity` instead;
-* **[Breaking]** All attribuites collections are deprecated, since `Attribute` does not have an identity, it is not possible to use it in a collection anymore;
-* **[Breaking]** `EventEmmiter` renamed to `EventEmitter`. Now it is used by `Entity` and `Attribute` in a `protected` access. You should use `IEventEmitter` interface to handle events without directly access `_emitter`;
-* **[Breaking]** `CollectionOfValueObjects` was refactored to use `Set` instead of `Map` for better performance;
-* **[Breaking]** Repository pattern was completely redesigned with Unit of Work support;
-* **[Breaking]** Services were refactored to implement interfaces and extend base service classes.
+#### Complete Architecture Overhaul
 
-#### Services
+* **Entities Reorganization**: All entity classes moved from `src/core/` to `src/core/entities/`
+  * `Entity`, `CollectionOfEntity`, `OptionalEntity`, `EntityID` now under `/entities`
+  * Removed `EnhancedEntity` - functionality merged into base `Entity` class
+  * Entities now extend EventEmitter for built-in event handling
 
-### Major Features
+#### Migration from Attributes to Value Objects
 
-#### Result Pattern Enhancements
+* **REMOVED**: All Attribute-based classes deprecated and moved to `/deprecated`:
+  * `Attribute`, `EnhancedAttribute`
+  * `CollectionOfAttributes`, `CollectionOfEnhancedAttributes`
+  * `AbstractCollectionOfAttributes`, `AbstractCollectionOfEnhancedAttributes`
+* **NEW**: Value Objects pattern implementation:
+  * `ValueObject<Props>` - Immutable value objects with equality checking
+  * `CollectionOfValueObjects` - Collection management for value objects
+  * `AbstractCollectionOfValueObjects` - Base class using Set instead of Map
 
-* Added `chain()` method for chaining operations that return Results (supports sync/async)
-* Added `map()` method for transforming data of successful Results
-* Added `tap()` method for executing side effects without modifying Results
-* Added `mapError()` method for transforming errors of failed Results
+#### Deprecated Classes Moved
 
-#### Entity System Overhaul
+* All deprecated classes moved to `src/core/deprecated/`:
+  * `CollectionOfEnhancedEntity`, `CollectionOfRelatedEntity`, `CollectionOfRelatedEnhancedEntity`
+  * `EnhancedAttribute`, `EnhancedEntity`, `UseCase`
+  * These will be removed in v6.0.0
 
-* Entities now use `EventEmitter` for domain events;
-* New ID system with `StringEntityId`, `NumberEntityId`, and `UUIDEntityId`;
-* Added `isModified` and `markAsPersisted` methods for tracking entity state;
-* Added `forceFind()` method to collections for retrieving entities with error handling;
-* Improved entity organization with dedicated `entities/` directory structure.
+#### Date Management Breaking Change
 
-#### Attribute System Overhaul
+* **REMOVED**: Moment.js dependency and all related functionality
+  * Removed `DateParser` class and `toMoment()` utility function
+  * Migrated to `date-fns` for date operations
+  * All date operations now use native Date or date-fns functions
 
-* Attributes now use `EventEmitter` for domain events;
-* Added `isModified` and `markAsPersisted` methods for tracking attribute state;
-* Improved attribute organization with dedicated `attributes/` directory structure.
+#### Event System Overhaul
 
-#### Value Objects Implementation
+* **REMOVED**: `EventEmmiter` (with typo) class
+* **NEW**: `EventEmitter` class with improved type safety and async support
+  * Integrated directly into Entity base class
+  * Support for domain events with proper typing
 
-* New `ValueObject` base class for immutable objects with equality checks;
-* `CollectionOfValueObjects` using `Set` for efficient storage;
-* Removed unnecessary `clone()` methods for simpler implementation;
-* Hash-based equality using `equals()` method.
+### ✨ New Features
 
-#### Repository Pattern with Unit of Work
+#### Repository Pattern Implementation
 
-* New repository interfaces: `IDatabaseDriver`, `IRepository`, `IUnitOfWork`;
-* `AbstractRelationalRepository` for relational database implementations;
-* `RelationalRepositoryBundle` for managing repository collections;
-* `RepositoryProvider` as IoC container for dependency injection;
-* Transaction support with `scoped()` method for isolation;
-* Connection signature tracking for repository compatibility.
+* **Repository Interfaces & Abstract Classes**:
+  * `AbstractRelationalRepository<Entity, Id>` - Base repository with CRUD operations
+  * `RelationalRepositoryBundle` - Bundle multiple repositories with shared driver
+  * `RepositoryProvider` - IoC container for repository management
+  * Full Unit of Work pattern support with transaction management
+
+#### Enhanced Result Pattern
+
+* **Result Class Enhancements**:
+  * New `ResultAsync` for handling async operations
+  * `Result.collect()` method to aggregate multiple results
+  * Separate `chain()` and `chainAsync()` methods for better type safety
+  * Improved error handling with `mapError()` and `tapError()`
 
 #### Application Layer
 
-* New `ApplicationMediator` for handling application-level orchestration;
-* Enhanced service layer with interface implementations;
-* Deprecated `UseCase` pattern.
+* **ApplicationMediator**: New mediator pattern implementation for command/query handling
+  * Support for `ICommand` and `IQuery` patterns
+  * Built-in error handling with domain errors
+  * Async command/query processing
 
-### Refactoring & Improvements
+#### JWT Management
 
-* **Project Structure**: Better organization with dedicated directories for entities, value objects, repositories, and services;
-* **Collections**: Optimized for performance and simplicity;
-* **Error Handling**: `RuntimeError` changed from abstract to concrete class;
-* **Type System**: Comprehensive type improvements across all modules;
-* **Testing**: Extensive test coverage for all new features and patterns.
+* **JWTBuilderService**: Standalone JWT service
+  * Moved from services to dedicated `src/core/jwt/` module
+  * Enhanced token building and validation
+  * Support for custom claims and schemas
 
-### Deprecated Features
+#### Entity ID System
 
-* Enhanced objects and major of collections were moved to `deprecated/` directory;
-* Old `EventEmmiter` class (replaced by `EventEmitter`);
-* Previous repository implementation from earlier versions.
+* **New Entity ID Types**:
+  * `UUIDv7EntityId` - UUID v7 support for time-ordered IDs
+  * `NumberEntityId` - Numeric entity IDs
+  * `StringEntityId` - String-based entity IDs
+  * Updated `UUIDEntityId` with better validation
 
-### Documentation
+#### Error Handling
 
-* Added comprehensive documentation for Result pattern (`docs/Result.md`);
-* Improved inline documentation and type definitions.
+* **New Error Classes**:
+  * `InvalidNormalizationError` - For normalization failures
+  * `InvalidSchemaNormalizationError` - Schema validation errors
+  * `ApplicationMediatorError` - Mediator-specific errors
+  * Enhanced `DomainError` with better error context
 
-### Technical Changes
+### 🔧 Improvements
 
-* All imports now use `.js` extension for ESM compatibility;
-* VS Code settings updated for proper module resolution;
-* Jest configuration enhanced for better test support;
-* Dependencies updated to latest versions.
+#### Module System
 
-### Features
+* New module exports for better tree-shaking:
+  * `/jwt` - JWT functionality
+  * `/crypto` - Cryptographic services
+  * `/env` - Environment utilities
+  * `/ini` - INI file parsing
+  * `/yaml` - YAML parsing support
 
-* Added `ResultChain.do()` method to create a new result chain;
-* Fixed type signature for `clone()` method in `Entity` and `Attribute`.
+#### Service Layer Refactoring
+
+* All services now implement proper interfaces
+* Services extend appropriate base classes (`ApplicationService`, `DomainService`, etc.)
+* Improved dependency injection with `ServiceProvider`
+
+#### Collection Improvements
+
+* Collections now use Set internally instead of Map for better performance
+* Removed unnecessary `clone()` methods from collections
+* Better type safety with generic constraints
+
+#### Build System
+
+* Added `fixTypes.cjs` script for build fixes
+* Improved dual ESM/CJS support
+* Better TypeScript declaration generation
+
+### 📦 Dependencies
+
+* **REMOVED**:
+  * `moment` - Replaced with `date-fns`
+  * Old JWT dependencies integrated into core
+
+* **ADDED**:
+  * `date-fns` ^4.1.0 - Modern date utility library
+  * Native crypto support for JWT operations
+
+### 🔄 Migration Guide
+
+1. **Update Entity Imports**:
+
+   ```typescript
+   // Before
+   import { Entity, EntityID } from '@/core';
+
+   // After
+   import { Entity, EntityID } from '@/core/entities';
+   ```
+
+2. **Migrate from Attributes to Value Objects**:
+
+   ```typescript
+   // Before
+   class MyAttribute extends Attribute<Props> { }
+
+   // After
+   class MyValueObject extends ValueObject<Props> { }
+   ```
+
+3. **Update Date Operations**:
+
+   ```typescript
+   // Before
+   import { toMoment } from '@/utils';
+   const date = toMoment(value);
+
+   // After
+   import { parseISO, format } from 'date-fns';
+   const date = parseISO(value);
+   ```
+
+4. **Update Event Emitter Usage**:
+
+   ```typescript
+   // Before
+   import { EventEmmiter } from '@/core';
+
+   // After
+   import { EventEmitter } from '@/core';
+   ```
+
+5. **Repository Pattern**:
+
+   ```typescript
+   // New pattern
+   import { AbstractRelationalRepository, RepositoryProvider } from '@/core/repositories';
+
+   class UserRepository extends AbstractRelationalRepository<User, UserId> {
+     // Implementation
+   }
+   ```

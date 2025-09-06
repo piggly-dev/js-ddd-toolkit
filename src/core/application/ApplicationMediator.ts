@@ -1,33 +1,33 @@
 import { crc32 } from 'zlib';
 
+import type {
+	IApplicationMiddleware,
+	IApplicationHandler,
+	ApplicationContext,
+	IMessage,
+} from '@/core/application/types/index.js';
+
 import { ApplicationMediatorError } from '@/core/errors/ApplicationMediatorError.js';
 import { PreviousError } from '@/core/errors/types/index.js';
 import { RuntimeError } from '@/core/errors/RuntimeError.js';
 import { DomainError } from '@/core/errors/DomainError.js';
 import { Result } from '@/core/Result.js';
 
-import type {
-	ApplicationMiddlewareFn,
-	ApplicationHandlerFn,
-	ApplicationContext,
-	ICommand,
-} from './types/index.js';
-
 export class ApplicationMediator {
 	/**
 	 * A map of handlers.
 	 *
-	 * @type {Map<string, ApplicationHandlerFn>}
+	 * @type {Map<string, IApplicationHandler>}
 	 * @private
 	 * @readonly
 	 * @memberof ApplicationMediator
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @since 5.0.0
 	 */
-	private _handlers: Map<string, ApplicationHandlerFn> = new Map();
+	private _handlers: Map<string, IApplicationHandler> = new Map();
 
 	/**
-	 * An array of middlewares.
+	 * Am array of middlewares.
 	 *
 	 * @type {Array<ApplicationMiddlewareFn>}
 	 * @private
@@ -36,7 +36,7 @@ export class ApplicationMediator {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @since 5.0.0
 	 */
-	private _middlewares: Array<ApplicationMiddlewareFn> = [];
+	private _middlewares: Array<IApplicationMiddleware> = [];
 
 	/**
 	 * Clear the mediator.
@@ -48,20 +48,24 @@ export class ApplicationMediator {
 	 */
 	public clear(): void {
 		this._handlers.clear();
-		this._middlewares = [];
+		this._middlewares.length = 0;
 	}
 
 	/**
 	 * Check if a handler is registered.
 	 *
-	 * @param {string} name Message name.
+	 * @param {IApplicationHandler | string} name Handler instance or name.
 	 * @returns {boolean}
 	 * @public
 	 * @memberof ApplicationMediator
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public has(name: string): boolean {
+	public has(name: IApplicationHandler | string): boolean {
+		if (name && typeof name === 'object' && 'handlerFor' in name) {
+			return this._handlers.has(name.handlerFor);
+		}
+
 		return this._handlers.has(name);
 	}
 
@@ -74,11 +78,10 @@ export class ApplicationMediator {
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @since 5.0.0
 	 */
-	public middleware<
-		Message extends ICommand = ICommand,
-		Context extends ApplicationContext = ApplicationContext,
-	>(middleware: ApplicationMiddlewareFn<Message, Context>): ApplicationMediator {
-		this._middlewares.push(middleware as ApplicationMiddlewareFn);
+	public middleware<Message extends IMessage, Context extends ApplicationContext>(
+		middleware: IApplicationMiddleware<Message, Context>,
+	): ApplicationMediator {
+		this._middlewares.push(middleware);
 		return this;
 	}
 
@@ -93,14 +96,11 @@ export class ApplicationMediator {
 	 * @since 5.0.0
 	 */
 	public register<
-		Message extends ICommand = ICommand,
-		Context extends ApplicationContext = ApplicationContext,
-		ResultData = any,
-	>(
-		name: string,
-		handler: ApplicationHandlerFn<Message, Context, ResultData>,
-	): ApplicationMediator {
-		this._handlers.set(name, handler as ApplicationHandlerFn);
+		Message extends IMessage,
+		Context extends ApplicationContext,
+		Response = any,
+	>(handler: IApplicationHandler<Message, Context, Response>): ApplicationMediator {
+		this._handlers.set(handler.handlerFor, handler);
 		return this;
 	}
 
@@ -116,10 +116,10 @@ export class ApplicationMediator {
 	 * @since 5.0.0
 	 */
 	public async send<
-		Message extends ICommand = ICommand,
-		Context extends ApplicationContext = ApplicationContext,
-		ResultData = any,
-	>(message: Message, context?: Context): Promise<Result<ResultData, DomainError>> {
+		Message extends IMessage,
+		Context extends ApplicationContext,
+		Response = any,
+	>(message: Message, context?: Context): Promise<Result<Response, DomainError>> {
 		try {
 			const handler = this._handlers.get(message.commandName);
 
@@ -132,12 +132,9 @@ export class ApplicationMediator {
 				);
 			}
 
-			const executeHandler = async (): Promise<
-				Result<ResultData, DomainError>
-			> => {
+			const executeHandler = async (): Promise<Result<Response, DomainError>> => {
 				try {
-					const result = await Promise.resolve(handler(message, context));
-					return result as Result<ResultData, DomainError>;
+					return await handler.handle(message, context);
 				} catch (error) {
 					return Result.fail(
 						new ApplicationMediatorError(
@@ -150,14 +147,11 @@ export class ApplicationMediator {
 			};
 
 			const executeWithMiddlewares = this._middlewares.reduceRight<
-				() => Promise<Result<ResultData, DomainError>>
+				() => Promise<Result<Response, DomainError>>
 			>((next, middleware) => {
-				return async (): Promise<Result<ResultData, DomainError>> => {
+				return async (): Promise<Result<Response, DomainError>> => {
 					try {
-						const result = await Promise.resolve(
-							middleware(message, context, next),
-						);
-						return result as Result<ResultData, DomainError>;
+						return await middleware.apply(message, context, next);
 					} catch (error) {
 						return Result.fail(
 							new ApplicationMediatorError(

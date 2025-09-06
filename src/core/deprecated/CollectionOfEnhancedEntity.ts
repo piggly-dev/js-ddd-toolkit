@@ -1,6 +1,7 @@
+import type { IEntity } from '@/core/types/index.js';
+
 import { CollectionOfEntity } from '@/core/entities/CollectionOfEntity.js';
 import { EntityID } from '@/core/entities/EntityID.js';
-import { IEntity } from '@/core/types/index.js';
 
 /**
  * It is just a alias for the CollectionOfEntity class.

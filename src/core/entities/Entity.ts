@@ -146,9 +146,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public clone(_?: Id): this {
-		throw new Error('Not implemented');
-	}
+	public abstract clone(_?: Id): this;
 
 	/**
 	 * Dispose the entity.
@@ -358,9 +356,7 @@ export abstract class Entity<Props, Id extends EntityID<any>>
 	 * @since 1.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	protected generateId(): Id {
-		throw new Error('Not implemented');
-	}
+	protected abstract generateId(): Id;
 
 	/**
 	 * Mark the entity as modified.

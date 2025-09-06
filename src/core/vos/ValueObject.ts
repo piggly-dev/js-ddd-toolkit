@@ -83,6 +83,6 @@ export class ValueObject<Props extends Record<string, any> = Record<string, any>
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
 	public is(name: string): boolean {
-		return name === 'valueobject';
+		return name.toLowerCase() === 'valueobject';
 	}
 }
