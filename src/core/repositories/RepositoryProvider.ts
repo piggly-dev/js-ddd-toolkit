@@ -45,6 +45,10 @@ export class RepositoryProvider {
 		const repositories = [];
 
 		for (const name of names) {
+			if (typeof name !== 'string') {
+				throw new Error('Repository name must be a string.');
+			}
+
 			const repository = this._repositories.get(name);
 
 			if (repository === undefined) {
@@ -54,33 +58,7 @@ export class RepositoryProvider {
 			repositories.push(repository);
 		}
 
-		for (let i = 0; i < repositories.length; i++) {
-			for (let j = i + 1; j < repositories.length; j++) {
-				if (!repositories[i].isCompatibleWith(repositories[j])) {
-					throw new Error(
-						`Incompatible repositories: "${repositories[i].name}" (engine ${repositories[i].engine}) × "${repositories[j].name}" (engine ${repositories[j].engine}).`,
-					);
-				}
-			}
-		}
-
-		const uow = repositories[0].buildUnitOfWork() as IUnitOfWork<Engine, Context>;
-
-		for (const r of repositories) {
-			if (uow.engine !== r.engine) {
-				throw new Error(
-					`UnitOfWork engine mismatch: UoW=${uow.engine} repo("${r.name}")=${r.engine}`,
-				);
-			}
-		}
-
-		const bundle = new RelationalRepositoryBundle<Engine, Context>(uow);
-
-		for (const repository of repositories) {
-			bundle.add(repository as IRepository<Engine, Context>);
-		}
-
-		return bundle;
+		return this.unitOfWorkFor(...repositories);
 	}
 
 	/**
@@ -158,6 +136,53 @@ export class RepositoryProvider {
 		}
 
 		this._repositories.set(instance.name, instance);
+	}
+
+	/**
+	 * Build a unit of work for a list of repositories.
+	 *
+	 * @param {IRepository<Engine, Context>[]} repositories
+	 * @returns {IUnitOfWork<Engine, Context>}
+	 * @public
+	 * @static
+	 * @memberof RepositoryProvider
+	 * @since 5.0.0
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public static unitOfWorkFor<Engine extends string = string, Context = unknown>(
+		...repositories: Array<IRepository<Engine, Context>>
+	): RelationalRepositoryBundle<Engine, Context> {
+		if (repositories.length === 0) {
+			throw new Error('You must to provide at least one repository.');
+		}
+
+		for (let i = 0; i < repositories.length; i++) {
+			for (let j = i + 1; j < repositories.length; j++) {
+				if (!repositories[i].isCompatibleWith(repositories[j])) {
+					throw new Error(
+						`Incompatible repositories: "${repositories[i].name}" (engine ${repositories[i].engine}) × "${repositories[j].name}" (engine ${repositories[j].engine}).`,
+					);
+				}
+			}
+		}
+
+		const uow = repositories[0].buildUnitOfWork() as IUnitOfWork<Engine, Context>;
+
+		for (const r of repositories) {
+			if (uow.engine !== r.engine) {
+				throw new Error(
+					`UnitOfWork engine mismatch: UoW=${uow.engine} repo("${r.name}")=${r.engine}`,
+				);
+			}
+		}
+
+		const bundle = new RelationalRepositoryBundle<Engine, Context>(uow);
+
+		for (const repository of repositories) {
+			bundle.add(repository as IRepository<Engine, Context>);
+		}
+
+		return bundle;
 	}
 
 	/**
