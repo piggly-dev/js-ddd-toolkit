@@ -407,3 +407,7 @@ This is a major breaking release that introduces significant architectural impro
      // Implementation
    }
    ```
+
+## 5.1.0 at `2025-09-24`
+
+* [Add] `unitOfWorkFor` method to `RepositoryProvider` to build a unit of work for a list of repositories.
