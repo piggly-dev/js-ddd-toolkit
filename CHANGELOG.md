@@ -415,3 +415,7 @@ This is a major breaking release that introduces significant architectural impro
 ## 5.1.1 at `2025-09-24`
 
 * [Fix] Exports for types.
+
+## 5.1.2 at `2025-09-24`
+
+* [Fix] `get` method of `RelationalRepositoryBundle` now has a flag to allow get repository without checking if the UoW is active.
