@@ -411,3 +411,7 @@ This is a major breaking release that introduces significant architectural impro
 ## 5.1.0 at `2025-09-24`
 
 * [Add] `unitOfWorkFor` method to `RepositoryProvider` to build a unit of work for a list of repositories.
+
+## 5.1.1 at `2025-09-24`
+
+* [Fix] Exports for types.

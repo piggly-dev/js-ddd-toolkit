@@ -61,7 +61,7 @@ export type {
 	IDatabaseDriver,
 	IRepository,
 	IUnitOfWork,
-} from '@/core/repositories/types';
+} from '@/core/repositories/types/index.js';
 
 export { AbstractRelationalRepository } from '@/core/repositories/AbstractRelationalRepository.js';
 export { RelationalRepositoryBundle } from '@/core/repositories/RelationalRepositoryBundle.js';
