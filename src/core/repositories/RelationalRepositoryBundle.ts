@@ -107,8 +107,9 @@ export class RelationalRepositoryBundle<
 	 */
 	public get<Repository extends IRepository<Engine, Context>>(
 		name: string,
+		opts: { must_be_active?: boolean } = { must_be_active: true },
 	): Repository {
-		if (!this._uow.isActive()) {
+		if (this._uow.isActive() === false && opts.must_be_active) {
 			throw new Error('Unit of Work is not active. Call begin() first.');
 		}
 
