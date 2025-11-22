@@ -419,3 +419,9 @@ This is a major breaking release that introduces significant architectural impro
 ## 5.1.2 at `2025-09-24`
 
 * [Fix] `get` method of `RelationalRepositoryBundle` now has a flag to allow get repository without checking if the UoW is active.
+
+## 5.2.0 at `2025-11-22`
+
+* [Update] Dependencies to latest version;
+* [Fix] `loadConfigIni` and `loadYaml` functions now removes the extension from the file name;
+* [Add] `loadInfisicalSecrets` function to load secrets from Infisical.
