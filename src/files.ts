@@ -2,6 +2,7 @@ import type z from 'zod';
 
 import fs from 'node:fs';
 
+import { InfisicalSDK } from '@infisical/sdk';
 import dotenv from 'dotenv';
 import yaml from 'js-yaml';
 import ini from 'ini';
@@ -15,6 +16,7 @@ import type { EnvironmentType } from '@/index.js';
  * @param file_name Without the yml extension.
  * @param schema
  * @param extension The extension of the file.
+ * @throws {ZodError} If the schema is invalid.
  * @returns Output schema type.
  * @since 5.0.0
  * @author Caique Araujo <caique@piggly.com.br>
@@ -27,7 +29,7 @@ export const loadYaml = async <Schema extends z.ZodType>(
 ): Promise<z.output<Schema>> => {
 	return new Promise<z.output<Schema>>((res, rej) => {
 		fs.readFile(
-			`${absolute_path}/${file_name}.${extension}`,
+			`${absolute_path}/${file_name.replace(`.${extension}`, '')}.${extension}`,
 			'utf-8',
 			(err, data) => {
 				if (err) {
@@ -38,7 +40,7 @@ export const loadYaml = async <Schema extends z.ZodType>(
 					.safeParseAsync(yaml.load(data))
 					.then(parsed => {
 						if (parsed.error) {
-							return rej(new Error(parsed.error.message));
+							return rej(parsed.error);
 						}
 
 						return res(parsed.data);
@@ -51,10 +53,12 @@ export const loadYaml = async <Schema extends z.ZodType>(
 
 /**
  * Load configuration from a ini file.
+ * It will remove the extension from the file name.
  *
  * @param absolute_path
  * @param file_name Without the ini extension.
  * @param schema
+ * @throws {ZodError} If the schema is invalid.
  * @returns Output schema type.
  * @since 5.0.0
  * @author Caique Araujo <caique@piggly.com.br>
@@ -65,22 +69,26 @@ export const loadConfigIni = async <Schema extends z.ZodType>(
 	schema: Schema,
 ): Promise<z.output<Schema>> => {
 	return new Promise<z.output<Schema>>((res, rej) => {
-		fs.readFile(`${absolute_path}/${file_name}.ini`, 'utf-8', (err, data) => {
-			if (err) {
-				return rej(err);
-			}
+		fs.readFile(
+			`${absolute_path}/${file_name.replace('.ini', '')}.ini`,
+			'utf-8',
+			(err, data) => {
+				if (err) {
+					return rej(err);
+				}
 
-			schema
-				.safeParseAsync(ini.parse(data))
-				.then(parsed => {
-					if (parsed.error) {
-						return rej(new Error(parsed.error.message));
-					}
+				schema
+					.safeParseAsync(ini.parse(data))
+					.then(parsed => {
+						if (parsed.error) {
+							return rej(parsed.error);
+						}
 
-					return res(parsed.data);
-				})
-				.catch(err => rej(err));
-		});
+						return res(parsed.data);
+					})
+					.catch(err => rej(err));
+			},
+		);
 	});
 };
 
@@ -90,6 +98,7 @@ export const loadConfigIni = async <Schema extends z.ZodType>(
  * @param type Will be used to load the correct file: .env.develoment, .env.test, etc.
  * @param absolute_path
  * @param schema
+ * @throws {ZodError} If the schema is invalid.
  * @returns Output schema type.
  * @since 4.0.0
  * @author Caique Araujo <caique@piggly.com.br>
@@ -103,11 +112,56 @@ export const loadDotEnv = async <Schema extends z.ZodType>(
 		path: `${absolute_path}/.env.${type}`,
 	});
 
-	const parsed = schema.safeParse(process.env);
+	return schema.parse(process.env);
+};
 
-	if (parsed.error) {
-		throw new Error(parsed.error.message);
+/**
+ * Load configuration from Infisical.
+ * This function will not modify process.env.
+ *
+ * This is a simple wrapper. It loads all the secrets of a project
+ * and returns them in an object ("key" => "value").
+ *
+ * If you need granular control over the SDK, don't use this function.
+ *
+ * It is recommended to use loadDotEnv to load the environment variables with
+ * required options about Infisical before using this function.
+ *
+ * @param options
+ * @throws {ZodError} If the schema is invalid.
+ * @returns Output schema type.
+ * @since 5.2.0
+ * @author Caique Araujo <caique@piggly.com.br>
+ */
+export const loadInfisicalSecrets = async <Schema extends z.ZodType>(
+	options: {
+		client_id: string;
+		project_id: string;
+		client_secret: string;
+		environment: string;
+		site_url: string;
+	},
+	schema: Schema,
+): Promise<z.output<Schema>> => {
+	const infisical = new InfisicalSDK({
+		siteUrl: options.site_url,
+	});
+
+	await infisical.auth().universalAuth.login({
+		clientId: options.client_id,
+		clientSecret: options.client_secret,
+	});
+
+	const secrets = await infisical.secrets().listSecrets({
+		environment: options.environment,
+		projectId: options.project_id,
+	});
+
+	const ENV: Record<string, string> = {};
+
+	for (const secret of secrets.secrets) {
+		ENV[secret.secretKey] = secret.secretValue;
 	}
 
-	return parsed.data;
+	return schema.parse(ENV);
 };
