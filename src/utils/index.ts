@@ -13,7 +13,6 @@ import type { TOrEmpty } from '@/types';
 
 import { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError.js';
 import { InvalidPayloadSchemaError } from '@/core/errors/InvalidPayloadSchemaError';
-import { CryptoService } from '@/core/services/CryptoService';
 import { DomainError } from '@/core/errors/DomainError';
 import { Result } from '@/core/Result';
 
@@ -383,7 +382,7 @@ export const displayLog = (
 	message: string,
 	...args: any[]
 ): { uuid: string; date: string; display: string; message: string } => {
-	const uuid = CryptoService.generateUUID();
+	const uuid = crypto.randomUUID();
 	const date = toRFC3339(new Date());
 
 	let display = `(${level}) "${message}"`;
