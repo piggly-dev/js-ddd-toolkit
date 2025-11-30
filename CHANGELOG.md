@@ -425,3 +425,7 @@ This is a major breaking release that introduces significant architectural impro
 * [Update] Dependencies to latest version;
 * [Fix] `loadConfigIni` and `loadYaml` functions now removes the extension from the file name;
 * [Add] `loadInfisicalSecrets` function to load secrets from Infisical.
+
+## 5.2.1 at `2025-11-30`
+
+* [Fix] `utils/index.ts` should not use `CryptoService` module directly.

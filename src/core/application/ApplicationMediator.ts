@@ -18,25 +18,25 @@ export class ApplicationMediator {
 	 * A map of handlers.
 	 *
 	 * @type {Map<string, IApplicationHandler>}
-	 * @private
+	 * @protected
 	 * @readonly
 	 * @memberof ApplicationMediator
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @since 5.0.0
 	 */
-	private _handlers: Map<string, IApplicationHandler> = new Map();
+	protected _handlers: Map<string, IApplicationHandler> = new Map();
 
 	/**
 	 * Am array of middlewares.
 	 *
 	 * @type {Array<ApplicationMiddlewareFn>}
-	 * @private
+	 * @protected
 	 * @readonly
 	 * @memberof ApplicationMediator
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 * @since 5.0.0
 	 */
-	private _middlewares: Array<IApplicationMiddleware> = [];
+	protected _middlewares: Array<IApplicationMiddleware> = [];
 
 	/**
 	 * Clear the mediator.
@@ -181,12 +181,12 @@ export class ApplicationMediator {
 	 *
 	 * @param {unknown} error
 	 * @returns {PreviousError}
-	 * @private
+	 * @protected
 	 * @memberof ApplicationMediator
 	 * @since 5.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	private _parseError(error: unknown): PreviousError {
+	protected _parseError(error: unknown): PreviousError {
 		if (error instanceof Error) {
 			return new RuntimeError(
 				error.name,
