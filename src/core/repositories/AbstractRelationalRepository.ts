@@ -14,8 +14,7 @@ export abstract class AbstractRelationalRepository<
 	Driver extends IDatabaseDriver<Engine, Context>,
 	Engine extends string,
 	Context = unknown,
-> implements IRepository<Engine>
-{
+> implements IRepository<Engine> {
 	/**
 	 * The driver associated with the repository.
 	 *

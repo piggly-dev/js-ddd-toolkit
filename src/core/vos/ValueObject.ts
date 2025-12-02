@@ -7,9 +7,9 @@ import type { IValueObject } from '@/core/types/index.js';
  * @copyright Piggly Lab 2023
  * @since 2.0.0 Flexible props
  */
-export class ValueObject<Props extends Record<string, any> = Record<string, any>>
-	implements IValueObject<Props>
-{
+export class ValueObject<
+	Props extends Record<string, any> = Record<string, any>,
+> implements IValueObject<Props> {
 	/**
 	 * The value object props.
 	 *

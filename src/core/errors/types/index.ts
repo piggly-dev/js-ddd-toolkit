@@ -33,7 +33,8 @@ export interface IApplicationError extends IDomainError {
 }
 
 export interface IDomainError
-	extends JSONExportable<DomainErrorHiddenProp, DomainErrorJSON>,
+	extends
+		JSONExportable<DomainErrorHiddenProp, DomainErrorJSON>,
 		ObjectExportable<DomainErrorJSON> {
 	is(class_name: string): boolean;
 	extra?: Record<any, any>;
@@ -45,7 +46,8 @@ export interface IDomainError
 }
 
 export interface IRuntimeError
-	extends JSONExportable<
+	extends
+		JSONExportable<
 			'message' | 'extra' | 'code' | 'name' | 'hint',
 			DomainErrorJSON
 		>,

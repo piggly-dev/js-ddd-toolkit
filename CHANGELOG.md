@@ -429,3 +429,7 @@ This is a major breaking release that introduces significant architectural impro
 ## 5.2.1 at `2025-11-30`
 
 * [Fix] `utils/index.ts` should not use `CryptoService` module directly.
+
+## 5.2.2 at `2025-12-02`
+
+* [Add] `cast` method to `Result` class to cast the result to a different type signature.

@@ -8,9 +8,10 @@ import { DomainEvent } from '@/core/DomainEvent.js';
  * @file Base entity class.
  * @copyright Piggly Lab 2023
  */
-export abstract class Entity<Props, Id extends EntityID<any>>
-	implements IEntity<Id>
-{
+export abstract class Entity<
+	Props,
+	Id extends EntityID<any>,
+> implements IEntity<Id> {
 	/**
 	 * The maximum number of events.
 	 *
