@@ -6,9 +6,9 @@ import type { IDomainEvent } from '@/core/types/index.js';
  * @file Base domain event class to be used/extended by all domain events.
  * @copyright Piggly Lab 2023
  */
-export class DomainEvent<Payload extends Record<string, any>>
-	implements IDomainEvent<Payload>
-{
+export class DomainEvent<
+	Payload extends Record<string, any>,
+> implements IDomainEvent<Payload> {
 	/**
 	 * Event data, where EventData may be an object.
 	 *

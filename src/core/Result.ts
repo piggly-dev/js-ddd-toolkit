@@ -111,6 +111,25 @@ export class Result<Data, Error extends DomainError> {
 	}
 
 	/**
+	 * Casts the Result to a different type signature.
+	 * Useful for propagating failures without verbose type assertions.
+	 *
+	 * @template NewData The new data type (defaults to never for failure propagation)
+	 * @template NewError The new error type (defaults to current Error type)
+	 * @returns {Result<NewData, NewError>} The same Result with new type signature
+	 * @public
+	 * @memberof Result
+	 * @since 5.2.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public cast<NewData = never, NewError extends DomainError = Error>(): Result<
+		NewData,
+		NewError
+	> {
+		return this as unknown as Result<NewData, NewError>;
+	}
+
+	/**
 	 * Chains a function that returns a Result, supporting sync functions.
 	 * If the current Result is successful, applies the function to the data.
 	 * If the current Result is a failure, propagates the error without executing the function.
@@ -408,6 +427,25 @@ export class ResultAsync<Data, Error extends DomainError> {
 	 */
 	private constructor(promise: Promise<Result<Data, Error>>) {
 		this._promise = promise;
+	}
+
+	/**
+	 * Casts the Result to a different type signature.
+	 * Useful for propagating failures without verbose type assertions.
+	 *
+	 * @template NewData The new data type (defaults to never for failure propagation)
+	 * @template NewError The new error type (defaults to current Error type)
+	 * @returns {Result<NewData, NewError>} The same Result with new type signature
+	 * @public
+	 * @memberof Result
+	 * @since 5.2.2
+	 * @author Caique Araujo <caique@piggly.com.br>
+	 */
+	public cast<NewData = never, NewError extends DomainError = Error>(): Result<
+		NewData,
+		NewError
+	> {
+		return this as unknown as Result<NewData, NewError>;
 	}
 
 	/**

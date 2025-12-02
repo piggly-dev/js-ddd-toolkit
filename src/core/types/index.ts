@@ -10,8 +10,7 @@ export type CollectionOfEntitiesIndex<ID, Value> = { id: ID; value?: Value };
 export type EventListener = (...args: Array<any>) => void;
 
 export interface IAttribute<Props extends Record<any, any> = Record<any, any>>
-	extends IEventEmitter,
-		IComponent {
+	extends IEventEmitter, IComponent {
 	equals(a: IAttribute<Props> | undefined | null): boolean;
 	toJSON(): Readonly<any>;
 	markAsPersisted(): void;
@@ -36,8 +35,7 @@ export interface IDomainEvent<
 }
 
 export interface IEntity<ID extends EntityID<any>>
-	extends IEventEmitter,
-		IComponent {
+	extends IEventEmitter, IComponent {
 	equals(e: IEntity<ID> | undefined | null): boolean;
 	markAsPersisted(): void;
 	isModified(): boolean;
