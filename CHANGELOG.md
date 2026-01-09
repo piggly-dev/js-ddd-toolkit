@@ -433,3 +433,7 @@ This is a major breaking release that introduces significant architectural impro
 ## 5.2.2 at `2025-12-02`
 
 * [Add] `cast` method to `Result` class to cast the result to a different type signature.
+
+## 5.3.2 at `2026-01-08`
+
+* [Remove] Infisical support.
