@@ -1,6 +1,6 @@
 {
 	"name": "@piggly/ddd-toolkit",
-	"version": "5.2.2",
+	"version": "5.3.0",
 	"description": "A bunch of tools to use Model-Driven Design and Domain-Driven Design architecture in a back-end application.",
 	"scripts": {
 		"clean": "rimraf dist",
@@ -114,7 +114,6 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",
-		"@infisical/sdk": "^4.0.6",
 		"@types/bcrypt": "^6.0.0",
 		"@types/debug": "^4.1.12",
 		"@types/ini": "^4.1.1",
@@ -160,7 +159,6 @@
 		"zod": "^4.1.13"
 	},
 	"optionalDependencies": {
-		"@infisical/sdk": ">=4.0",
 		"@types/bcrypt": ">=6.0",
 		"@types/ini": ">=4.1",
 		"@types/js-yaml": ">=4.0",
