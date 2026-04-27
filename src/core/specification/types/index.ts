@@ -7,10 +7,10 @@ import type { Result } from '@/core/Result.js';
  * @author Caique Araujo <caique@piggly.com.br>
  */
 export interface ISpecification<Candidate> {
-	check(candidate: Candidate, message?: string): Result<void, DomainError>;
 	and(other: ISpecification<Candidate>): ISpecification<Candidate>;
-	or(other: ISpecification<Candidate>): ISpecification<Candidate>;
-	isSatisfiedBy(candidate: Candidate): boolean;
+	check(candidate: Candidate, message?: string): Result<void, DomainError>;
 	explainWhy(candidate: Candidate): string;
+	isSatisfiedBy(candidate: Candidate): boolean;
 	not(): ISpecification<Candidate>;
+	or(other: ISpecification<Candidate>): ISpecification<Candidate>;
 }

@@ -43,14 +43,23 @@ export class CryptoService {
 	/**
 	 * Generate an Ed25519 key pair.
 	 *
-	 * @returns {crypto.KeyPairSyncResult<string, string>}
+	 * @returns {crypto.KeyPairExportResult<string, string>}
 	 * @public
 	 * @static
 	 * @memberof CryptoService
 	 * @since 4.0.0
 	 * @author Caique Araujo <caique@piggly.com.br>
 	 */
-	public static generateKeyPair(): crypto.KeyPairSyncResult<string, string> {
+	public static generateKeyPair(): crypto.KeyPairExportResult<{
+		privateKeyEncoding: {
+			format: 'pem';
+			type: 'pkcs8';
+		};
+		publicKeyEncoding: {
+			format: 'pem';
+			type: 'spki';
+		};
+	}> {
 		return crypto.generateKeyPairSync('ed25519', {
 			privateKeyEncoding: { format: 'pem', type: 'pkcs8' },
 			publicKeyEncoding: { format: 'pem', type: 'spki' },
@@ -70,7 +79,16 @@ export class CryptoService {
 	 */
 	public static generateRSAKeyPair(
 		modulusLength: 2048 | 3072 | 4096 = 2048,
-	): crypto.KeyPairSyncResult<string, string> {
+	): crypto.KeyPairExportResult<{
+		privateKeyEncoding: {
+			format: 'pem';
+			type: 'pkcs8';
+		};
+		publicKeyEncoding: {
+			format: 'pem';
+			type: 'spki';
+		};
+	}> {
 		if (![2048, 3072, 4096].includes(modulusLength)) {
 			throw new Error('Modulus length must be 2048, 3072 or 4096');
 		}

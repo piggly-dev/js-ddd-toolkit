@@ -27,22 +27,22 @@ export type DomainErrorJSON = {
 };
 
 export interface IApplicationError extends IDomainError {
-	previousToObject(): TOrNullable<PreviousErrorJSON>;
 	getPrevious(): TOrUndefined<PreviousError>;
 	previous?: PreviousError;
+	previousToObject(): TOrNullable<PreviousErrorJSON>;
 }
 
 export interface IDomainError
 	extends
 		JSONExportable<DomainErrorHiddenProp, DomainErrorJSON>,
 		ObjectExportable<DomainErrorJSON> {
-	is(class_name: string): boolean;
-	extra?: Record<any, any>;
-	message?: string;
-	status: number;
-	hint?: string;
 	code: number;
+	extra?: Record<any, any>;
+	hint?: string;
+	is(class_name: string): boolean;
+	message?: string;
 	name: string;
+	status: number;
 }
 
 export interface IRuntimeError
@@ -53,16 +53,16 @@ export interface IRuntimeError
 		>,
 		ObjectExportable<DomainErrorJSON>,
 		Error {
-	previousToObject(): TOrNullable<PreviousErrorJSON>;
-	getPrevious(): TOrUndefined<PreviousError>;
-	extra?: TOrNullable<Record<any, any>>;
-	is(class_name: string): boolean;
-	hint?: TOrNullable<string>;
-	previous?: PreviousError;
-	message: string;
-	status: number;
 	code: number;
+	extra?: TOrNullable<Record<any, any>>;
+	getPrevious(): TOrUndefined<PreviousError>;
+	hint?: TOrNullable<string>;
+	is(class_name: string): boolean;
+	message: string;
 	name: string;
+	previous?: PreviousError;
+	previousToObject(): TOrNullable<PreviousErrorJSON>;
+	status: number;
 }
 
 export type PreviousError = IApplicationError | IRuntimeError | IDomainError | Error;

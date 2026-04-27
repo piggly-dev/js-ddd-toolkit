@@ -11,13 +11,13 @@ export type EventListener = (...args: Array<any>) => void;
 
 export interface IAttribute<Props extends Record<any, any> = Record<any, any>>
 	extends IEventEmitter, IComponent {
-	equals(a: IAttribute<Props> | undefined | null): boolean;
-	toJSON(): Readonly<any>;
-	markAsPersisted(): void;
-	isModified(): boolean;
-	dispose(): void;
-	hash(): string;
 	clone(): this;
+	dispose(): void;
+	equals(a: IAttribute<Props> | undefined | null): boolean;
+	hash(): string;
+	isModified(): boolean;
+	markAsPersisted(): void;
+	toJSON(): Readonly<any>;
 }
 
 export interface IComponent {
@@ -28,20 +28,20 @@ export interface IDomainEvent<
 	EventData extends Record<string, any> = Record<string, any>,
 > {
 	readonly data: Readonly<EventData>;
-	readonly issued_at: number;
-	readonly name: string;
 	generateId(): string;
 	readonly id: string;
+	readonly issued_at: number;
+	readonly name: string;
 }
 
 export interface IEntity<ID extends EntityID<any>>
 	extends IEventEmitter, IComponent {
-	equals(e: IEntity<ID> | undefined | null): boolean;
-	markAsPersisted(): void;
-	isModified(): boolean;
 	clone(id?: ID): this;
 	dispose(): void;
+	equals(e: IEntity<ID> | undefined | null): boolean;
 	id: ID;
+	isModified(): boolean;
+	markAsPersisted(): void;
 }
 
 export type IEventEmitter = {

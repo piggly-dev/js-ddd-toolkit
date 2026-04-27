@@ -36,12 +36,12 @@ export { EventEmitter } from '@/core/EventEmitter.js';
 
 /** Services */
 export { ApplicationService } from '@/core/ApplicationService.js';
+export { UseCase } from '@/core/deprecated/UseCase.js';
 export { DomainService } from '@/core/DomainService.js';
 export { InfraService } from '@/core/InfraService.js';
 export { Service } from '@/core/Service.js';
-export { ServiceProvider } from '@/core/ServiceProvider.js';
 
-export { UseCase } from '@/core/deprecated/UseCase.js';
+export { ServiceProvider } from '@/core/ServiceProvider.js';
 
 /** Specification */
 export {
@@ -55,6 +55,10 @@ export {
 export type { ISpecification } from '@/core/specification/types/index.js';
 
 /** Repositories */
+export { AbstractRelationalRepository } from '@/core/repositories/AbstractRelationalRepository.js';
+
+export { RelationalRepositoryBundle } from '@/core/repositories/RelationalRepositoryBundle.js';
+export { RepositoryProvider } from '@/core/repositories/RepositoryProvider.js';
 export type {
 	TransactionIsolationLevelType,
 	BeginTransactionOptions,
@@ -62,10 +66,6 @@ export type {
 	IRepository,
 	IUnitOfWork,
 } from '@/core/repositories/types/index.js';
-
-export { AbstractRelationalRepository } from '@/core/repositories/AbstractRelationalRepository.js';
-export { RelationalRepositoryBundle } from '@/core/repositories/RelationalRepositoryBundle.js';
-export { RepositoryProvider } from '@/core/repositories/RepositoryProvider.js';
 
 /** Application */
 export { ApplicationMediator } from '@/core/application/ApplicationMediator.js';
@@ -89,16 +89,23 @@ export { InvalidSchemaError } from '@/core/errors/InvalidSchemaError.js';
 export { InvalidSchemaNormalizationError } from '@/core/errors/InvalidSchemaNormalizationError.js';
 export { RuntimeError } from '@/core/errors/RuntimeError.js';
 
+export type {
+	DomainErrorHiddenProp,
+	ApplicationErrorJSON,
+	IApplicationError,
+	PreviousErrorJSON,
+	RuntimeErrorJSON,
+	DomainErrorJSON,
+	IRuntimeError,
+	PreviousError,
+	IDomainError,
+	DataIssues,
+	DataIssue,
+} from '@/core/errors/types/index.js';
 export { FileLogStreamService } from '@/core/services/FileLogStreamService.js';
 export { LoggerService } from '@/core/services/LoggerService.js';
-export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService.js';
 
-export type {
-	IPromisesHandlerService,
-	IFileLogService,
-	ILoggerService,
-	IStoreService,
-} from '@/core/services/types/index.js';
+export { OnGoingPromisesService } from '@/core/services/OnGoingPromisesService.js';
 
 export type {
 	OnGoingPromisesServiceSettings,
@@ -119,7 +126,39 @@ export {
 	LoggerFnSchema,
 } from '@/core/services/schemas/index.js';
 
-export type { EnvironmentType } from '@/utils/types/index.js';
+export type {
+	IPromisesHandlerService,
+	IFileLogService,
+	ILoggerService,
+	IStoreService,
+} from '@/core/services/types/index.js';
+
+export type {
+	RelatedEnhancedEntity,
+	ResultReturnType,
+	EventListener,
+	RelatedEntity,
+	IEventEmitter,
+	IDomainEvent,
+	IValueObject,
+	IAttribute,
+	IComponent,
+	ResultFn,
+	IEntity,
+} from '@/core/types/index.js';
+
+export type {
+	ObjectExportable,
+	JSONExportable,
+	TOrUndefined,
+	TOrNullable,
+	TDateInput,
+	TOrAnother,
+	TOrEmpty,
+	TOrFalse,
+	TObject,
+	TOrNull,
+} from '@/types/index.js';
 
 export {
 	zodIssuesToDataIssues,
@@ -150,43 +189,4 @@ export {
 	toJSON,
 } from '@/utils/index.js';
 
-export type {
-	ObjectExportable,
-	JSONExportable,
-	TOrUndefined,
-	TOrNullable,
-	TDateInput,
-	TOrAnother,
-	TOrEmpty,
-	TOrFalse,
-	TObject,
-	TOrNull,
-} from '@/types/index.js';
-
-export type {
-	DomainErrorHiddenProp,
-	ApplicationErrorJSON,
-	IApplicationError,
-	PreviousErrorJSON,
-	RuntimeErrorJSON,
-	DomainErrorJSON,
-	IRuntimeError,
-	PreviousError,
-	IDomainError,
-	DataIssues,
-	DataIssue,
-} from '@/core/errors/types/index.js';
-
-export type {
-	RelatedEnhancedEntity,
-	ResultReturnType,
-	EventListener,
-	RelatedEntity,
-	IEventEmitter,
-	IDomainEvent,
-	IValueObject,
-	IAttribute,
-	IComponent,
-	ResultFn,
-	IEntity,
-} from '@/core/types/index.js';
+export type { EnvironmentType } from '@/utils/types/index.js';
