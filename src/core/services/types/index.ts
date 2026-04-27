@@ -18,13 +18,13 @@ import type { TOrUndefined } from '@/types/index.js';
  * @author Caique Araujo <caique@piggly.com.br>
  */
 export interface IStoreService {
-	set<T = any>(key: string, value: T, ttl?: number): Promise<boolean>;
-	getAndDelete(key: string): Promise<TOrUndefined<string>>;
-	increment(key: string, amount: number): Promise<number>;
-	get(key: string): Promise<TOrUndefined<string>>;
-	resetIncrement(key: string): Promise<number>;
 	delete(key: string): Promise<boolean>;
+	get(key: string): Promise<TOrUndefined<string>>;
+	getAndDelete(key: string): Promise<TOrUndefined<string>>;
 	has(key: string): Promise<boolean>;
+	increment(key: string, amount: number): Promise<number>;
+	resetIncrement(key: string): Promise<number>;
+	set<T = any>(key: string, value: T, ttl?: number): Promise<boolean>;
 }
 
 /**
@@ -34,14 +34,14 @@ export interface IStoreService {
  * @author Caique Araujo <caique@piggly.com.br>
  */
 export interface ILoggerService {
+	cleanup(): Promise<void>;
 	debug(message?: string, ...args: any[]): void;
 	error(message?: string, ...args: any[]): void;
 	fatal(message?: string, ...args: any[]): void;
-	info(message?: string, ...args: any[]): void;
-	warn(message?: string, ...args: any[]): void;
-	wait(ms: number): Promise<void>;
-	cleanup(): Promise<void>;
 	flush(): void;
+	info(message?: string, ...args: any[]): void;
+	wait(ms: number): Promise<void>;
+	warn(message?: string, ...args: any[]): void;
 }
 
 /**
@@ -51,9 +51,9 @@ export interface ILoggerService {
  * @author Caique Araujo <caique@piggly.com.br>
  */
 export interface IFileLogService {
-	log(level: LogLevel, message: string): void;
-	flush(level: LogLevel): void;
 	cleanup(): void;
+	flush(level: LogLevel): void;
+	log(level: LogLevel, message: string): void;
 }
 
 /**
@@ -63,7 +63,7 @@ export interface IFileLogService {
  * @author Caique Araujo <caique@piggly.com.br>
  */
 export interface IPromisesHandlerService {
-	register(promise: Promise<any>): void;
 	cleanup(): Promise<void>;
+	register(promise: Promise<any>): void;
 	size: number;
 }

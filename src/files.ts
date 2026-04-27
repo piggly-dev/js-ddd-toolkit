@@ -1,10 +1,10 @@
-import type z from 'zod';
-
 import fs from 'node:fs';
 
 import dotenv from 'dotenv';
 import yaml from 'js-yaml';
 import ini from 'ini';
+
+import type z from 'zod';
 
 import type { EnvironmentType } from '@/index.js';
 

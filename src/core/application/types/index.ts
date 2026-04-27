@@ -2,8 +2,8 @@ import type { DomainError } from '@/core/errors/DomainError.js';
 import type { Result } from '@/core/Result.js';
 
 export interface ApplicationContext<T = Record<string, any>> {
-	metadata?: Record<string, any>;
 	data: T;
+	metadata?: Record<string, any>;
 }
 
 export interface IApplicationHandler<
